@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="SFC.Gate.Views.StudentFinder"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SFC.Gate.Views"
+             xmlns:views="clr-namespace:SFC.Gate.Views"
+             mc:Ignorable="d" 
+             xmlns:vm="clr-namespace:SFC.Gate.ViewModels"
+             d:DesignHeight="300" d:DesignWidth="300">
+
+
+    <TabControl>
+        <TabItem Header="All Students">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid Margin="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="SEARCH " VerticalAlignment="Center" />
+                    <TextBox MinWidth="100" Grid.Column="1"/>
+                </Grid>
+                <ListView Grid.Row="1" Margin="4" SelectionMode="Extended">
+                    <ListView.View>
+                        <GridView>
+                            <GridView.Columns>
+                                <GridViewColumn Header="ID Number"/>
+                                <GridViewColumn Header="Firstname"/>
+                                <GridViewColumn Header="Lastname"/>
+                                <GridViewColumn Header="Year Level"/>
+                                <GridViewColumn Header="Department"/>
+                            </GridView.Columns>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <UniformGrid Grid.Row="2" Columns="5">
+                    <Button Content="Print Selected" Margin="4"/>
+                    <Button Content="Print All" Margin="4"/>
+                    <Rectangle/>
+                    <Button Content="Delete Selected" Margin="4"/>
+                    <Button Content="Delete All" Margin="4"/>
+                </UniformGrid>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Edit Student"
+                 Visibility="Collapsed">
+            <views:StudentInfo/>
+        </TabItem>
+        <TabItem Header="Add New">
+            <views:StudentInfo DataContext="{Binding Source={x:Static vm:MainViewModel.Instance},Path=NewStudentHolder}"/>
+        </TabItem>
+        
+    </TabControl>
+</UserControl>
