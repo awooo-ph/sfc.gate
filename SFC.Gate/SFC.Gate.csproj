@@ -57,8 +57,8 @@
     <Reference Include="PresentationFramework.Classic">
       <Private>True</Private>
     </Reference>
-    <Reference Include="SFC.Gate.Core, Version=1.0.6.5, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SFC.Gate.Core.1.0.6.5\lib\net40\SFC.Gate.Core.dll</HintPath>
+    <Reference Include="SFC.Gate.Core, Version=1.0.9.7, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SFC.Gate.Core.1.0.9.7\lib\net40\SFC.Gate.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -99,7 +99,9 @@
     <Compile Include="Converters\SizeConverter.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\MessageBox.cs" />
+    <Compile Include="ViewModels\Students.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="ViewModels\Visitors.cs" />
     <Compile Include="Views\MessageBox.xaml.cs">
       <DependentUpon>MessageBox.xaml</DependentUpon>
     </Compile>

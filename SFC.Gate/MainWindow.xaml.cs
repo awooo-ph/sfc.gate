@@ -16,7 +16,7 @@ namespace SFC.Gate
         {
             InitializeComponent();
 
-            MainViewModel.Context = SynchronizationContext.Current;
+            ViewModelBase.Context = SynchronizationContext.Current;
         }
         
     }

@@ -5,7 +5,21 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SFC.Gate.Views"
              mc:Ignorable="d" 
+             xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
+             xmlns:vm="clr-namespace:SFC.Gate.ViewModels"
+             DataContext="{Binding Source={x:Static vm:Visitors.Instance},Path=NewVisitor}"
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={RelativeSource Self}, 
+                   Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -21,19 +35,22 @@
         <Label Target="{Binding ElementName=Fullname}" VerticalAlignment="Center" Content="Name"
                                Margin="4"/>
         <TextBox Grid.Column="1" Grid.Row="0" x:Name="Fullname" x:FieldModifier="private"
-                                 Margin="4"/>
+                                 Margin="4"
+                 Text="{Binding Name,ValidatesOnDataErrors=True,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
 
         <Label Target="{Binding ElementName=Address}" VerticalAlignment="Center" Content="Address"
                                Grid.Column="0" Grid.Row="1"
                                Margin="4"/>
         <TextBox Grid.Column="1" Grid.Row="1" x:Name="Address" x:FieldModifier="private"
-                                 Margin="4"/>
+                                 Margin="4"
+                 Text="{Binding Address,ValidatesOnDataErrors=True,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
 
         <Label Target="{Binding ElementName=Number}" VerticalAlignment="Center" Content="Number"
                                Grid.Column="0" Grid.Row="2"
                                Margin="4"/>
         <TextBox Grid.Column="1" Grid.Row="2" x:Name="Number" x:FieldModifier="private"
-                                 Margin="4"/>
+                                 Margin="4"
+                 Text="{Binding Number,ValidatesOnDataErrors=True,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
 
         <Label Target="{Binding ElementName=VisitPurpose}" VerticalAlignment="Center" Content="Purpose"
                                Grid.Column="0" Grid.Row="3"
@@ -42,8 +59,10 @@
                                  TextWrapping="Wrap"
                                  AcceptsReturn="True"
                                  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
-                                 Margin="4"/>
+                                 Margin="4"
+                 Text="{Binding Purpose,ValidatesOnDataErrors=True,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
         <Button Content="Save" Grid.Column="1" Grid.Row="4" Margin="4" HorizontalAlignment="Right" Width="100"
-                IsDefault="True"/>
+                IsDefault="True"
+                Command="{Binding SaveCommand}"/>
     </Grid>
 </UserControl>

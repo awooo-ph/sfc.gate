@@ -6,11 +6,13 @@
              xmlns:local="clr-namespace:SFC.Gate.Views"
              xmlns:views="clr-namespace:SFC.Gate.Views"
              mc:Ignorable="d" 
+             xmlns:cnv="clr-namespace:SFC.Gate.Converters"
              xmlns:vm="clr-namespace:SFC.Gate.ViewModels"
+             xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
              d:DesignHeight="300" d:DesignWidth="300">
 
 
-    <TabControl>
+    <TabControl SelectedIndex="{Binding SelectedTab,Source={x:Static vm:MainViewModel.Instance},Mode=TwoWay}">
         <TabItem Header="All Students">
             <Grid>
                 <Grid.RowDefinitions>
@@ -26,35 +28,47 @@
                     <TextBlock Text="SEARCH " VerticalAlignment="Center" />
                     <TextBox MinWidth="100" Grid.Column="1"/>
                 </Grid>
-                <ListView Grid.Row="1" Margin="4" SelectionMode="Extended">
+                <ListView Grid.Row="1" Margin="4" SelectionMode="Extended"
+                          SelectedItem="{Binding SelectedStudent,Source={x:Static vm:Students.Instance},Mode=TwoWay}"
+                          ItemsSource="{Binding Source={x:Static models:Student.Cache}}"
+                          MouseDoubleClick="StudentList_DoubleClicked">
+                    <ListView.Resources>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Setter Property="IsSelected"
+                                    Value="{Binding IsSelected,Mode=TwoWay}"/>
+                        </Style>
+                    </ListView.Resources>
                     <ListView.View>
                         <GridView>
                             <GridView.Columns>
-                                <GridViewColumn Header="ID Number"/>
-                                <GridViewColumn Header="Firstname"/>
-                                <GridViewColumn Header="Lastname"/>
-                                <GridViewColumn Header="Year Level"/>
-                                <GridViewColumn Header="Department"/>
+                                <GridViewColumn Header="ID Number" DisplayMemberBinding="{Binding StudentId}"/>
+                                <GridViewColumn Header="Firstname" DisplayMemberBinding="{Binding Firstname}"/>
+                                <GridViewColumn Header="Lastname" DisplayMemberBinding="{Binding Lastname}"/>
+                                <GridViewColumn Header="Year Level" DisplayMemberBinding="{Binding YearLevel}"/>
+                                <GridViewColumn Header="Department" DisplayMemberBinding="{Binding Department}"/>
                             </GridView.Columns>
                         </GridView>
                     </ListView.View>
+                 
                 </ListView>
                 <UniformGrid Grid.Row="2" Columns="5">
                     <Button Content="Print Selected" Margin="4"/>
                     <Button Content="Print All" Margin="4"/>
                     <Rectangle/>
-                    <Button Content="Delete Selected" Margin="4"/>
-                    <Button Content="Delete All" Margin="4"/>
+                    <Button Content="Delete Selected" Margin="4"
+                            Command="{Binding Source={x:Static vm:Students.Instance},Path=DeleteSelectedStudents}"/>
+                    <Button Content="Delete All" Margin="4"
+                            Command="{Binding Source={x:Static vm:Students.Instance},Path=DeleteAllStudents}"/>
                 </UniformGrid>
             </Grid>
         </TabItem>
         <TabItem Header="Edit Student"
-                 Visibility="Collapsed">
-            <views:StudentInfo/>
+                 Visibility="{Binding SelectedStudent, Source={x:Static vm:Students.Instance}, Mode=TwoWay, Converter={cnv:BooleanToVisibility}}">
+            <views:StudentInfo DataContext="{Binding Source={x:Static vm:Students.Instance},Path=SelectedStudent}"/>
         </TabItem>
         <TabItem Header="Add New">
-            <views:StudentInfo DataContext="{Binding Source={x:Static vm:MainViewModel.Instance},Path=NewStudentHolder}"/>
+            <views:StudentInfo DataContext="{Binding Source={x:Static vm:Students.Instance},Path=NewStudentHolder}"/>
         </TabItem>
-        
+
     </TabControl>
 </UserControl>

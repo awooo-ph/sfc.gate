@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows;
+using System.Windows.Input;
 using SFC.Gate.Models;
+using MsgBox = System.Windows.MessageBox;
 
 namespace SFC.Gate.ViewModels
 {
     class MainViewModel : ViewModelBase
     {
-        public static SynchronizationContext Context { get; set; }
+        
         private MainViewModel() { }
         
         private static MainViewModel _instance;
@@ -20,27 +23,34 @@ namespace SFC.Gate.ViewModels
             {
                 if (_instance != null) return _instance;
                 _instance = new MainViewModel();
-                Messenger.Default.AddListener<Student>(Messages.DuplicateRfid, NotifyDuplicateId);
+                
+                Messenger.Default.AddListener(Messages.DuplicateName, NotifyDuplicateName);
+                
                 return _instance;
             }
         }
+        
+        private int _selectedTab;
 
-        private static async void NotifyDuplicateId(Student stud)
+        public int SelectedTab
         {
-            var res = await MessageBox.Show("Cannot Add New Student", $"{stud.Firstname} {stud.Lastname} is already using RFID Code [{stud.Rfid}].",
-                "Each student must have a unique RFID.\n" +
-                $"Click CANCEL to cancel adding {Instance.NewStudentHolder.Firstname} {Instance.NewStudentHolder.Lastname}.\n" +
-                $"Click REMOVE to remove {stud.Firstname} {stud.Lastname} from the database.\n" +
-                $"What do you want to do?",
-                $"CANCEL Adding New Student",
-                $"REMOVE Old Student");
-            if (res == MessageBox.MessageBoxResults.Button2)
+            get => _selectedTab;
+            set
             {
-                
+                _selectedTab = value; 
+                OnPropertyChanged(nameof(SelectedTab));
             }
         }
 
-        private Student _newStudentHolder;
-        public Student NewStudentHolder => _newStudentHolder ?? (_newStudentHolder = new Student());
+        private static void NotifyDuplicateName()
+        {
+            Context.Post(d =>
+            {
+                MsgBox.Show($"{Students.Instance.NewStudentHolder.Fullname} is already in the database.",
+                    "Student Already Exists", MessageBoxButton.OK, MessageBoxImage.Hand);
+                Instance.SelectedTab = 1;
+            }, null);
+        }
+        
     }
 }

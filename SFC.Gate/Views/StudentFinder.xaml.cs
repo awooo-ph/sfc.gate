@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using SFC.Gate.ViewModels;
 
 namespace SFC.Gate.Views
 {
@@ -23,6 +24,11 @@ namespace SFC.Gate.Views
         {
             InitializeComponent();
         }
-        
+
+        private void StudentList_DoubleClicked(object sender, MouseButtonEventArgs e)
+        {
+            if(Students.Instance.SelectedStudent!=null)
+            MainViewModel.Instance.SelectedTab = 1;
+        }
     }
 }

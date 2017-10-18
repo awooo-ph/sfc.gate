@@ -34,7 +34,7 @@ namespace SFC.Gate.ViewModels
         public Visibility Button3Visibility => string.IsNullOrEmpty(Button3) ? Visibility.Hidden : Visibility.Visible;
         public long Result { get; set; }
 
-        public static async Task<MessageBoxResults> Show(string title, string header, string message,
+        public static MessageBoxResults Show(string title, string header, string message,
              string button1, string button2="", string button3="")
         {
             var vm = new MessageBox()
@@ -46,24 +46,14 @@ namespace SFC.Gate.ViewModels
                 Button1 = button1,
                 Button3 = button3
             };
-
-            await Task.Factory.StartNew(() =>
-            {
-                MainViewModel.Context.Post(d =>
-                {
-                    ShowMessageBox((MessageBox) d);
-                }, vm);
-            });
             
+                var msg = new Views.MessageBox { DataContext = vm };
+                msg.ShowDialog();
+                if (!msg.DialogResult ?? false) vm.Result = 0;
+     
+          
             return (MessageBoxResults) vm.Result;
         }
         
-
-        private static void ShowMessageBox(MessageBox vm)
-        {
-            var msg = new Views.MessageBox {DataContext = vm};
-            msg.ShowDialog();
-            if (!msg.DialogResult ?? false) vm.Result = 0;
-        }
     }
 }
