@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SFC.Gate"
         xmlns:views="clr-namespace:SFC.Gate.Views"
         mc:Ignorable="d"
-        
+        xmlns:vm="clr-namespace:SFC.Gate.ViewModels"
         xmlns:cnv="clr-namespace:SFC.Gate.Converters"
         Title="{Binding SelectedItem.Tag, ElementName=MainTab}" Height="471" Width="741">
 
@@ -22,19 +22,26 @@
         <TextBlock Text="SAINT FRANCIS COLLEGE - GUIHULNGAN" HorizontalAlignment="Center" Margin="10" FontSize="14pt" Grid.Row="0"/>
 
         <Grid Grid.Row="2" Margin="40,20,40,40">
-            <TabControl TabStripPlacement="Left" x:Name="MainTab" x:FieldModifier="private">
+            <TabControl TabStripPlacement="Left" x:Name="MainTab" x:FieldModifier="private"
+                        SelectedIndex="{Binding Source={x:Static vm:MainViewModel.Instance},Path=SelectedTab,Mode=TwoWay}">
                 <TabItem Header="STUDENTS" Tag="SFC-Guihulngan [STUDENTS]">
                     <views:StudentFinder/>
                 </TabItem>
                 <TabItem Header="VISITORS" Tag="SFC-Guihulngan [VISITORS]">
                     <views:VisitorEntry/>
                 </TabItem>
-                <TabItem Header="VIOLATIONS" Tag="SFC-Guihulngan [VIOLATIONS]"/>
+                <TabItem Header="VIOLATIONS" Tag="SFC-Guihulngan [VIOLATIONS]">
+                    <views:Violations/>
+                </TabItem>
                 <TabItem Header="SMS" Tag="SFC-Guihulngan [SMS]">
                     <views:SmsSender/>
                 </TabItem>
-                <TabItem Header="USERS" Tag="SFC-Guihulngan [USERS]"/>
-                <TabItem Header="LOGS" Tag="SFC-Guihulngan [LOGS]"/>
+                <TabItem Header="USERS" Tag="SFC-Guihulngan [USERS]">
+                    <views:Users/>
+                </TabItem>
+                <TabItem Header="LOGS" Tag="SFC-Guihulngan [LOGS]">
+                    <views:Logs/>
+                </TabItem>
                 <TabItem Header="SETTINGS" Tag="SFC-Guihulngan [SETTINGS]"/>
             </TabControl>
         </Grid>

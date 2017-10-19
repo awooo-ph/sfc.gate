@@ -12,7 +12,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
 
 
-    <TabControl SelectedIndex="{Binding SelectedTab,Source={x:Static vm:MainViewModel.Instance},Mode=TwoWay}">
+    <TabControl SelectedIndex="{Binding SelectedTab,Source={x:Static vm:Students.Instance},Mode=TwoWay}">
         <TabItem Header="All Students">
             <Grid>
                 <Grid.RowDefinitions>
@@ -30,12 +30,21 @@
                 </Grid>
                 <ListView Grid.Row="1" Margin="4" SelectionMode="Extended"
                           SelectedItem="{Binding SelectedStudent,Source={x:Static vm:Students.Instance},Mode=TwoWay}"
-                          ItemsSource="{Binding Source={x:Static models:Student.Cache}}"
-                          MouseDoubleClick="StudentList_DoubleClicked">
+                          ItemsSource="{Binding Source={x:Static models:Student.Cache}}">
                     <ListView.Resources>
                         <Style TargetType="{x:Type ListViewItem}">
+                            <EventSetter Event="MouseDoubleClick" Handler="StudentList_DoubleClicked"/>
                             <Setter Property="IsSelected"
                                     Value="{Binding IsSelected,Mode=TwoWay}"/>
+                            <Setter Property="ContextMenu">
+                                <Setter.Value>
+                                    <ContextMenu>
+                                        <MenuItem Header="Edit" Command="{Binding Source={x:Static vm:Students.Instance},Path=EditStudentCommand}"/>
+                                        <MenuItem Header="Delete" Command="{Binding SelectedStudent.DeleteCommand, Source={x:Static vm:Students.Instance}}"/>
+                                        <MenuItem Header="Add Violation" Command="{Binding Source={x:Static vm:MainViewModel.Instance},Path=AddViolationCommand}"/>
+                                    </ContextMenu>
+                                </Setter.Value>
+                            </Setter>
                         </Style>
                     </ListView.Resources>
                     <ListView.View>

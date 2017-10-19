@@ -24,12 +24,19 @@ namespace SFC.Gate.ViewModels
                 if (_instance != null) return _instance;
                 _instance = new MainViewModel();
                 
-                Messenger.Default.AddListener(Messages.DuplicateName, NotifyDuplicateName);
-                
                 return _instance;
             }
         }
-        
+
+
+        private ICommand _addViolationCommand;
+
+        public ICommand AddViolationCommand => _addViolationCommand ?? (_addViolationCommand = new DelegateCommand(stud =>
+        {
+            Violations.Instance.SelectedStudent = Students.Instance.SelectedStudent;
+            SelectedTab = 2;
+        }));
+
         private int _selectedTab;
 
         public int SelectedTab
@@ -37,20 +44,9 @@ namespace SFC.Gate.ViewModels
             get => _selectedTab;
             set
             {
-                _selectedTab = value; 
+                _selectedTab = value;
                 OnPropertyChanged(nameof(SelectedTab));
             }
         }
-
-        private static void NotifyDuplicateName()
-        {
-            Context.Post(d =>
-            {
-                MsgBox.Show($"{Students.Instance.NewStudentHolder.Fullname} is already in the database.",
-                    "Student Already Exists", MessageBoxButton.OK, MessageBoxImage.Hand);
-                Instance.SelectedTab = 1;
-            }, null);
-        }
-        
     }
 }

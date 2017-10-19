@@ -11,25 +11,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using SFC.Gate.ViewModels;
 
 namespace SFC.Gate.Views
 {
     /// <summary>
-    /// Interaction logic for StudentFinder.xaml
+    /// Interaction logic for Violations.xaml
     /// </summary>
-    public partial class StudentFinder : UserControl
+    public partial class Violations : UserControl
     {
-        public StudentFinder()
+        public Violations()
         {
             InitializeComponent();
         }
-
-        private void StudentList_DoubleClicked(object sender, MouseButtonEventArgs e)
-        {
-            if(Students.Instance.SelectedStudent!=null)
-            Students.Instance.SelectedTab = 1;
-        }
-        
     }
 }

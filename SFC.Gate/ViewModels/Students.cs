@@ -13,7 +13,7 @@ namespace SFC.Gate.ViewModels
         {
             Messenger.Default.AddListener<Student>(Messages.DuplicateRfid, s => NotifyDuplicate(s, "RFID"));
             Messenger.Default.AddListener<Student>(Messages.DuplicateStudentId, s => NotifyDuplicate(s, "ID Number"));
-            
+            Messenger.Default.AddListener(Messages.DuplicateName, NotifyDuplicateName);
             Messenger.Default.AddListener<Student>(Messages.NewStudentAdded, NewStudentAdded);
             Messenger.Default.AddListener(Messages.StudentSaved, StudentInfoSaved);
         }
@@ -38,8 +38,27 @@ namespace SFC.Gate.ViewModels
             }
         }
 
+        private ICommand _editStudentCommand;
+
+        public ICommand EditStudentCommand => _editStudentCommand ?? (_editStudentCommand = new DelegateCommand(d =>
+        {
+            Instance.SelectedTab = 1;
+        }));
+
+        private int _selectedTab;
+
+        public int SelectedTab
+        {
+            get => _selectedTab;
+            set
+            {
+                _selectedTab = value;
+                OnPropertyChanged(nameof(SelectedTab));
+            }
+        }
+
         private static Students _instance;
-        public static Students Instance = _instance ?? (_instance=new Students());
+        public static Students Instance = _instance ?? (_instance= new Students());
         
         private static void NewStudentAdded(Student student)
         {
@@ -68,7 +87,7 @@ namespace SFC.Gate.ViewModels
                     MsgBox.Show($"{stud.Firstname} {stud.Lastname} has been removed while the new student has been successfully added to the database.",
                         "New Student Added",
                         MessageBoxButton.OK, MessageBoxImage.Information);
-                    MainViewModel.Instance.SelectedTab = 1;
+                    Instance.SelectedTab = 1;
                 }
 
             }, null);
@@ -123,5 +142,15 @@ namespace SFC.Gate.ViewModels
             Student.DeleteAll();
             Log.Add("Database Cleared", "Students database has been cleared.");
         }));
+
+        private static void NotifyDuplicateName()
+        {
+            Context.Post(d =>
+            {
+                MsgBox.Show($"{Students.Instance.NewStudentHolder.Fullname} is already in the database.",
+                    "Student Already Exists", MessageBoxButton.OK, MessageBoxImage.Hand);
+                Instance.SelectedTab = 1;
+            }, null);
+        }
     }
 }
