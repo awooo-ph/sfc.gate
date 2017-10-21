@@ -57,8 +57,8 @@
     <Reference Include="PresentationFramework.Classic">
       <Private>True</Private>
     </Reference>
-    <Reference Include="SFC.Gate.Core, Version=1.0.14.8, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SFC.Gate.Core.1.0.14.8\lib\net40\SFC.Gate.Core.dll</HintPath>
+    <Reference Include="SFC.Gate.Core, Version=1.0.47.11, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SFC.Gate.Core.1.0.47.11\lib\net40\SFC.Gate.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -98,6 +98,7 @@
     <Compile Include="Converters\IsNullConverter.cs" />
     <Compile Include="Converters\PathToBitmapConverter.cs" />
     <Compile Include="Converters\SizeConverter.cs" />
+    <Compile Include="ViewModels\Login.cs" />
     <Compile Include="ViewModels\Logs.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\MessageBox.cs" />
@@ -107,6 +108,12 @@
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="ViewModels\Violations.cs" />
     <Compile Include="ViewModels\Visitors.cs" />
+    <Compile Include="Views\ChangePassword.xaml.cs">
+      <DependentUpon>ChangePassword.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Login.xaml.cs">
+      <DependentUpon>Login.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Logs.xaml.cs">
       <DependentUpon>Logs.xaml</DependentUpon>
     </Compile>
@@ -143,6 +150,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\ChangePassword.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Login.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Logs.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -5,6 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:SFC.Gate.Views"
              xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
+             xmlns:viewModels="clr-namespace:SFC.Gate.ViewModels"
+             xmlns:converters="clr-namespace:SFC.Gate.Converters"
              mc:Ignorable="d"
              DataContextChanged="StudentInfo_OnDataContextChanged"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance models:Student}">
@@ -97,9 +99,15 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                    <Image Source="pack://application:,,,/default_pic.jpeg" Stretch="Uniform"
+                        <Image Source="pack://application:,,,/default_pic.jpeg" Stretch="Uniform"
+                               Visibility="{Binding HasPicture,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
+                               Margin="4"/>
+                        <Image Source="{Binding PicturePath, Converter={converters:PathToBitmapConverter}}" Stretch="Uniform"
+                               Grid.Row="0"
                            Margin="4"/>
-                        <Button Margin="4" Grid.Row="1" HorizontalAlignment="Center" Content="Change Picture"/>
+                        <Button Margin="4" Grid.Row="1" HorizontalAlignment="Center" Content="Change Picture"
+                                Command="{Binding Source={x:Static viewModels:Students.Instance},Path=ChangePictureCommand}"
+                                CommandParameter="{Binding}"/>
                     </Grid>
                 </GroupBox>
 
@@ -139,9 +147,18 @@
                 </GroupBox>
             </Grid>
         </ScrollViewer>
-        <Button Content="Save" Width="100" Margin="4,10,4,4" HorizontalAlignment="Right"
+        <UniformGrid Grid.Row="1" HorizontalAlignment="Right"
+                     Margin="0 10, 0,0">
+            <Button Content="{Binding IsNew,Converter={converters:BooleanToObject Reset, Cancel}}"
+                    Command="{Binding ResetCommand, Source={x:Static viewModels:Students.Instance}}"
+                    CommandParameter="{Binding}"
+                    Margin="4" 
+                    IsCancel="True"/>
+            
+        <Button Content="Save" Width="100" Margin="4" 
                 Command="{Binding SaveCommand}"
                 IsDefault="True"
-                Grid.Row="1" />
+                />
+        </UniformGrid>
     </Grid>
 </UserControl>

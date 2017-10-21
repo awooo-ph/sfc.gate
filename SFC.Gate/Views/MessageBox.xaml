@@ -9,7 +9,7 @@
         WindowStyle="SingleBorderWindow"
         ResizeMode="NoResize"
         WindowState="Normal"
-        WindowStartupLocation="CenterScreen"
+        WindowStartupLocation="CenterOwner"
         Title="{Binding Title}">
     <Grid Margin="10">
         <Grid.ColumnDefinitions>

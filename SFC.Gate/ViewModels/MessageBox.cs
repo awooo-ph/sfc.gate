@@ -37,6 +37,7 @@ namespace SFC.Gate.ViewModels
         public static MessageBoxResults Show(string title, string header, string message,
              string button1, string button2="", string button3="")
         {
+            MainViewModel.Instance.IsDialogOpen = true;
             var vm = new MessageBox()
             {
                 Title = title,
@@ -48,10 +49,11 @@ namespace SFC.Gate.ViewModels
             };
             
                 var msg = new Views.MessageBox { DataContext = vm };
+            msg.Owner = Application.Current.MainWindow;
                 msg.ShowDialog();
                 if (!msg.DialogResult ?? false) vm.Result = 0;
-     
-          
+
+            MainViewModel.Instance.IsDialogOpen = false;
             return (MessageBoxResults) vm.Result;
         }
         

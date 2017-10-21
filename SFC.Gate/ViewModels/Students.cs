@@ -1,6 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using FastMember;
+using Microsoft.Win32;
+using SFC.Gate.Data;
 using SFC.Gate.Models;
 using MsgBox = System.Windows.MessageBox;
 
@@ -33,8 +39,17 @@ namespace SFC.Gate.ViewModels
             get => _selectedStudent;
             set
             {
+                if (_selectedStudent != null && _savedValues.ContainsKey(_selectedStudent.Id))
+                    _savedValues.Remove(_selectedStudent.Id);
+                
                 _selectedStudent = value;
+                
+                if (_selectedStudent != null)
+                    SaveValues(_selectedStudent);
+                
                 OnPropertyChanged(nameof(SelectedStudent));
+                OnPropertyChanged(nameof(ResetCommand));
+                
             }
         }
 
@@ -43,6 +58,7 @@ namespace SFC.Gate.ViewModels
         public ICommand EditStudentCommand => _editStudentCommand ?? (_editStudentCommand = new DelegateCommand(d =>
         {
             Instance.SelectedTab = 1;
+            OnPropertyChanged(nameof(ResetCommand));
         }));
 
         private int _selectedTab;
@@ -54,6 +70,7 @@ namespace SFC.Gate.ViewModels
             {
                 _selectedTab = value;
                 OnPropertyChanged(nameof(SelectedTab));
+                OnPropertyChanged(nameof(ResetCommand));
             }
         }
 
@@ -67,6 +84,26 @@ namespace SFC.Gate.ViewModels
             Instance.NewStudentHolder = null;
 
         }
+
+        private ICommand _changePictureCommand;
+
+        public ICommand ChangePictureCommand => _changePictureCommand ?? (_changePictureCommand = new DelegateCommand<Student>(
+                                                    student =>
+                                                    {
+                                                        var dialog = new OpenFileDialog();
+                                                        dialog.Multiselect = false;
+                                                        dialog.Filter =
+                                                            @"All Images|*.BMP;*.JPG;*.JPEG;*.GIF;*.PNG|
+                                                            BMP Files|*.BMP;*.DIB;*.RLE|
+                                                            JPEG Files|*.JPG;*.JPEG;*.JPE;*.JFIF|
+                                                            GIF Files|*.GIF|
+                                                            PNG Files|*.PNG";
+                                                        dialog.Title = "Select Picture";
+                                                        dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+                                                        if (!(dialog.ShowDialog() ?? false)) return;
+                                                        
+                                                        student.PicturePath = dialog.FileName;
+                                                    }));
         
         private static void NotifyDuplicate(Student stud, string property)
         {
@@ -93,13 +130,67 @@ namespace SFC.Gate.ViewModels
             }, null);
         }
 
+        private Dictionary<long, Dictionary<string, object>> _savedValues = new Dictionary<long, Dictionary<string, object>>();
+        private void SaveValues(Student student)
+        {
+            if (student == null) return;
+            var obj = TypeAccessor.Create(typeof(Student));
+            var model = ObjectAccessor.Create(student);
+            if(!_savedValues.ContainsKey(student.Id))
+                _savedValues.Add(student.Id, new Dictionary<string, object>());
+            var sv = _savedValues[student.Id];
+
+            var props = typeof(Student).GetProperties();
+            
+            
+            foreach (var member in props)
+            {
+                if (!member.CanWrite || member.Name=="Item" || member.Name=="Id") continue;
+                if(member.IsDefined(typeof(IgnoreAttribute), true)) continue;
+                
+                if(!sv.ContainsKey(member.Name))
+                    sv.Add(member.Name, null);
+                sv[member.Name] = model[member.Name];
+            }
+        }
+
+        private bool ValuesChanged(Student student)
+        {
+            if (student == null) return false;
+            var obj = TypeAccessor.Create(typeof(Student));
+            var model = ObjectAccessor.Create(student);
+            if (!_savedValues.ContainsKey(student.Id))
+                return false;
+            var sv = _savedValues[student.Id];
+
+            var props = typeof(Student).GetProperties();
+            
+            foreach (var member in props)
+            {
+                if(!member.CanWrite || member.Name == "Item" || member.Name == "Id") continue;
+                if (member.IsDefined(typeof(IgnoreAttribute), true)) continue;
+                if (!sv.ContainsKey(member.Name))
+                    sv.Add(member.Name, null);
+                var mv = model[member.Name];
+                var svv = sv[member.Name];
+                if (svv?.ToString() != mv?.ToString())
+                    return true;
+            }
+            return false;
+        }
+        
         private Student _newStudentHolder;
 
         public Student NewStudentHolder
         {
             get
             {
-                if (_newStudentHolder == null) _newStudentHolder = new Student();
+                if (_newStudentHolder == null)
+                {
+                    _newStudentHolder = new Student();
+                    if(!_savedValues.ContainsKey(0))
+                        SaveValues(_newStudentHolder);
+                }
                 return _newStudentHolder;
             }
             set
@@ -142,7 +233,7 @@ namespace SFC.Gate.ViewModels
             Student.DeleteAll();
             Log.Add("Database Cleared", "Students database has been cleared.");
         }));
-
+        
         private static void NotifyDuplicateName()
         {
             Context.Post(d =>
@@ -152,5 +243,19 @@ namespace SFC.Gate.ViewModels
                 Instance.SelectedTab = 1;
             }, null);
         }
+
+        private ICommand _resetCommand;
+
+        public ICommand ResetCommand => _resetCommand ?? (_resetCommand = new DelegateCommand<Student>(stud =>
+        {
+            if (stud.IsNew)
+                NewStudentHolder = new Student();
+            else
+                SelectedStudent = stud.Reset();
+        }, stud =>
+        {
+            return ValuesChanged(stud);
+        }));
+        
     }
 }
