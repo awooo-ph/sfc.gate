@@ -99,9 +99,9 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Image Source="pack://application:,,,/default_pic.jpeg" Stretch="Uniform"
+                        <!--<Image Source="pack://application:,,,/default_pic.jpeg" Stretch="Uniform"
                                Visibility="{Binding HasPicture,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
-                               Margin="4"/>
+                               Margin="4"/>-->
                         <Image Source="{Binding PicturePath, Converter={converters:PathToBitmapConverter}}" Stretch="Uniform"
                                Grid.Row="0"
                            Margin="4"/>

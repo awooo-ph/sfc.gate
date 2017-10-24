@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using SFC.Gate.Configuration;
+using SFC.Gate.Configurations;
 using SFC.Gate.Models;
 
 namespace SFC.Gate.ViewModels

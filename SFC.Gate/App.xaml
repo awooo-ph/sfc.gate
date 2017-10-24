@@ -7,7 +7,6 @@
             <ResourceDictionary>
                 <ResourceDictionary.MergedDictionaries>
                     <ResourceDictionary Source="/PresentationFramework.Classic;component/themes/classic.xaml" />
-                    <ResourceDictionary Source="Resources/Icons.xaml"/>
                 </ResourceDictionary.MergedDictionaries>
             </ResourceDictionary>
     </Application.Resources>

@@ -24,14 +24,18 @@ namespace SFC.Gate.ViewModels
         protected void OnPropertyChanged(string propertyName)
         {
             if (!NotifyChanges) return;
-            var pc = PropertyChanged;
-            if (pc == null) return;
 
-            VerifyPropertyName(propertyName);
+            Context.Post(d =>
+            {
+                var pc = PropertyChanged;
+                if (pc == null) return;
 
-            var e = new PropertyChangedEventArgs(propertyName);
-            pc(this, e);
-            
+                VerifyPropertyName(propertyName);
+
+                var e = new PropertyChangedEventArgs(propertyName);
+                pc(this, e);
+            }, null);
+
         }
 
         [Conditional("DEBUG")]

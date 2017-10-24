@@ -11,58 +11,55 @@ namespace SFC.Gate.Converters {
         {
       
         }
-        
+
+        public string Default { get; set; } = "pack://application:,,,/default_pic.jpeg";
 
         private static Dictionary<string, BitmapImage> Cache = new Dictionary<string, BitmapImage>();
 
         protected override object Convert(object value, Type targetType, object parameter)
         {
-
-            // var defUri = _imageType ==ImageType.Background ? new Uri($"pack://application:,,,/Resources/background.jpg"): new Uri("pack://application:,,,/Resources/user.png");
-            BitmapImage bmp = null;
-            if (value==null || !File.Exists((string) value))
+            var bmp = new BitmapImage();
+            bmp.BeginInit();
+            bmp.CacheOption = BitmapCacheOption.OnLoad;
+            try
             {
-             
-            }
-            else
-            {
-                try
-                {
-                    using (var stream = File.OpenRead((string)value))
+                if (value != null && File.Exists((string) value))
+                    using (var stream = File.OpenRead((string) value))
                     {
-                        bmp = new BitmapImage();
-                        bmp.BeginInit();
-                        bmp.CacheOption = BitmapCacheOption.OnLoad;
                         bmp.StreamSource = stream;
-                        //bmp.UriSource = File.Exists((string)value) ? new Uri($"file://{(string)value}") : defUri;
                         bmp.EndInit();
                         bmp.Freeze();
                     }
-                }
-                catch 
+                else
                 {
-                    if (Cache.ContainsKey((string) value))
-                    {
-                        bmp = Cache[(string) value];
-                    }
-                    else
-                    {
-                        return null;
-                    }
+                    bmp.UriSource = new Uri(Default); 
+                    bmp.EndInit();
+                    bmp.Freeze();
                 }
-                
+
+            }
+            catch
+            {
+                if (Cache.ContainsKey((string) value+""))
+                {
+                    bmp = Cache[(string) value+""];
+                }
+                else
+                {
+                    return null;
+                }
             }
 
             var key = value?.ToString() ?? "[EMPTY]";
             if (Cache.ContainsKey(key))
                 Cache[key] = bmp;
             else
-                Cache.Add(key,bmp);
+                Cache.Add(key, bmp);
 
             return bmp;
-            
+
         }
 
-        
+
     }
 }

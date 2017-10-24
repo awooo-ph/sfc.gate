@@ -8,7 +8,12 @@
         mc:Ignorable="d"
         xmlns:vm="clr-namespace:SFC.Gate.ViewModels"
         xmlns:cnv="clr-namespace:SFC.Gate.Converters"
-        Title="{Binding SelectedItem.Tag, ElementName=MainTab}" Height="471" Width="741">
+        xmlns:cnf="clr-namespace:SFC.Gate.Configurations;assembly=SFC.Gate.Core"
+        Title="{Binding SelectedItem.Tag, ElementName=MainTab}"
+        Top="{Binding Source={x:Static cnf:Config.General},Path=WindowTop, FallbackValue=147}"
+        Left="{Binding Source={x:Static cnf:Config.General},Path=WindowLeft, FallbackValue=147}"
+        Height="{Binding Source={x:Static cnf:Config.General},Path=WindowHeight, FallbackValue=471}"
+        Width="{Binding Source={x:Static cnf:Config.General},Path=WindowWidth, FallbackValue=741}">
     <Window.Resources>
    
           
@@ -53,7 +58,7 @@
                             <MenuItem Header="Change Password" Command="{Binding ChangePasswordCommand}"/>
                             <MenuItem Header="Logout" Command="{Binding LogoutCommand}"/>
                         </MenuItem>
-                        <MenuItem Header="Guard Mode">
+                        <MenuItem Header="Guard Mode" Command="{Binding EnableGuardModeCommand}">
                             <MenuItem.HeaderTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -97,7 +102,9 @@
                     <TabItem Header="LOGS" Tag="SFC-Guihulngan [LOGS]">
                         <views:Logs/>
                     </TabItem>
-                    <TabItem Header="SETTINGS" Tag="SFC-Guihulngan [SETTINGS]"/>
+                    <TabItem Header="SETTINGS" Tag="SFC-Guihulngan [SETTINGS]">
+                        <views:Settings/>
+                    </TabItem>
                     <TabItem Header="Login" Tag="SFC-Guihulngan [LOGIN]"
                              IsSelected="True"
                              Visibility="{Binding Source={x:Static
@@ -110,5 +117,6 @@
         <views:Login Visibility="{Binding Source={x:Static
             vm:MainViewModel.Instance},Path=CurrentUser,
             Converter={cnv:BooleanToVisibility Collapsed, Visible}}"/>
+        <views:GuardMode Visibility="{Binding Source={x:Static vm:MainViewModel.Instance},Path=IsGuardMode,Converter={cnv:BooleanToVisibility}}"/>
     </Grid>
 </Window>

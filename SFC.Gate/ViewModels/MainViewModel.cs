@@ -14,8 +14,11 @@ namespace SFC.Gate.ViewModels
 {
     class MainViewModel : ViewModelBase
     {
-        
-        private MainViewModel() { }
+
+        private MainViewModel()
+        {
+           
+        }
         
         private static MainViewModel _instance;
         public static MainViewModel Instance
@@ -85,6 +88,27 @@ namespace SFC.Gate.ViewModels
             {
                 _isDialogOpen = value; 
                 OnPropertyChanged(nameof(IsDialogOpen));
+            }
+        }
+
+        private ICommand _enableGuardModeCommand;
+
+        public ICommand EnableGuardModeCommand =>
+            _enableGuardModeCommand ?? (_enableGuardModeCommand = new DelegateCommand(
+                d =>
+                {
+                    IsGuardMode = true;
+                }));
+
+        private bool _isGuardMode = false;
+
+        public bool IsGuardMode
+        {
+            get { return _isGuardMode; }
+            set
+            {
+                _isGuardMode = value; 
+                OnPropertyChanged(nameof(IsGuardMode));
             }
         }
         

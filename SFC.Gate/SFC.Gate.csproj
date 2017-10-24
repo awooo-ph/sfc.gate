@@ -57,8 +57,11 @@
     <Reference Include="PresentationFramework.Classic">
       <Private>True</Private>
     </Reference>
-    <Reference Include="SFC.Gate.Core, Version=1.0.47.11, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SFC.Gate.Core.1.0.47.11\lib\net40\SFC.Gate.Core.dll</HintPath>
+    <Reference Include="RawInputProcessor, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RawInputProcessor.1.0.0\lib\net40\RawInputProcessor.dll</HintPath>
+    </Reference>
+    <Reference Include="SFC.Gate.Core, Version=1.0.138.13, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SFC.Gate.Core.1.0.138.13\lib\net40\SFC.Gate.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -98,10 +101,14 @@
     <Compile Include="Converters\IsNullConverter.cs" />
     <Compile Include="Converters\PathToBitmapConverter.cs" />
     <Compile Include="Converters\SizeConverter.cs" />
+    <Compile Include="Converters\StringToColor.cs" />
+    <Compile Include="RfidScanner.cs" />
+    <Compile Include="ViewModels\Guard.cs" />
     <Compile Include="ViewModels\Login.cs" />
     <Compile Include="ViewModels\Logs.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\MessageBox.cs" />
+    <Compile Include="ViewModels\Settings.cs" />
     <Compile Include="ViewModels\Sms.cs" />
     <Compile Include="ViewModels\Students.cs" />
     <Compile Include="ViewModels\Users.cs" />
@@ -111,6 +118,12 @@
     <Compile Include="Views\ChangePassword.xaml.cs">
       <DependentUpon>ChangePassword.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Clock.xaml.cs">
+      <DependentUpon>Clock.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GuardMode.xaml.cs">
+      <DependentUpon>GuardMode.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
@@ -119,6 +132,9 @@
     </Compile>
     <Compile Include="Views\MessageBox.xaml.cs">
       <DependentUpon>MessageBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SmsSender.xaml.cs">
       <DependentUpon>SmsSender.xaml</DependentUpon>
@@ -154,6 +170,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Clock.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\GuardMode.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Login.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -165,6 +189,10 @@
     <Page Include="Views\MessageBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\SmsSender.xaml">
       <SubType>Designer</SubType>
@@ -200,21 +228,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
+    <None Include="Properties\app.manifest" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="student_id.ico" />
@@ -224,6 +244,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="sfc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="contactless-icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.105.2\build\net40\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net40\System.Data.SQLite.Core.targets')" />

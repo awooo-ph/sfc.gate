@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Windows;
-using SFC.Gate.Configuration;
+using SFC.Gate.Configurations;
 using SFC.Gate.Models;
 
 namespace SFC.Gate
@@ -14,11 +14,16 @@ namespace SFC.Gate
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            
+            awooo.IsRunning = true;
+            Config.Sms.Enabled = true;
             base.OnStartup(e);
         }
         
         protected override void OnExit(ExitEventArgs e)
         {
+            
+            Config.Save();
             Log.Add("Application Shutdown");
             base.OnExit(e);
         }
