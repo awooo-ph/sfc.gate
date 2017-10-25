@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Windows;
 using SFC.Gate.Configurations;
 using SFC.Gate.Models;
 
@@ -17,23 +18,58 @@ namespace SFC.Gate.ViewModels
         {
             Messenger.Default.AddListener<string>(Messages.Scan, id =>
             {
-                Student = Student.Cache.FirstOrDefault(x => x.Rfid == id);
+                Student = Student.Cache.FirstOrDefault(x => x.Rfid.ToUpper() == id);
                 if (Student == null)
                     Instance.Index = InvalidIndex;
                 else
                 {
+
+
+                    var pass = Student.Pass();
+                    switch (pass)
+                    {
+                        case Student.PassReturnValues.Ignored:
+                            Student = null;
+                            return;
+                        case Student.PassReturnValues.Entry:
+                            Welcome = "WELCOME";
+                            break;
+                        case Student.PassReturnValues.Exit:
+                            Welcome = "GOODBYE";
+                            break;
+                    }
+
+                    if (!MainViewModel.Instance.IsGuardMode && Config.General.GuardModeOnScan)
+                    {
+                        MainViewModel.Instance.IsGuardMode = true;
+                    }
+                    
                     Instance.Index = StudentIndex;
                     _infoTimer?.Dispose();
                     if (Config.Rfid.StudentInfoDelay > 0)
-                        _infoTimer = new Timer(HideStudentInfo, null, 0,Config.Rfid.StudentInfoDelay*1000);
+                        _infoTimer = new Timer(HideStudentInfo, null, Config.Rfid.StudentInfoDelay*1000, int.MaxValue);
+
                 }
             });
+        }
+
+        private string _welcome;
+
+        public string Welcome
+        {
+            get { return _welcome; }
+            private set
+            {
+                _welcome = value; 
+                OnPropertyChanged(nameof(Welcome));
+            }
         }
 
         private void HideStudentInfo(object state)
         {
             Index = 0;
             Student = null;
+            _infoTimer.Dispose();
         }
 
 
@@ -62,8 +98,47 @@ namespace SFC.Gate.ViewModels
             {
                 _student = value; 
                 OnPropertyChanged(nameof(Student));
+                if (_student == null)
+                {
+                    StandbyVisibility = Visibility.Visible;
+                    StudentInfoVisibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    StandbyVisibility = Visibility.Collapsed;
+                    StudentInfoVisibility = Visibility.Visible;
+                }
             }
         }
 
+        private Visibility _standbyVisibility = Visibility.Visible;
+
+        public Visibility StandbyVisibility
+        {
+            get
+            {
+                return _standbyVisibility;
+            }
+            set
+            {
+                _standbyVisibility = value; 
+                OnPropertyChanged(nameof(StandbyVisibility));
+            }
+        }
+
+        private Visibility _studentInfoVisibility = Visibility.Collapsed;
+
+        public Visibility StudentInfoVisibility
+        {
+            get
+            {
+                return _studentInfoVisibility;
+            }
+            set
+            {
+                _studentInfoVisibility = value; 
+                OnPropertyChanged(nameof(StudentInfoVisibility));
+            }
+        }
     }
 }

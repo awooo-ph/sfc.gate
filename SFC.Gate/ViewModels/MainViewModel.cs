@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using SFC.Gate.Configurations;
 using SFC.Gate.Models;
 using SFC.Gate.Views;
 using MsgBox = System.Windows.MessageBox;
@@ -14,10 +15,28 @@ namespace SFC.Gate.ViewModels
 {
     class MainViewModel : ViewModelBase
     {
-
+        internal const int StudentsTab = 0,
+            VisitorsTab = 1,
+            ViolationsTab = 2,
+            SmsTab = 3,
+            UsersTab = 4,
+            LogsTab = 5,
+            SettingsTab = 6,
+            LoginTab=7;
+        
+        
         private MainViewModel()
         {
-           
+            Context = SynchronizationContext.Current;
+            RfidScanner.WatchKey(Key.F7, () =>
+            {
+                if (!Instance.IsGuardMode) return;
+
+                Instance.IsGuardMode = false;
+                if (Instance.CurrentUser == null)
+                    Instance.SelectedTab = LoginTab;
+
+            });
         }
         
         private static MainViewModel _instance;
@@ -27,7 +46,9 @@ namespace SFC.Gate.ViewModels
             {
                 if (_instance != null) return _instance;
                 _instance = new MainViewModel();
-                
+                //{
+                 //   IsGuardMode = Config.General.GuarModeOnStartup
+              //  };
                 return _instance;
             }
         }
@@ -41,7 +62,7 @@ namespace SFC.Gate.ViewModels
             {
                 _currentUser = value; 
                 OnPropertyChanged(nameof(CurrentUser));
-                SelectedTab = _currentUser != null ? 0 : 7;
+                SelectedTab = _currentUser != null ? StudentsTab : LoginTab;
             }
         }
         
@@ -50,7 +71,7 @@ namespace SFC.Gate.ViewModels
         public ICommand AddViolationCommand => _addViolationCommand ?? (_addViolationCommand = new DelegateCommand(stud =>
         {
             Violations.Instance.SelectedStudent = Students.Instance.SelectedStudent;
-            SelectedTab = 2;
+            SelectedTab = ViolationsTab;
         }));
 
         private int _selectedTab;
@@ -108,8 +129,40 @@ namespace SFC.Gate.ViewModels
             set
             {
                 _isGuardMode = value; 
+                //Messenger.Default.Broadcast(Messages.GuardModeChanged,value);
                 OnPropertyChanged(nameof(IsGuardMode));
+                SetGuardMode(value);
             }
+        }
+
+        private void SetGuardMode(bool value)
+        {
+            Context.Post(d =>
+            {
+                if (value && Config.General.LogoutOnGuardMode)
+                    CurrentUser = null;
+                
+                if (Config.General.GuardModeFullScreen)
+                {
+
+                    if (value)
+                    {
+                        Config.General.WindowMaximized =
+                            Application.Current.MainWindow.WindowState == WindowState.Maximized;
+                        Application.Current.MainWindow.WindowStyle = WindowStyle.None;
+                        Application.Current.MainWindow.WindowState = WindowState.Maximized;
+                        
+                    }
+                    else
+                    {
+                        Application.Current.MainWindow.WindowStyle = WindowStyle.SingleBorderWindow;
+                        Application.Current.MainWindow.WindowState = Config.General.WindowMaximized
+                            ? WindowState.Maximized
+                            : WindowState.Normal;
+                    }
+
+                }
+            },null);
         }
         
 

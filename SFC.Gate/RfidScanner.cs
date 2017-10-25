@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using RawInputProcessor;
 using SFC.Gate.Configurations;
+using SFC.Gate.ViewModels;
 
 namespace SFC.Gate
 {
@@ -26,17 +29,42 @@ namespace SFC.Gate
 
         private static StringBuilder _input = new StringBuilder(10);
 
+        private static string GetScannerId(RawKeyboardDevice device)
+        {
+            var regex = new Regex(@"(?<={)(.*)(?=})");
+            if (regex.IsMatch(device.Name))
+                return regex.Match(device.Name).Value;
+            return device.Name;
+        }
+        
+        private static Dictionary<Key,Action> _watchKeys = new Dictionary<Key, Action>();
+
+        public static void WatchKey(Key key, Action callback)
+        {
+            _watchKeys.Add(key,callback);
+        }
+        
         private static void RawInputOnKeyPressed(object sender, RawInputEventArgs e)
         {
+            if (_watchKeys.ContainsKey(e.Key))
+            {
+                _watchKeys[e.Key]?.Invoke();
+            }
+            
             if(IsWaitingForScanner)
             {
-                Config.Rfid.Scanner = e.Device.Name;
+                Config.Rfid.ScannerId = GetScannerId(e.Device);
+                Config.Rfid.Description = e.Device.Description;
+                Config.Rfid.ScannerType = e.Device.Type.ToString();
+                Config.Rfid.Fullname = e.Device.Name;
                 Config.Rfid.Save();
                 IsWaitingForScanner = false;
                 Messenger.Default.Broadcast(Messages.ScannerRegistered);
+                _input.Clear();
+                return;
             }
             
-            if(e.Device.Name == Config.Rfid.Scanner)
+            if(GetScannerId(e.Device) == Config.Rfid.ScannerId)
             {
                 if (e.KeyPressState != KeyPressState.Down) return;
                 if (e.Key != Key.Enter)

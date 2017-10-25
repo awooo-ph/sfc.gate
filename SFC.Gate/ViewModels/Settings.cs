@@ -18,7 +18,7 @@ namespace SFC.Gate.ViewModels
             
             Messenger.Default.AddListener(Messages.ScannerRegistered, () =>
             {
-                Context.Post(d => OnPropertyChanged(nameof(RegisteredScanner)), null);
+                Context.Post(d => OnPropertyChanged(""), null);
             });
         }
 
@@ -42,7 +42,7 @@ namespace SFC.Gate.ViewModels
         public ICommand RegisterCommand => _registerCommand ?? (_registerCommand = new DelegateCommand(d =>
         {
             RfidScanner.RegisterScanner();
-            OnPropertyChanged(nameof(RegisteredScanner));
+            OnPropertyChanged("");
         }));
 
         private ICommand _cancelRegisterCommand;
@@ -50,20 +50,85 @@ namespace SFC.Gate.ViewModels
         public ICommand CancelRegisterCommand => _cancelRegisterCommand ?? (_cancelRegisterCommand = new DelegateCommand(d =>
         {
             RfidScanner.CancelRegistration();
-            OnPropertyChanged(nameof(RegisteredScanner));
+            OnPropertyChanged("");
         }));
 
-        public string RegisteredScanner
+        public string ScannerId
         {
             get
             {
                 if (RfidScanner.IsWaitingForScanner)
                     return "Waiting for Scanner...";
-                if (string.IsNullOrEmpty(Config.Rfid.Scanner))
+                if (string.IsNullOrEmpty(Config.Rfid.ScannerId))
                     return "No Scanner Registered";
-                return Config.Rfid.Scanner;
+                return Config.Rfid.ScannerId;
             }
         }
+        
+
+        public string ScannerType
+        {
+            get
+            {
+                if (RfidScanner.IsWaitingForScanner) return "N/A";
+                if (string.IsNullOrEmpty(Config.Rfid.ScannerId)) return "N/A";
+                return Config.Rfid.ScannerType;
+            }
+            private set
+            {
+                OnPropertyChanged(nameof(ScannerType));
+            }
+        }
+
+        private string _scannerDescription;
+
+        public string ScannerDescription
+        {
+            get
+            {
+                if (RfidScanner.IsWaitingForScanner) return "N/A";
+                if (string.IsNullOrEmpty(Config.Rfid.ScannerId)) return "N/A";
+                return Config.Rfid.Description;
+            }
+            private set
+            {
+                _scannerDescription = value; 
+                OnPropertyChanged(nameof(ScannerDescription));
+            }
+        }
+
+        private string _scannerFullname;
+
+        public string ScannerFullname
+        {
+            get
+            {
+                if (RfidScanner.IsWaitingForScanner) return "N/A";
+                if (string.IsNullOrEmpty(Config.Rfid.ScannerId)) return "N/A";
+                return Config.Rfid.Fullname;
+
+            }
+            private set
+            {
+                _scannerFullname = value; 
+                OnPropertyChanged(nameof(ScannerFullname));
+            }
+            
+        }
+
+        private ICommand _testScanCommnad;
+
+        public ICommand TestScanCommand => _testScanCommnad ?? (_testScanCommnad = new DelegateCommand(d =>
+        {
+            //Todo: Test scanner
+        }, d =>
+        {
+            if (RfidScanner.IsWaitingForScanner) return false;
+            if (string.IsNullOrEmpty(Config.Rfid.ScannerId)) return false;
+            return true;
+        }));
+
+        public bool IsRegistering => RfidScanner.IsWaitingForScanner;
 
     }
 }

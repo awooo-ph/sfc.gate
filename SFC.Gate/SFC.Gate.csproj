@@ -60,8 +60,8 @@
     <Reference Include="RawInputProcessor, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RawInputProcessor.1.0.0\lib\net40\RawInputProcessor.dll</HintPath>
     </Reference>
-    <Reference Include="SFC.Gate.Core, Version=1.0.138.13, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SFC.Gate.Core.1.0.138.13\lib\net40\SFC.Gate.Core.dll</HintPath>
+    <Reference Include="SFC.Gate.Core, Version=1.0.153.28, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SFC.Gate.Core.1.0.153.28\lib\net40\SFC.Gate.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
