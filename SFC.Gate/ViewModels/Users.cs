@@ -40,7 +40,7 @@ namespace SFC.Gate.ViewModels
                 NewPassword = "";
                 OnPropertyChanged(nameof(HasPassword));
                 OnPropertyChanged(nameof(DeleteCancel));
-                IsAdmin = SelectedUser.IsAdmin;
+                IsAdmin = _selectedUser?.IsAdmin??false;
             }
         }
 
@@ -126,7 +126,7 @@ namespace SFC.Gate.ViewModels
             {
                 _isAdmin = value;
                 OnPropertyChanged(nameof(IsAdmin));
-                if (!_isAdmin && SelectedUser.IsAdmin && User.Cache.Count(x => x.IsAdmin) == 1)
+                if (!_isAdmin && (SelectedUser?.IsAdmin ?? false) && User.Cache.Count(x => x.IsAdmin) == 1)
                 {
                     System.Windows.MessageBox.Show("There must be at least one (1) administrator account.",
                         "Action Failed", MessageBoxButton.OK, MessageBoxImage.Stop);
