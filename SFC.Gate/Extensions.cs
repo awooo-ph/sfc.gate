@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Windows.Input;
 using Microsoft.Win32;
 
 namespace SFC.Gate
@@ -21,5 +23,12 @@ namespace SFC.Gate
 
             return dialog.FileName;
         }
+
+        private static ICommand _openModemsCommand;
+
+        public static ICommand OpenModemsCommand => _openModemsCommand ?? (_openModemsCommand = new DelegateCommand(d =>
+        {
+            Process.Start("rundll32", "shell32.dll,Control_RunDLL modem.cpl");
+        }));
     }
 }

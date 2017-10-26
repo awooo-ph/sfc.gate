@@ -7,6 +7,7 @@
              xmlns:vm="clr-namespace:SFC.Gate.ViewModels"
              xmlns:cnf="clr-namespace:SFC.Gate.Configurations;assembly=SFC.Gate.Core"
              xmlns:cnv="clr-namespace:SFC.Gate.Converters"
+             xmlns:gate="clr-namespace:SFC.Gate"
              DataContext="{Binding Source={x:Static vm:Settings.Instance}}"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
@@ -122,16 +123,16 @@
                             <StackPanel Orientation="Horizontal">
                                 <StackPanel Margin="4">
                                     <TextBlock Text="Image" FontWeight="Bold"/>
-                                    
-                                        <Image Source="{Binding Source={x:Static vm:Settings.Instance},Path=BackgroundPath,Converter={cnv:PathToBitmapConverter}}"
+
+                                    <Image Source="{Binding Source={x:Static vm:Settings.Instance},Path=BackgroundPath,Converter={cnv:PathToBitmapConverter}}"
                                    Margin="4"
                                    HorizontalAlignment="Center"
                                    Width="147" Stretch="UniformToFill"/>
-                                        <Button Content="Change" Command="{Binding ChangeBackgroundCommand}"
+                                    <Button Content="Change" Command="{Binding ChangeBackgroundCommand}"
                                     VerticalAlignment="Center"
                                     HorizontalAlignment="Center" Margin="4"
                                     ToolTip="Click to change the background image."/>
-                                    
+
                                 </StackPanel>
                                 <StackPanel Margin="4">
                                     <TextBlock Text="Color" FontWeight="Bold"/>
@@ -142,7 +143,88 @@
                     </WrapPanel>
                 </ScrollViewer>
             </TabItem>
-           
+
+            <TabItem Header="SMS">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
+                              Margin="20">
+                    <WrapPanel Orientation="Vertical">
+                        <StackPanel Margin="4">
+                            <CheckBox Content="Enable SMS Service" IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"/>
+                            <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                                       VerticalAlignment="Center"
+                                       TextWrapping="Wrap" MaxWidth="400"
+                                       Text="Check this to automatically send SMS notifications to parents or guardians when a student enters or leaves the campus."/>
+                        </StackPanel>
+
+                        <StackPanel Margin="4">
+                        <TextBlock Text="School Entry Message Template" Margin="4" FontWeight="Bold"/>
+                        <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=EntryTemplate}"
+                                 MaxWidth="400"
+                                         TextWrapping="Wrap"
+                                         AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                                         HorizontalScrollBarVisibility="Disabled"/>
+                        <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                                   MaxWidth="400"
+                                   MaxHeight="147"
+                                           VerticalAlignment="Center">
+                                    <Run Text="The message sent to parents or guardians when their students enter the school campus."/>
+                        </TextBlock>
+                        </StackPanel>
+
+                        <StackPanel Margin="4">
+                        <TextBlock Text="School Exit Message Template" Margin="4" FontWeight="Bold"/>
+                        <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=ExitTemplate}"
+                                         TextWrapping="Wrap"
+                                 MaxWidth="400"
+                                 MaxHeight="147"
+                                         AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                                         HorizontalScrollBarVisibility="Disabled"/>
+                        <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                                   MaxWidth="400"
+                                           VerticalAlignment="Center">
+                                    <Run Text="The message sent to parents or guardians when their students leave the school campus."/>
+                        </TextBlock>
+
+                        </StackPanel>
+
+                        <StackPanel Margin="4">
+
+                        <TextBlock Text="Violation Message Template" Margin="4" FontWeight="Bold"/>
+                        <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=ViolationTemplate}"
+                                         TextWrapping="Wrap"
+                                 MaxWidth="400"
+                                 MaxHeight="147"
+                                         AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                                         HorizontalScrollBarVisibility="Disabled"/>
+                        <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                                   MaxWidth="400"
+                                           VerticalAlignment="Center">
+                                    <Run Text="The message sent to parents or guardians when their students committed a violation."/>
+                        </TextBlock>
+                        </StackPanel>
+                        
+                        <GroupBox Margin="4" Header="GSM Modem">
+                            <StackPanel Margin="4">
+                                <TextBlock Text="Port" Margin="4" FontWeight="Bold"/>
+                                <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=Port}"/>
+                                <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                                           VerticalAlignment="Center">
+                                    <Run Text="COM port the GSM Modem is attached into."/>
+                                    <Hyperlink Command="{Binding Source={x:Static gate:Extensions.OpenModemsCommand}}">See Installed Modems.</Hyperlink>
+                                </TextBlock>
+                                
+                                <TextBlock Text="Baudrate" Margin="4" FontWeight="Bold"/>
+                                <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=Baudrate}"/>
+                                <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                                           VerticalAlignment="Center"
+                                           Text="The communication speed. Please check the device specification."/>
+                            </StackPanel>
+                        </GroupBox>
+
+                     
+                    </WrapPanel>
+                </ScrollViewer>
+            </TabItem>
         </TabControl>
 
         <Border CornerRadius="4" HorizontalAlignment="Center"

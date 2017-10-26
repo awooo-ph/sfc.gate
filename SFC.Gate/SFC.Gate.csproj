@@ -100,8 +100,10 @@
     <Compile Include="Converters\Inverter.cs" />
     <Compile Include="Converters\IsNullConverter.cs" />
     <Compile Include="Converters\PathToBitmapConverter.cs" />
+    <Compile Include="Converters\RgbConverter.cs" />
     <Compile Include="Converters\SizeConverter.cs" />
     <Compile Include="Converters\StringToColor.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="RfidScanner.cs" />
     <Compile Include="ViewModels\Guard.cs" />
     <Compile Include="ViewModels\Login.cs" />
@@ -120,6 +122,9 @@
     </Compile>
     <Compile Include="Views\Clock.xaml.cs">
       <DependentUpon>Clock.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ColorPicker.xaml.cs">
+      <DependentUpon>ColorPicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\GuardMode.xaml.cs">
       <DependentUpon>GuardMode.xaml</DependentUpon>
@@ -171,6 +176,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Clock.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ColorPicker.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
