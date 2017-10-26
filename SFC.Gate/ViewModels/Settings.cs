@@ -145,6 +145,22 @@ namespace SFC.Gate.ViewModels
                 }));
         
         public string BackgroundPath { get; } = Config.General.Background;
-        
+
+        private List<string> _printers;
+        public List<string> Printers
+        {
+            get
+            {
+                if (_printers != null) return _printers;
+                _printers = new List<string>();
+                var serv = new System.Printing.LocalPrintServer();
+                var pqs = serv.GetPrintQueues();
+                foreach (var pq in pqs)
+                {
+                    _printers.Add(pq.Name);
+                }
+                return _printers;
+            }
+        }
     }
 }
