@@ -13,7 +13,6 @@ namespace SFC.Gate.Converters
         {
             if (value.ToString()=="") value = "Black";
             return new BrushConverter().ConvertFromString(value + "");
-            return ColorConverter.ConvertFromString(value+"");
         }
 
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

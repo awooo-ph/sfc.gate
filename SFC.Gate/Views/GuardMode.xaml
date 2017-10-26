@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SFC.Gate.Views"
              mc:Ignorable="d" 
-             Background="{Binding Source={x:Static cnf:Config.General},Path=GuardModeBackground,Converter={cnv:StringToColor}}"
+             Background="{Binding Background}"
              xmlns:vm="clr-namespace:SFC.Gate.ViewModels"
              DataContext="{Binding Source={x:Static vm:Guard.Instance}}"
              xmlns:cnv="clr-namespace:SFC.Gate.Converters"
@@ -82,7 +82,7 @@
         </Viewbox>
     </Grid>
         <Grid Visibility="{Binding StudentInfoVisibility}">
-            <Image Source="pack://siteoforigin:,,,/bg2.jpg" Stretch="UniformToFill"/>
+            
                 
         <Viewbox >
             <Grid IsHitTestVisible="False" HorizontalAlignment="Center"

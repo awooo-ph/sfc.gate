@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows;
+using System.Windows.Media;
 using SFC.Gate.Configurations;
 using SFC.Gate.Models;
 
@@ -16,6 +17,11 @@ namespace SFC.Gate.ViewModels
         
         private Guard()
         {
+          //  Messenger.Default.AddListener(Messages.ConfigChanged,);
+            Config.General.PropertyChanged += (sender, args) =>
+            {
+                OnPropertyChanged(nameof(Background));
+            };
             Messenger.Default.AddListener<string>(Messages.Scan, id =>
             {
                 Student = Student.Cache.FirstOrDefault(x => x.Rfid.ToUpper() == id);
@@ -72,6 +78,8 @@ namespace SFC.Gate.ViewModels
             _infoTimer.Dispose();
         }
 
+
+        public SolidColorBrush Background => Config.General.GuardModeBackground;
 
         private static Guard _instance;
         public static Guard Instance => _instance ?? (_instance = new Guard());

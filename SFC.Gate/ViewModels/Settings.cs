@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Input;
+using Microsoft.Win32;
 using SFC.Gate.Configurations;
 
 namespace SFC.Gate.ViewModels
@@ -130,5 +132,19 @@ namespace SFC.Gate.ViewModels
 
         public bool IsRegistering => RfidScanner.IsWaitingForScanner;
 
+        private ICommand _changeBackgroundCommand;
+
+        public ICommand ChangeBackgroundCommand =>
+            _changeBackgroundCommand ?? (_changeBackgroundCommand = new DelegateCommand(
+                d =>
+                {
+                    var filename = Extensions.GetPicture();
+                    File.Copy("bg.jpg","bgx.jpg",true);
+                    File.Copy(filename,"bg.jpg",true);
+                    OnPropertyChanged(nameof(BackgroundPath));
+                }));
+        
+        public string BackgroundPath { get; } = Config.General.Background;
+        
     }
 }

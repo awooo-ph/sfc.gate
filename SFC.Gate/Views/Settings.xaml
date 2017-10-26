@@ -41,108 +41,100 @@
                                 </UniformGrid>
                             </StackPanel>
                         </GroupBox>
-                        
-                        
+
+
                         <StackPanel Margin="7">
-                        <TextBlock FontWeight="Bold">
+                            <TextBlock FontWeight="Bold">
                             <Run Text="Scan Interval ("/>
                             <Run Text="{Binding Source={x:Static cnf:Config.General},Path=ScanInterval}"/>
                             <Run Text="seconds)"/>
-                        </TextBlock>
+                            </TextBlock>
 
-                        <Slider Margin="4" Minimum="7" Interval="1"
+                            <Slider Margin="4" Minimum="7" Interval="1"
                                 Maximum="777" TickFrequency="7" TickPlacement="BottomRight"
                                 Value="{Binding Source={x:Static cnf:Config.General},Path=ScanInterval}"/>
 
-                        <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
+                            <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
                                    VerticalAlignment="Center"
                                    Text="Minimum time, in seconds, between valid scans."/>
-                    </StackPanel>
+                        </StackPanel>
 
-                    <StackPanel Margin="7">
-                        <TextBlock FontWeight="Bold">
+                        <StackPanel Margin="7">
+                            <TextBlock FontWeight="Bold">
                             <Run Text="Activate Guard Mode When Idle For "/>
                             <Run Text="{Binding Source={x:Static cnf:Config.General},Path=GuardModeOnIdle}"/>
                             <Run Text="Seconds"/>
-                        </TextBlock>
+                            </TextBlock>
 
-                        <Slider Margin="4" Minimum="0" Interval="1"
+                            <Slider Margin="4" Minimum="0" Interval="1"
                                 Maximum="777" TickFrequency="7" TickPlacement="BottomRight"
                                 Value="{Binding Source={x:Static cnf:Config.General},Path=GuardModeOnIdle}"/>
 
-                        <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
+                            <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
                                    VerticalAlignment="Center"
                                    Text="Set to zero (0) seconds to disable this option."/>
-                    </StackPanel>
-                    
+                        </StackPanel>
+
                         <StackPanel Margin="7">
-                        <CheckBox Margin="4" Content="Confirm Exit" FontWeight="Bold"
+                            <CheckBox Margin="4" Content="Confirm Exit" FontWeight="Bold"
                               VerticalAlignment="Center"
                               IsChecked="{Binding Source={x:Static cnf:Config.General},Path=ConfirmExit}"/>
-                        <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
+                            <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
                                VerticalAlignment="Center"
                                Text="If checked, asks for confirmation when the application is closed."/>
-                    </StackPanel>
+                        </StackPanel>
 
-                    <StackPanel Margin="7">
-                        <CheckBox Margin="4" Content="Enable Guard Mode On Startup"
+                        <StackPanel Margin="7">
+                            <CheckBox Margin="4" Content="Enable Guard Mode On Startup"
                                   VerticalAlignment="Center" FontWeight="Bold"
                                   IsChecked="{Binding Source={x:Static cnf:Config.General},Path=GuarModeOnStartup}"/>
-                        <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
+                            <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
                                    VerticalAlignment="Center"
                                    Text="Check to activate Guard Mode on startup. Uncheck to show Login Screen."/>
-                    </StackPanel>
+                        </StackPanel>
 
-                    <StackPanel Margin="7">
-                        <CheckBox Margin="4" Content="Always Show Student Info On Scan"
+                        <StackPanel Margin="7">
+                            <CheckBox Margin="4" Content="Always Show Student Info On Scan"
                                   VerticalAlignment="Center" FontWeight="Bold"
                                   IsChecked="{Binding Source={x:Static cnf:Config.General},Path=GuardModeOnScan}"/>
-                        <TextBlock Margin="4 4 4 0" FontStyle="Italic" Opacity="0.7"
+                            <TextBlock Margin="4 4 4 0" FontStyle="Italic" Opacity="0.7"
                                    Text="If unchecked, Student's Info will only be shown when Guard Mode is active."
                                    VerticalAlignment="Center" TextWrapping="Wrap"/>
-                        <TextBlock Margin="4 0 4 4" FontStyle="Italic" Opacity="0.7"
+                            <TextBlock Margin="4 0 4 4" FontStyle="Italic" Opacity="0.7"
                                    Text="NOTE: Valid scans are always recorded."
                                    VerticalAlignment="Center" TextWrapping="Wrap"/>
-                    </StackPanel>
+                        </StackPanel>
 
-                    <StackPanel Margin="7">
-                        <CheckBox Margin="4" Content="Show Guard Mode in Fullscreen"
+                        <StackPanel Margin="7">
+                            <CheckBox Margin="4" Content="Show Guard Mode in Fullscreen"
                                   VerticalAlignment="Center" FontWeight="Bold"
                                   IsChecked="{Binding Source={x:Static cnf:Config.General},Path=GuardModeFullScreen}"/>
-                        <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
+                            <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
                                    VerticalAlignment="Center"
                                    Text="Check to show Guard Mode in fullscreen."/>
-                    </StackPanel>
+                        </StackPanel>
 
-                   
-
-                    <GroupBox Header="Background Images" Margin="7" HorizontalAlignment="Left">
-                        <StackPanel Orientation="Horizontal">
-                        <StackPanel Margin="4">
-                                    <TextBlock Text="Main Window" FontWeight="Bold"/>
-                            <Image Source="{Binding Source={x:Static cnf:Config.General},Path=Background,Converter={cnv:PathToBitmapConverter}}"
+                        <GroupBox Header="Background" Margin="7" HorizontalAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel Margin="4">
+                                    <TextBlock Text="Image" FontWeight="Bold"/>
+                                    
+                                        <Image Source="{Binding Source={x:Static vm:Settings.Instance},Path=BackgroundPath,Converter={cnv:PathToBitmapConverter}}"
                                    Margin="4"
                                    HorizontalAlignment="Center"
                                    Width="147" Stretch="UniformToFill"/>
-                            <Button Content="Change" Command="{Binding ChangeBackgroundCommand}"
+                                        <Button Content="Change" Command="{Binding ChangeBackgroundCommand}"
+                                    VerticalAlignment="Center"
                                     HorizontalAlignment="Center" Margin="4"
                                     ToolTip="Click to change the background image."/>
-                        </StackPanel>
-                        <StackPanel Margin="4">
-                                    <TextBlock Text="Guard Mode" FontWeight="Bold"/>
-                                <Image Source="{Binding Source={x:Static cnf:Config.General},Path=Background,Converter={cnv:PathToBitmapConverter}}"
-                                   Margin="4"
-                                   HorizontalAlignment="Center"
-                                   Width="147" Stretch="UniformToFill"/>
-                            <Button Content="Change" Command="{Binding ChangeGuardModeBackgroundCommand}"
-                                    HorizontalAlignment="Center" Margin="4"
-                                    ToolTip="Click to change the background image."/>
-                        </StackPanel>
-                        </StackPanel>
-                    </GroupBox>
-
-                     
-
+                                    
+                                </StackPanel>
+                                <StackPanel Margin="4">
+                                    <TextBlock Text="Color" FontWeight="Bold"/>
+                                    <local:ColorPicker SelectedColor="{Binding Source={x:Static cnf:Config.General},Path=GuardModeBackground}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
                     </WrapPanel>
                 </ScrollViewer>
             </TabItem>

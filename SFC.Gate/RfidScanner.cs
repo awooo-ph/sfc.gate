@@ -19,12 +19,11 @@ namespace SFC.Gate
 
         public static void Hook(Visual visual)
         {
- if (_rawInput == null)
+            if (_rawInput == null)
             {
                 _rawInput = new RawPresentationInput(visual, RawInputCaptureMode.ForegroundAndBackground);
                 _rawInput.KeyPressed += RawInputOnKeyPressed;
             }
-            
         }
 
         private static StringBuilder _input = new StringBuilder(10);

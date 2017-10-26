@@ -20,7 +20,7 @@
         
     </Window.Resources>
     <Grid>
-        <Image Source="pack://siteoforigin:,,,/bg.jpg" Stretch="UniformToFill"/>
+        <Image Source="{Binding Source={x:Static vm:Settings.Instance},Path=BackgroundPath,Converter={cnv:PathToBitmapConverter}}" Stretch="UniformToFill"/>
         <Grid Visibility="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser,Converter={cnv:BooleanToVisibility}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />

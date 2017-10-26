@@ -90,19 +90,7 @@ namespace SFC.Gate.ViewModels
         public ICommand ChangePictureCommand => _changePictureCommand ?? (_changePictureCommand = new DelegateCommand<Student>(
                                                     student =>
                                                     {
-                                                        var dialog = new OpenFileDialog();
-                                                        dialog.Multiselect = false;
-                                                        dialog.Filter =
-                                                            @"All Images|*.BMP;*.JPG;*.JPEG;*.GIF;*.PNG|
-                                                            BMP Files|*.BMP;*.DIB;*.RLE|
-                                                            JPEG Files|*.JPG;*.JPEG;*.JPE;*.JFIF|
-                                                            GIF Files|*.GIF|
-                                                            PNG Files|*.PNG";
-                                                        dialog.Title = "Select Picture";
-                                                        dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-                                                        if (!(dialog.ShowDialog() ?? false)) return;
-                                                        
-                                                        student.PicturePath = dialog.FileName;
+                                                        student.PicturePath = Extensions.GetPicture();
                                                     }));
         
         private static void NotifyDuplicate(Student stud, string property)
