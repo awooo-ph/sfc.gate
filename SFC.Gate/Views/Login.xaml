@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:SFC.Gate.Views"
              mc:Ignorable="d" 
              xmlns:vm="clr-namespace:SFC.Gate.ViewModels"
+             xmlns:converters="clr-namespace:SFC.Gate.Converters"
              DataContext="{Binding Source={x:Static vm:Login.Instance}}"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid Margin="10"
@@ -52,7 +53,7 @@
             <Button Content="Login" IsDefault="True" Command="{Binding LoginCommand}"
                     Margin="4" MinWidth="100" CommandParameter="{Binding ElementName=Password}"/>
             <Button Content="Exit" Command="{Binding ExitCommand}" Margin="4" MinWidth="100"
-                    IsCancel="True"/>
+                    IsCancel="{Binding Source={x:Static vm:MainViewModel.Instance}, Path=SelectedTab,Converter={converters:IsCurrentScreen Login}}"/>
         </UniformGrid>
     </Grid>
     </Grid>

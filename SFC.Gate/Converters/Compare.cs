@@ -25,7 +25,7 @@ namespace SFC.Gate.Converters
         protected override object Convert(object value, Type targetType, object parameter)
         {
             var type = value.GetType();
-            var lVal = (double) value;
+            var lVal = (double)value;
             var lParam = double.Parse(parameter.ToString());
             switch (Comparison)
             {

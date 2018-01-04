@@ -66,8 +66,8 @@
                  
                 </ListView>
                 <UniformGrid Grid.Row="2" Columns="5">
-                    <Button Content="Print Selected" Margin="4"/>
-                    <Button Content="Print All" Margin="4"/>
+                    <Button Content="Print Selected" Margin="4" Command="{Binding Source={x:Static vm:Students.Instance},Path=PrintSelectedCommand}"/>
+                    <Button Content="Print All" Margin="4" Command="{Binding Source={x:Static vm:Students.Instance},Path=PrintCommand}"/>
                     <Rectangle/>
                     <Button Content="Delete Selected" Margin="4"
                             Command="{Binding Source={x:Static vm:Students.Instance},Path=DeleteSelectedStudents}"/>

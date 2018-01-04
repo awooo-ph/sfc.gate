@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using RawInputProcessor;
 using SFC.Gate.Configurations;
-using SFC.Gate.ViewModels;
 
 namespace SFC.Gate
 {
@@ -35,22 +31,22 @@ namespace SFC.Gate
                 return regex.Match(device.Name).Value;
             return device.Name;
         }
-        
-        private static Dictionary<Key,Action> _watchKeys = new Dictionary<Key, Action>();
+
+        private static Dictionary<Key, Action> _watchKeys = new Dictionary<Key, Action>();
 
         public static void WatchKey(Key key, Action callback)
         {
-            _watchKeys.Add(key,callback);
+            _watchKeys.Add(key, callback);
         }
-        
+
         private static void RawInputOnKeyPressed(object sender, RawInputEventArgs e)
         {
-            if (_watchKeys.ContainsKey(e.Key))
+            if (e.KeyPressState == KeyPressState.Up && _watchKeys.ContainsKey(e.Key))
             {
                 _watchKeys[e.Key]?.Invoke();
             }
-            
-            if(IsWaitingForScanner)
+
+            if (IsWaitingForScanner)
             {
                 Config.Rfid.ScannerId = GetScannerId(e.Device);
                 Config.Rfid.Description = e.Device.Description;
@@ -62,22 +58,22 @@ namespace SFC.Gate
                 _input.Clear();
                 return;
             }
-            
-            if(GetScannerId(e.Device) == Config.Rfid.ScannerId)
+
+            if (GetScannerId(e.Device) == Config.Rfid.ScannerId)
             {
                 if (e.KeyPressState != KeyPressState.Down) return;
                 if (e.Key != Key.Enter)
                 {
-                    _input.Append((char) e.VirtualKey);
+                    _input.Append((char)e.VirtualKey);
                 }
                 else
                 {
-                    Messenger.Default.Broadcast(Messages.Scan,_input.ToString());
+                    Messenger.Default.Broadcast(Messages.Scan, _input.ToString());
                     _input.Clear();
                 }
-              //  TrapKey = true;
+                //  TrapKey = true;
             }
-            
+
         }
 
         public static bool IsWaitingForScanner { get; set; }
@@ -101,6 +97,6 @@ namespace SFC.Gate
             _rawInput.KeyPressed -= RawInputOnKeyPressed;
             _rawInput.Dispose();
         }
-        
+
     }
 }

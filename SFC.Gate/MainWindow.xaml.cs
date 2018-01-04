@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Threading;
 using System.Windows;
-using System.Windows.Media;
 using SFC.Gate.Configurations;
 using SFC.Gate.Models;
 using SFC.Gate.ViewModels;
@@ -29,13 +26,13 @@ namespace SFC.Gate
             }
             Log.Add("Application Started");
             ViewModelBase.Context = SynchronizationContext.Current;
-            
+
         }
 
         protected override void OnStateChanged(EventArgs e)
         {
             base.OnStateChanged(e);
-           // Config.General.WindowMaximized = WindowState == WindowState.Maximized;
+            // Config.General.WindowMaximized = WindowState == WindowState.Maximized;
         }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
@@ -53,7 +50,7 @@ namespace SFC.Gate
                 Config.General.WindowTop = Top;
                 Config.General.WindowMaximized = WindowState == WindowState.Maximized;
             }
-            
+
             base.OnClosed(e);
         }
 
@@ -75,7 +72,7 @@ namespace SFC.Gate
             base.OnInitialized(e);
             MainViewModel.Instance.IsGuardMode = Config.General.GuarModeOnStartup;
         }
-        
+
         protected override void OnSourceInitialized(EventArgs e)
         {
             RfidScanner.Hook(this);

@@ -55,8 +55,8 @@
                             <Run Text="seconds)"/>
                             </TextBlock>
 
-                            <Slider Margin="4" Minimum="7" Interval="1"
-                                Maximum="777" TickFrequency="7" TickPlacement="BottomRight"
+                            <Slider Margin="4" Minimum="1" Interval="1"
+                                Maximum="777" TickFrequency="47" TickPlacement="BottomRight"
                                 Value="{Binding Source={x:Static cnf:Config.General},Path=ScanInterval}"/>
 
                             <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
@@ -71,8 +71,8 @@
                             <Run Text="Seconds"/>
                             </TextBlock>
 
-                            <Slider Margin="4" Minimum="0" Interval="1"
-                                Maximum="777" TickFrequency="7" TickPlacement="BottomRight"
+                            <Slider Margin="4" TickFrequency="74" Minimum="0" Interval="1"
+                                Maximum="777" TickPlacement="BottomRight"
                                 Value="{Binding Source={x:Static cnf:Config.General},Path=GuardModeOnIdle}"/>
 
                             <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"

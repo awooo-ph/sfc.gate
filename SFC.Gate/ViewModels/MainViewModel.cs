@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using SFC.Gate.Configurations;
@@ -13,6 +8,8 @@ using MsgBox = System.Windows.MessageBox;
 
 namespace SFC.Gate.ViewModels
 {
+
+
     class MainViewModel : ViewModelBase
     {
         internal const int StudentsTab = 0,
@@ -22,23 +19,33 @@ namespace SFC.Gate.ViewModels
             UsersTab = 4,
             LogsTab = 5,
             SettingsTab = 6,
-            LoginTab=7;
-        
-        
+            LoginTab = 7;
+
+        public enum Screens : int
+        {
+            Students = StudentsTab,
+            Visitors = ViolationsTab,
+            Sms = SmsTab,
+            Users = UsersTab,
+            Logs = LogsTab,
+            Settings = SettingsTab,
+            Login = LoginTab,
+        }
+
         private MainViewModel()
         {
             Context = SynchronizationContext.Current;
             RfidScanner.WatchKey(Key.F7, () =>
             {
-                if (!Instance.IsGuardMode) return;
+                //if (!Instance.IsGuardMode) return;
 
-                Instance.IsGuardMode = false;
-                if (Instance.CurrentUser == null)
-                    Instance.SelectedTab = LoginTab;
+                IsGuardMode = !IsGuardMode;
+                if (CurrentUser == null)
+                    SelectedTab = LoginTab;
 
             });
         }
-        
+
         private static MainViewModel _instance;
         public static MainViewModel Instance
         {
@@ -47,12 +54,12 @@ namespace SFC.Gate.ViewModels
                 if (_instance != null) return _instance;
                 _instance = new MainViewModel();
                 //{
-                 //   IsGuardMode = Config.General.GuarModeOnStartup
-              //  };
+                //   IsGuardMode = Config.General.GuarModeOnStartup
+                //  };
                 return _instance;
             }
         }
-        
+
         private User _currentUser;
 
         public User CurrentUser
@@ -60,12 +67,12 @@ namespace SFC.Gate.ViewModels
             get { return _currentUser; }
             set
             {
-                _currentUser = value; 
+                _currentUser = value;
                 OnPropertyChanged(nameof(CurrentUser));
                 SelectedTab = _currentUser != null ? StudentsTab : LoginTab;
             }
         }
-        
+
         private ICommand _addViolationCommand;
 
         public ICommand AddViolationCommand => _addViolationCommand ?? (_addViolationCommand = new DelegateCommand(stud =>
@@ -90,7 +97,7 @@ namespace SFC.Gate.ViewModels
 
         public ICommand LogoutCommand => _logoutCommand ?? (_logoutCommand = new DelegateCommand(d =>
         {
-            Log.Add("User Logout", $"{CurrentUser.Username} has logged out.", "Users",CurrentUser.Id);
+            Log.Add("User Logout", $"{CurrentUser.Username} has logged out.", "Users", CurrentUser.Id);
             CurrentUser = null;
         }));
 
@@ -107,7 +114,7 @@ namespace SFC.Gate.ViewModels
             get { return _isDialogOpen; }
             set
             {
-                _isDialogOpen = value; 
+                _isDialogOpen = value;
                 OnPropertyChanged(nameof(IsDialogOpen));
             }
         }
@@ -128,7 +135,7 @@ namespace SFC.Gate.ViewModels
             get { return _isGuardMode; }
             set
             {
-                _isGuardMode = value; 
+                _isGuardMode = value;
                 //Messenger.Default.Broadcast(Messages.GuardModeChanged,value);
                 OnPropertyChanged(nameof(IsGuardMode));
                 SetGuardMode(value);
@@ -141,7 +148,7 @@ namespace SFC.Gate.ViewModels
             {
                 if (value && Config.General.LogoutOnGuardMode)
                     CurrentUser = null;
-                
+
                 if (Config.General.GuardModeFullScreen)
                 {
 
@@ -151,7 +158,7 @@ namespace SFC.Gate.ViewModels
                             Application.Current.MainWindow.WindowState == WindowState.Maximized;
                         Application.Current.MainWindow.WindowStyle = WindowStyle.None;
                         Application.Current.MainWindow.WindowState = WindowState.Maximized;
-                        
+
                     }
                     else
                     {
@@ -162,9 +169,9 @@ namespace SFC.Gate.ViewModels
                     }
 
                 }
-            },null);
+            }, null);
         }
-        
+
 
         private void ChangePassword()
         {
@@ -197,9 +204,9 @@ namespace SFC.Gate.ViewModels
                     IsDialogOpen = false;
                     break;
                 }
-                
-                CurrentUser.Update("Password",cPwd.NewPassword.Password);
-                Log.Add("Password Changed", $"{CurrentUser.Username} changed his/her password.","Users",CurrentUser.Id);
+
+                CurrentUser.Update("Password", cPwd.NewPassword.Password);
+                Log.Add("Password Changed", $"{CurrentUser.Username} changed his/her password.", "Users", CurrentUser.Id);
                 MsgBox.Show("Your password is successfully updated!", "Change Password", MessageBoxButton.OK, MessageBoxImage.Information);
                 IsDialogOpen = false;
                 break;
