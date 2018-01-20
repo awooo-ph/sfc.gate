@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using SFC.Gate.Configurations;
 using SFC.Gate.Models;
+using SFC.Gate.ViewModels;
 
 namespace SFC.Gate
 {
@@ -11,14 +12,12 @@ namespace SFC.Gate
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-
             awooo.IsRunning = true;
             base.OnStartup(e);
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
-
             Config.Save();
             Log.Add("Application Shutdown");
             base.OnExit(e);

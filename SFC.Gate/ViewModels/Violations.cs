@@ -87,7 +87,6 @@ namespace SFC.Gate.ViewModels
             violation.Save();
             
             SelectedStudent.AddViolation(violation);
-            
         }, CanAddViolation));
 
         private ICommand _printCommand;
@@ -161,6 +160,7 @@ namespace SFC.Gate.ViewModels
             info.UseShellExecute = true;
             info.Verb = "PrintTo";
             Process.Start(info);
+            
         }
 
         private ICommand _clearCommand;
