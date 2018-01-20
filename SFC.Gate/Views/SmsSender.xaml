@@ -4,7 +4,7 @@
              xmlns:vm="clr-namespace:SFC.Gate.ViewModels"
              xmlns:converters="clr-namespace:SFC.Gate.Converters">
     <Grid  IsEnabled="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.SmsAccess}">
-    <Grid>
+    <Grid DataContext="{Binding Source={x:Static vm:Sms.Instance}}">
         <Grid.Effect>
             <BlurEffect Radius="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.SmsAccess,Converter={converters:BooleanToObject 0, 7},FallbackValue=10}" 
                         KernelType="Gaussian" RenderingBias="Performance"/>
@@ -19,20 +19,25 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Label Target="{Binding ElementName=Recipient}" Content="_Name" VerticalAlignment="Center"/>
-        <TextBox x:Name="Recipient" x:FieldModifier="private" Grid.Column="1" Grid.Row="0" Margin="4"/>
+        <!--<Label Target="{Binding ElementName=Recipient}" Content="_Name" VerticalAlignment="Center"/>
+        <TextBox x:Name="Recipient" x:FieldModifier="private" Grid.Column="1" Grid.Row="0" Margin="4"
+                 Text="{Binding }"/>-->
 
         <Label Target="{Binding ElementName=ContactNumber}" Content="N_umber" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
-        <TextBox x:Name="ContactNumber" x:FieldModifier="private" Grid.Column="1" Grid.Row="1" Margin="4"/>
+        <TextBox x:Name="ContactNumber" x:FieldModifier="private" Grid.Column="1" Grid.Row="1" Margin="4"
+                 Text="{Binding ContactNumber, UpdateSourceTrigger=PropertyChanged}"/>
 
         <Label Target="{Binding ElementName=Message}" Content="_Message" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top"/>
         <TextBox x:Name="Message" x:FieldModifier="private" Grid.Column="1" Grid.Row="2"
+                 Text="{Binding Message,UpdateSourceTrigger=PropertyChanged}"
                  AcceptsReturn="True" MaxLines="47" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
                  Margin="4"/>
 
         <UniformGrid Columns="2" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Right">
-            <Button Content="Send" Margin="4"/>
-            <Button Content="Cancel" Margin="4"/>
+            <Button Content="SEND" Margin="4"
+                    Command="{Binding SendCommand}"/>
+            <Button Content="CANCEL" Margin="4"
+                    Command="{Binding CancelCommand}"/>
         </UniformGrid>
     </Grid>
         
