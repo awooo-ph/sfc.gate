@@ -1,0 +1,214 @@
+﻿<UserControl x:Class="SFC.Gate.Material.Views.Students"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             xmlns:vm="clr-namespace:SFC.Gate.Material.ViewModels"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:SFC.Gate.Converters"
+             d:DesignHeight="300" d:DesignWidth="300">
+  <md:DrawerHost IsRightDrawerOpen="{Binding StudentActivityOpen}">
+    <md:DrawerHost.RightDrawerContent>
+      <Grid Grid.Column="1">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Background="{StaticResource MaterialDesignPaper}">
+          <ToggleButton Style="{StaticResource MaterialDesignFlatToggleButton}"
+                        Content="{md:PackIcon ChevronRight}"
+                        md:ToggleButtonAssist.OnContent="{md:PackIcon ChevronRight}"
+                        IsChecked="{Binding StudentActivityOpen}"
+                        VerticalAlignment="Center"
+                        Margin="10"/>
+          
+          <Image Source="{Binding Students/Picture,Converter={converters:BytesToImage}}"
+                 Height="64"
+                 Margin="10" />
+          <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+            <TextBlock VerticalAlignment="Center"
+                       Text="{Binding Students/Fullname,Mode=OneWay}"
+                       Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
+            <TextBlock>
+              <Run Text="{Binding Students/YearLevel}" />
+              <Run Text=" / " />
+              <Run Text="{Binding Students/Department}" />
+            </TextBlock>
+          </StackPanel>
+        </StackPanel>
+
+        <DataGrid ItemsSource="{Binding Students/Logs}" AutoGenerateColumns="False"
+                  Grid.Row="1"
+                  IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="TIME" Binding="{Binding DateTime}" />
+            <DataGridTextColumn Header="EVENT" Binding="{Binding Description}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Grid>
+    </md:DrawerHost.RightDrawerContent>
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="*" MaxWidth="444"/>
+    </Grid.ColumnDefinitions>
+
+      <Grid Grid.Column="1">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Background="{StaticResource MaterialDesignPaper}">
+          <Image Source="{Binding Students/Picture,Converter={converters:BytesToImage}}"
+               Height="64"
+               Margin="10"/>
+          <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+            <TextBlock VerticalAlignment="Center"
+                   Text="{Binding Students/Fullname,Mode=OneWay}"
+                   Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
+            <TextBlock>
+            <Run Text="{Binding Students/YearLevel}"/>
+            <Run Text=" / "/>
+            <Run Text="{Binding Students/Department}"/>
+            </TextBlock>
+          </StackPanel>
+        </StackPanel>
+
+        <DataGrid ItemsSource="{Binding Students/Logs}" AutoGenerateColumns="False"
+                Grid.Row="1"
+                IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="TIME" Binding="{Binding DateTime}" />
+            <DataGridTextColumn Header="EVENT" Binding="{Binding Description}"/>
+          </DataGrid.Columns>
+        </DataGrid>
+
+        <UniformGrid Rows="1" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="20">
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  Command="{Binding PrintLogCommand}"
+                  CommandParameter="{Binding Students/}">
+            <StackPanel Orientation="Horizontal">
+              <md:PackIcon Kind="Printer"/>
+              <TextBlock Text=" PRINT"/>
+            </StackPanel>
+          </Button>
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  Command="{Binding ClearLogCommand}"
+                  CommandParameter="{Binding Students/}">
+            <StackPanel Orientation="Horizontal">
+              <md:PackIcon Kind="CalendarRemove" />
+              <TextBlock Text=" CLEAR" />
+            </StackPanel>
+          </Button>
+        </UniformGrid>
+      </Grid>
+      <Border x:Name="StudentsCard"
+              BorderBrush="#e8edec" BorderThickness="0 0 2 0">
+        <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <md:ColorZone Mode="Light" Background="#f5f5f3"
+                      BorderBrush="#e8edec" BorderThickness="0 0 0 2">
+          <Grid>
+        
+          <StackPanel Orientation="Horizontal" Margin="20">
+            <md:PackIcon Kind="School" Foreground="{StaticResource PrimaryHueMidBrush}" VerticalAlignment="Center"
+                         Height="48" Width="48"
+                         Margin="7 0"/>
+            <TextBlock Text=" ALL STUDENTS" FontWeight="Bold" VerticalAlignment="Center"
+                       Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
+          </StackPanel>
+              <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="0 0 10 0"
+                          HorizontalAlignment="Right">
+                <Grid VerticalAlignment="Bottom" Margin="0 0 10 7">
+                  <Grid>
+                    <TextBox Width="174" md:HintAssist.Hint="SEARCH" md:HintAssist.IsFloating="False"
+                             Text="{Binding StudentsKeyword,UpdateSourceTrigger=PropertyChanged}" />
+                    <md:PackIcon Kind="Magnify" VerticalAlignment="Center"
+                                 IsHitTestVisible="False"
+                                 HorizontalAlignment="Right" />
+                  </Grid>
+                </Grid>
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        VerticalAlignment="Bottom" 
+                        Margin="0 0 0 7">
+                  <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="Printer"/>
+                    <TextBlock Text=" PRINT"/>
+                  </StackPanel>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        Command="{Binding ShowActivityCommand}"
+                        x:Name="ActivityButton"
+                        VerticalAlignment="Bottom"
+                        Margin="0 0 0 7" >
+                  <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="CalendarClock" />
+                    <TextBlock Text=" ACTIVITY LOG" />
+                  </StackPanel>
+                </Button>
+                
+              </StackPanel>
+            </Grid>
+        </md:ColorZone>
+
+          <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Students}"
+                  InitializingNewItem="DataGrid_OnInitializingNewItem"
+                  IsSynchronizedWithCurrentItem="True"
+                  ClipboardCopyMode="None"
+                  AllowDrop="True"
+                  PreviewDrop="StudentsDrop"
+                  PreviewDragOver="StudentsDragEnter"
+                  Grid.Row="1">
+            <DataGrid.Columns>
+              <DataGridTemplateColumn Header="{md:PackIcon AccountCardDetails}">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <Button Style="{StaticResource MaterialDesignToolButton}" Padding="0"
+                          Command="{Binding Source={x:Static vm:MainViewModel.Instance},Path=ChangePictureCommand}"
+                          CommandParameter="{Binding}"
+                          HorizontalContentAlignment="Stretch"
+                          Height="Auto"
+                          Width="Auto">
+                      <Button.ToolTip>
+                        <Image Source="{Binding Picture,Converter={converters:BytesToImage}}"/>
+                      </Button.ToolTip>
+                      <Grid Margin="0 0 4 0">
+                        <md:PackIcon Kind="AccountCardDetails" Visibility="{Binding HasPicture,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
+                                     HorizontalAlignment="Center"
+                                     Height="16"/>
+                        <Image Source="{Binding Picture,Converter={converters:BytesToImage}}"
+                             HorizontalAlignment="Center"
+                             Height="16"/>
+                      </Grid>
+                    </Button>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+              <DataGridTextColumn Header="RFID" Binding="{Binding Rfid,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              <DataGridTextColumn Header="STUDENT ID" Binding="{Binding StudentId,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
+              <DataGridTextColumn Header="FIRST NAME" Binding="{Binding Firstname,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              <DataGridTextColumn Header="LAST NAME" Binding="{Binding Lastname,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              <DataGridTextColumn Header="YEAR LEVEL" Binding="{Binding YearLevel,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              <DataGridTextColumn Header="DEPARTMENT" Binding="{Binding Department,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              <DataGridTextColumn Header="CONTACT NUMBER" Binding="{Binding ContactNumber,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </Grid>
+      </Border>
+
+  </Grid>
+  </md:DrawerHost>
+</UserControl>
