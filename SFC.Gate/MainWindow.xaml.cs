@@ -1,12 +1,18 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Windows;
-using SFC.Gate.Configurations;
-using SFC.Gate.Models;
-using SFC.Gate.ViewModels;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
-namespace SFC.Gate
+namespace SFC.Gate.Material
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -16,67 +22,30 @@ namespace SFC.Gate
         public MainWindow()
         {
             InitializeComponent();
-            WindowState = Config.General.WindowMaximized ? WindowState.Maximized : WindowState.Normal;
-            if (WindowState != WindowState.Maximized)
-            {
-                Top = Config.General.WindowTop;
-                Left = Config.General.WindowLeft;
-                Height = Config.General.WindowHeight;
-                Width = Config.General.WindowWidth;
-            }
-            Log.Add("Application Started");
-            ViewModelBase.Context = SynchronizationContext.Current;
-
         }
 
-        protected override void OnStateChanged(EventArgs e)
+        private void CloseClicked(object sender, RoutedEventArgs e)
         {
-            base.OnStateChanged(e);
-            // Config.General.WindowMaximized = WindowState == WindowState.Maximized;
+            Close();
         }
 
-        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        private void MaximizeClicked(object sender, RoutedEventArgs e)
         {
-            base.OnRenderSizeChanged(sizeInfo);
+            if (WindowState == WindowState.Maximized)
+                WindowState = WindowState.Normal;
+            else
+                WindowState = WindowState.Maximized;
         }
 
-        protected override void OnClosed(EventArgs e)
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
-            if (WindowState != WindowState.Maximized)
-            {
-                Config.General.WindowWidth = ActualWidth;
-                Config.General.WindowHeight = ActualHeight;
-                Config.General.WindowLeft = Left;
-                Config.General.WindowTop = Top;
-                Config.General.WindowMaximized = WindowState == WindowState.Maximized;
-            }
-
-            base.OnClosed(e);
+            base.OnMouseLeftButtonDown(e);
+            DragMove();
         }
 
-        protected override void OnClosing(CancelEventArgs e)
+        private void MinimizeClicked(object sender, RoutedEventArgs e)
         {
-            if (Config.General.ConfirmExit && System.Windows.MessageBox.Show(
-                    "Are you sure you want to exit?", "Confirm Exit",
-                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-            {
-                e.Cancel = true;
-                return;
-            }
-            RfidScanner.UnHook();
-            base.OnClosing(e);
-        }
-
-        protected override void OnInitialized(EventArgs e)
-        {
-            base.OnInitialized(e);
-            MainViewModel.Instance.IsGuardMode = Config.General.GuarModeOnStartup;
-        }
-
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            RfidScanner.Hook(this);
-            base.OnSourceInitialized(e);
+            WindowState = WindowState.Minimized;
         }
     }
 }

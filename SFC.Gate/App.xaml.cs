@@ -1,9 +1,12 @@
-﻿using System.Windows;
-using SFC.Gate.Configurations;
-using SFC.Gate.Models;
-using SFC.Gate.ViewModels;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Linq;
+using System.Threading;
+using System.Windows;
 
-namespace SFC.Gate
+namespace SFC.Gate.Material
 {
     /// <summary>
     /// Interaction logic for App.xaml
@@ -13,14 +16,8 @@ namespace SFC.Gate
         protected override void OnStartup(StartupEventArgs e)
         {
             awooo.IsRunning = true;
+            awooo.Context = SynchronizationContext.Current;
             base.OnStartup(e);
-        }
-
-        protected override void OnExit(ExitEventArgs e)
-        {
-            Config.Save();
-            Log.Add("Application Shutdown");
-            base.OnExit(e);
         }
     }
 }
