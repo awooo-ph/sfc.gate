@@ -303,7 +303,61 @@ namespace SFC.Gate.Material.ViewModels
         }
 
         string IDataErrorInfo.Error => null;
+
+        private bool _ShowReturnDialog;
+
+        public bool ShowReturnDialog
+        {
+            get => _ShowReturnDialog;
+            set
+            {
+                if(value == _ShowReturnDialog)
+                    return;
+                _ShowReturnDialog = value;
+                OnPropertyChanged(nameof(ShowReturnDialog));
+            }
+        }
+
+        private string _ReturnRfid;
+
+        public string ReturnRfid
+        {
+            get => _ReturnRfid;
+            set
+            {
+                if(value == _ReturnRfid)
+                    return;
+                _ReturnRfid = value;
+                OnPropertyChanged(nameof(ReturnRfid));
+            }
+        }
         
-        
+        private ICommand _ShowReturnDialogCommand;
+
+        public ICommand ReturnCardCommand =>
+            _ShowReturnDialogCommand ?? (_ShowReturnDialogCommand = new DelegateCommand(
+                d =>
+                {
+                    ReturnRfid = "";
+                    ShowReturnDialog = true;
+                }));
+
+        private ICommand _ReturnCancelCommand;
+
+        public ICommand ReturnCancelCommand => _ReturnCancelCommand ?? (_ReturnCancelCommand = new DelegateCommand(d =>
+        {
+            ShowReturnDialog = false;
+        }));
+
+        private ICommand _ReturnAcceptCommand;
+
+        public ICommand ReturnAcceptCommand => _ReturnAcceptCommand ?? (_ReturnAcceptCommand = new DelegateCommand(d =>
+        {
+            var visit = Visit.Cache.FirstOrDefault(x => !x.HasLeft && x.Rfid.ToLower() == ReturnRfid.ToLower());
+            if (visit == null) return;
+            visit.Update(nameof(Visit.TimeOut),DateTime.Now);
+            Log.Add("VISITOR LEFT", $"{visit.Visitor.Name} has left.");
+            ShowReturnDialog = false;
+        }));
     }
 }

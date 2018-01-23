@@ -161,13 +161,7 @@
                   HorizontalAlignment="Left"
                   VerticalAlignment="Bottom"
                   Margin="20">
-        <Button Style="{StaticResource MaterialDesignFlatButton}"
-                Command="{Binding PrintListCommand}">
-          <StackPanel Orientation="Horizontal">
-            <md:PackIcon Kind="Printer" />
-            <TextBlock Text=" PRINT LIST" />
-          </StackPanel>
-        </Button>
+       
         <Button Style="{StaticResource MaterialDesignFlatButton}"
                 Command="{Binding AddVisitorCommand}">
           <StackPanel Orientation="Horizontal">
@@ -175,8 +169,27 @@
             <TextBlock Text=" NEW VISITOR" />
           </StackPanel>
         </Button>
+     
+        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                Command="{Binding ReturnCardCommand}">
+          <StackPanel Orientation="Horizontal">
+            <md:PackIcon Kind="CreditCardScan" />
+            <TextBlock Text=" RETURN CARD" />
+          </StackPanel>
+        </Button>
+
+        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                Command="{Binding PrintListCommand}">
+          <StackPanel Orientation="Horizontal">
+            <md:PackIcon Kind="Printer" />
+            <TextBlock Text=" PRINT" />
+          </StackPanel>
+        </Button>
       </StackPanel>
     </Grid>
+      
+      <local:ReturnCard Grid.Row="0" Grid.RowSpan="2"
+                        Visibility="{Binding ShowReturnDialog,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}" />
       
       <local:NewVisitor Grid.Row="0" Grid.RowSpan="2"
                         Visibility="{Binding ShowNewDialog,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}"/>

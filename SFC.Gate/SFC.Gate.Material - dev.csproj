@@ -111,6 +111,9 @@
     <Compile Include="Views\NewVisitor.xaml.cs">
       <DependentUpon>NewVisitor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ReturnCard.xaml.cs">
+      <DependentUpon>ReturnCard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Students.xaml.cs">
       <DependentUpon>Students.xaml</DependentUpon>
     </Compile>
@@ -133,6 +136,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\NewVisitor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ReturnCard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
