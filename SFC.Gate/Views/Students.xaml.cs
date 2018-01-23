@@ -35,13 +35,13 @@ namespace SFC.Gate.Material.Views
             if (ActualWidth < 777)
             {
                 Grid.SetColumnSpan(StudentsCard, 2);
-                MainViewModel.Instance.StudentActivityOpen = false;
+                StudentsViewModel.Instance.StudentActivityOpen = false;
                 ActivityButton.Visibility = Visibility.Visible;
             }
             else
             {
                 Grid.SetColumnSpan(StudentsCard,1);
-                MainViewModel.Instance.StudentActivityOpen = false;
+                StudentsViewModel.Instance.StudentActivityOpen = false;
                 ActivityButton.Visibility = Visibility.Collapsed;
             }
         }

@@ -1,0 +1,309 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Windows.Data;
+using System.Windows.Input;
+using SFC.Gate.Models;
+
+namespace SFC.Gate.Material.ViewModels
+{
+    class VisitorsViewModel : INotifyPropertyChanged, IDataErrorInfo
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        
+        private VisitorsViewModel() { }
+        private static VisitorsViewModel _instance;
+        public static VisitorsViewModel Instance => _instance ?? (_instance = new VisitorsViewModel());
+
+        private ListCollectionView _visitors;
+        public ListCollectionView Visitors
+        {
+            get
+            {
+                if (_visitors != null) return _visitors;
+                _visitors = new ListCollectionView(Visitor.Cache);
+                _visitors.Filter = FilterVisitors;
+                Visitor.Cache.CollectionChanged += (sender, args) =>
+                {
+                    _visitors.Filter = FilterVisitors;
+                };
+                return _visitors;
+            }
+        }
+
+        private string _SearchKeyword;
+
+        public string SearchKeyword
+        {
+            get => _SearchKeyword;
+            set
+            {
+                if(value == _SearchKeyword)
+                    return;
+                _SearchKeyword = value;
+                OnPropertyChanged(nameof(SearchKeyword));
+                Visitors.Filter = FilterVisitors;
+            }
+        }
+        
+        private bool FilterVisitors(object o)
+        {
+            var v = o as Visitor;
+            if (v == null) return false;
+            
+            if(FilterCurrentVisitors)
+                if (Visit.Cache.FirstOrDefault(x => x.VisitorId == v.Id && !x.HasLeft) == null) return false;
+            if(FilterVisitorsToday)
+                if (Visit.Cache.FirstOrDefault(x => x.TimeIn.Date == DateTime.Now.Date) == null) return false;
+            
+            if (!string.IsNullOrWhiteSpace(SearchKeyword))
+                return v.Name.ToLower().Contains(SearchKeyword.ToLower()) ||
+                       v.Number.ToLower().Contains(SearchKeyword.ToLower()) ||
+                       v.Address.ToLower().Contains(SearchKeyword.ToLower());
+            
+            return true;
+        }
+
+        private bool _FilterCurrentVisitors;
+
+        public bool FilterCurrentVisitors
+        {
+            get => _FilterCurrentVisitors;
+            set
+            {
+                if(value == _FilterCurrentVisitors)
+                    return;
+                _FilterCurrentVisitors = value;
+                OnPropertyChanged(nameof(FilterCurrentVisitors));
+                Visitors.Filter = FilterVisitors;
+            }
+        }
+
+        private bool _FilterVisitorsToday;
+
+        public bool FilterVisitorsToday
+        {
+            get => _FilterVisitorsToday;
+            set
+            {
+                if(value == _FilterVisitorsToday)
+                    return;
+                _FilterVisitorsToday = value;
+                OnPropertyChanged(nameof(FilterVisitorsToday));
+                Visitors.Filter = FilterVisitors;
+            }
+        }
+        
+
+        private bool _ShowNewDialog;
+
+        public bool ShowNewDialog
+        {
+            get => _ShowNewDialog;
+            set
+            {
+                if(value == _ShowNewDialog)
+                    return;
+                _ShowNewDialog = value;
+                OnPropertyChanged(nameof(ShowNewDialog));
+            }
+        }
+
+        private ICommand _addVisitorCommand;
+
+        public ICommand AddVisitorCommand => _addVisitorCommand ?? (_addVisitorCommand = new DelegateCommand(d =>
+        {
+            NewName = null;
+            NewAddress = null;
+            NewNumber = "";
+            NewRfid = "";
+            NewPurpose = "";
+            ShowNewDialog = true;
+        }));
+
+        private ICommand _newCancelCommand;
+
+        public ICommand NewCancelCommand => _newCancelCommand ?? (_newCancelCommand = new DelegateCommand(d =>
+        {
+            ShowNewDialog = false;
+            NewName = "";
+            NewAddress = "";
+            NewNumber = "";
+            NewRfid = "";
+            NewPurpose = "";
+        }));
+
+        private ICommand _timeOutCommand;
+
+        public ICommand TimeOutCommand => _timeOutCommand ?? (_timeOutCommand = new DelegateCommand<Visit>(visit =>
+        {
+            visit.Update(nameof(Visit.TimeOut),DateTime.Now);
+            Log.Add("VISITOR LEFT", $"{visit.Visitor.Name} has left.");
+        }));
+
+        private ICommand _newAcceptCommand;
+
+        public ICommand NewAcceptCommand => _newAcceptCommand ?? (_newAcceptCommand = new DelegateCommand(d =>
+        {
+            var visitor = Visitor.Cache.FirstOrDefault(x => x.Name.ToLower() == NewName.ToLower());
+            if(visitor==null)
+                visitor = new Visitor();
+            visitor.Name = NewName;
+            visitor.Address = NewAddress;
+            visitor.Number = NewNumber;
+            visitor.Save();
+
+            new Visit()
+            {
+                VisitorId = visitor.Id,
+                Purpose = NewPurpose,
+                Rfid = NewRfid,
+            }.Save();
+
+            Log.Add("VISITOR", $"A visitor has entered the campus. Name: {visitor.Name} Purpose: {NewPurpose}");
+            
+            ShowNewDialog = false;
+        }, d =>
+        {
+            if (string.IsNullOrWhiteSpace(NewName)) return false;
+            if (string.IsNullOrWhiteSpace(NewRfid)) return false;
+            if (string.IsNullOrWhiteSpace(NewPurpose)) return false;
+
+            var visitor = Visitor.Cache.FirstOrDefault(x => x.Name.ToLower() == NewName.ToLower());
+            if (visitor != null)
+            {
+                var v = Visit.Cache.OrderByDescending(x => x.TimeIn).FirstOrDefault(x => x.VisitorId == visitor.Id);
+                if (v != null)
+                {
+                    if (!v.HasLeft) return false;
+                }
+            }
+
+            var visit = Visit.Cache.FirstOrDefault(x => !x.HasLeft && x.Rfid.ToLower() == NewRfid.ToLower());
+            if (visit == null) return true;
+            
+            return visit.TimeOut != null;
+        }));
+
+        private string _NewPurpose;
+
+        public string NewPurpose
+        {
+            get => _NewPurpose;
+            set
+            {
+                if(value == _NewPurpose)
+                    return;
+                _NewPurpose = value;
+                OnPropertyChanged(nameof(NewPurpose));
+            }
+        }
+        
+        public List<string> VisitorNames => Visitor.Cache.Select(x => x.Name).ToList();
+
+        private string _NewName;
+
+        public string NewName
+        {
+            get => _NewName;
+            set
+            {
+                if(value == _NewName)
+                    return;
+                _NewName = value;
+                OnPropertyChanged(nameof(NewName));
+                RefreshNewVisitor();
+            }
+        }
+
+        private string _NewNumber;
+
+        public string NewNumber
+        {
+            get => _NewNumber;
+            set
+            {
+                if(value == _NewNumber)
+                    return;
+                _NewNumber = value;
+                OnPropertyChanged(nameof(NewNumber));
+            }
+        }
+
+        private string _NewAddress;
+
+        public string NewAddress
+        {
+            get => _NewAddress;
+            set
+            {
+                if(value == _NewAddress)
+                    return;
+                _NewAddress = value;
+                OnPropertyChanged(nameof(NewAddress));
+            }
+        }
+
+        private string _NewRfid;
+
+        public string NewRfid
+        {
+            get => _NewRfid;
+            set
+            {
+                if(value == _NewRfid)
+                    return;
+                _NewRfid = value;
+                OnPropertyChanged(nameof(NewRfid));
+            }
+        }
+
+        private Visitor _selectedVisitor;
+        public void RefreshNewVisitor()
+        {
+            var visitor = Visitor.Cache.FirstOrDefault(x => x.Name?.ToLower() == NewName?.ToLower());
+            if (_selectedVisitor != null)
+            {
+                NewAddress = "";
+                NewNumber = "";
+            }
+            
+            _selectedVisitor = visitor;
+            if (visitor == null || NewName.Trim()=="") return;
+            
+            NewAddress = visitor.Address;
+            NewNumber = visitor.Number;
+        }
+
+        string IDataErrorInfo.this[string columnName]
+        {
+            get
+            {
+                if (columnName == nameof(NewName) && string.IsNullOrWhiteSpace(NewName)) return "Name is required";
+                if (columnName == nameof(NewPurpose) && string.IsNullOrWhiteSpace(NewPurpose))
+                    return "Provide purpose of visit";
+                
+                if (columnName == nameof(NewRfid))
+                {
+                    if(string.IsNullOrWhiteSpace(NewRfid)) return "RFID is required";
+                    var visit = Visit.Cache.FirstOrDefault(x => !x.HasLeft && x.Rfid.ToLower() == NewRfid.ToLower());
+                    if (visit != null) return "Card is in use";
+                }
+                    
+                return null;
+            }
+        }
+
+        string IDataErrorInfo.Error => null;
+        
+        
+    }
+}

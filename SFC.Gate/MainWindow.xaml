@@ -40,7 +40,7 @@
           <views:Students/>
         </md:TransitionerSlide>
         <md:TransitionerSlide>
-          <views:Students />
+          <views:Visitors />
         </md:TransitionerSlide>
         <md:TransitionerSlide/>
         <md:TransitionerSlide/>

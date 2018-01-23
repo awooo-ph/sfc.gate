@@ -1,0 +1,63 @@
+﻿<UserControl x:Class="SFC.Gate.Material.Views.NewVisitor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SFC.Gate.Material.Views"
+             mc:Ignorable="d" 
+             Background="#77777777"
+             xmlns:behaviors="clr-namespace:WPFTextBoxAutoComplete;assembly=WPFTextBoxAutoComplete"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch">
+  <md:Card HorizontalAlignment="Center"
+           MinWidth="444"
+           UniformCornerRadius="7"
+             VerticalAlignment="Center">
+    <StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="10">
+        <md:PackIcon Kind="AccountPlus"
+                     Margin="5"
+                     VerticalAlignment="Center"
+                     Height="32"
+                     Width="32" />
+        <TextBlock Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                   VerticalAlignment="Center"
+                   Text="NEW VISITOR"/>
+      </StackPanel>
+      <Rectangle Height="1" Fill="{StaticResource PrimaryHueMidBrush}"/>
+      <TextBox md:HintAssist.IsFloating="True"
+                Text="{Binding NewName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+               behaviors:AutoCompleteBehavior.AutoCompleteItemsSource="{Binding VisitorNames}"
+               behaviors:AutoCompleteBehavior.AutoCompleteStringComparison="InvariantCultureIgnoreCase"
+                Margin="20 10 20 5"
+                md:HintAssist.Hint="VISITOR'S NAME"/>
+      <TextBox md:HintAssist.IsFloating="True"
+               Margin="20 5"
+               Text="{Binding NewAddress,UpdateSourceTrigger=PropertyChanged}"
+               md:HintAssist.Hint="VISITOR'S ADDRESS" />
+      <TextBox md:HintAssist.IsFloating="True"
+               Margin="20 5"
+               Text="{Binding NewNumber,UpdateSourceTrigger=PropertyChanged}"
+               md:HintAssist.Hint="VISITOR'S CONTACT NUMBER" />
+      <TextBox md:HintAssist.IsFloating="True"
+               Margin="20 5"
+               Text="{Binding NewPurpose,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+               md:HintAssist.Hint="PURPOSE OF VISIT" />
+      <TextBox md:HintAssist.IsFloating="True"
+               Margin="20 5"
+               Text="{Binding NewRfid,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+               md:HintAssist.Hint="ISSUED RFID" />
+      <UniformGrid Rows="1" Margin="0 20 0 0">
+        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                IsCancel="True"
+                Command="{Binding NewCancelCommand}"
+                Content="CANCEL" />
+        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                Command="{Binding NewAcceptCommand}"
+                Content="ACCEPT"/>
+      </UniformGrid>
+    </StackPanel>
+  </md:Card>
+</UserControl>

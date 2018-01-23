@@ -7,6 +7,7 @@
              xmlns:vm="clr-namespace:SFC.Gate.Material.ViewModels"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:SFC.Gate.Converters"
+             DataContext="{Binding Source={x:Static vm:StudentsViewModel.Instance}}"
              d:DesignHeight="300" d:DesignWidth="300">
   <md:DrawerHost IsRightDrawerOpen="{Binding StudentActivityOpen}">
     <md:DrawerHost.RightDrawerContent>
@@ -123,7 +124,7 @@
             <TextBlock Text=" ALL STUDENTS" FontWeight="Bold" VerticalAlignment="Center"
                        Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
           </StackPanel>
-              <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="0 0 10 0"
+              <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="0 0 7 0"
                           HorizontalAlignment="Right">
                 <Grid VerticalAlignment="Bottom" Margin="0 0 10 7">
                   <Grid>
@@ -134,14 +135,7 @@
                                  HorizontalAlignment="Right" />
                   </Grid>
                 </Grid>
-                <Button Style="{StaticResource MaterialDesignFlatButton}"
-                        VerticalAlignment="Bottom" 
-                        Margin="0 0 0 7">
-                  <StackPanel Orientation="Horizontal">
-                    <md:PackIcon Kind="Printer"/>
-                    <TextBlock Text=" PRINT"/>
-                  </StackPanel>
-                </Button>
+               
                 <Button Style="{StaticResource MaterialDesignFlatButton}"
                         Command="{Binding ShowActivityCommand}"
                         x:Name="ActivityButton"
@@ -149,7 +143,7 @@
                         Margin="0 0 0 7" >
                   <StackPanel Orientation="Horizontal">
                     <md:PackIcon Kind="CalendarClock" />
-                    <TextBlock Text=" ACTIVITY LOG" />
+                    <TextBlock Text=" VIEW LOG" />
                   </StackPanel>
                 </Button>
                 
@@ -170,7 +164,7 @@
                 <DataGridTemplateColumn.CellTemplate>
                   <DataTemplate>
                     <Button Style="{StaticResource MaterialDesignToolButton}" Padding="0"
-                          Command="{Binding Source={x:Static vm:MainViewModel.Instance},Path=ChangePictureCommand}"
+                          Command="{Binding Source={x:Static vm:StudentsViewModel.Instance},Path=ChangePictureCommand}"
                           CommandParameter="{Binding}"
                           HorizontalContentAlignment="Stretch"
                           Height="Auto"
@@ -206,6 +200,18 @@
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
             </DataGrid.Columns>
           </DataGrid>
+
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  Command="{Binding PrintListCommand}"
+                  Grid.Row="1"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Bottom"
+                  Margin="20">
+            <StackPanel Orientation="Horizontal">
+              <md:PackIcon Kind="Printer" />
+              <TextBlock Text=" PRINT LIST" />
+            </StackPanel>
+          </Button>
         </Grid>
       </Border>
 
