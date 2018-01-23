@@ -1,0 +1,190 @@
+﻿<UserControl x:Class="SFC.Gate.Material.Views.Violations"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SFC.Gate.Material.Views"
+             mc:Ignorable="d"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:SFC.Gate.Converters"
+             xmlns:viewModels="clr-namespace:SFC.Gate.Material.ViewModels"
+             d:DesignHeight="300" d:DesignWidth="300">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+
+    <md:ColorZone Mode="Light"
+                    IsEnabled="{Binding ShowNewDialog,Converter={converters:Inverter}}"
+                    Grid.ColumnSpan="2"
+                    Background="#f5f5f3"
+                    Grid.Row="0"
+                    BorderBrush="#e8edec"
+                    BorderThickness="0 0 0 2">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal" Margin="20">
+          <md:PackIcon Kind="AccountStarVariant" Foreground="{StaticResource PrimaryHueMidBrush}" VerticalAlignment="Center"
+                         Height="48" Width="48"
+                         Margin="7 0"/>
+          <TextBlock Text=" VIOLATIONS" FontWeight="Bold" VerticalAlignment="Center"
+                       Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Column="1" 
+                          HorizontalAlignment="Right">
+          <Grid VerticalAlignment="Bottom" Margin="0 0 0 7">
+            <Grid>
+              <TextBox Width="174" md:HintAssist.Hint="SEARCH" md:HintAssist.IsFloating="False"
+                         md:TextFieldAssist.TextBoxViewMargin="0 0 100 0"
+                             Text="{Binding SearchKeyword,UpdateSourceTrigger=PropertyChanged}" />
+              <md:PackIcon Kind="Magnify" VerticalAlignment="Center"
+                                 IsHitTestVisible="False"
+                                 HorizontalAlignment="Right" />
+            </Grid>
+          </Grid>
+          <ListBox Style="{StaticResource MaterialDesignToolToggleFlatListBox}"
+                   BorderBrush="{StaticResource MaterialDesignTextAreaBorder}"
+                   Focusable="False"
+                   BorderThickness="0 0 0 1"
+                   VerticalAlignment="Bottom" Margin="0 0 10 7">
+            <ListBoxItem Padding="4 2" ToolTip="Filter visitors who have not left yet."
+                         Focusable="False"
+                         IsSelected="{Binding FilterCurrentVisitors}">
+              <md:PackIcon Kind="AccountLocation"/>
+            </ListBoxItem>
+            <ListBoxItem Padding="4 2" ToolTip="Show all visitors today"
+                         Focusable="False"
+                         IsSelected="{Binding FilterVisitorsToday}">
+              <md:PackIcon Kind="CalendarToday" />
+            </ListBoxItem>
+          </ListBox>
+        </StackPanel>
+      </Grid>
+    </md:ColorZone>
+
+    <Grid Grid.Row="1" IsEnabled="{Binding ShowNewDialog,Converter={converters:Inverter}}">
+
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" MaxWidth="444" />
+      </Grid.ColumnDefinitions>
+
+      <Border x:Name="VisitorsCard"
+              Grid.Column="0"
+              BorderBrush="#e8edec" BorderThickness="0 0 2 0">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+
+
+          <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Visitors}"
+                    CanUserDeleteRows="True"
+                    CanUserAddRows="False"
+                  IsSynchronizedWithCurrentItem="True"
+                  ClipboardCopyMode="None"
+                  Grid.Row="1">
+            <DataGrid.Columns>
+
+              <DataGridTextColumn Header="NAME" Binding="{Binding Name}"
+                                  IsReadOnly="True"/>
+              <DataGridTextColumn Header="ADDRESS"
+                                  Binding="{Binding Address,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                  EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              <DataGridTextColumn Header="CONTACT" Binding="{Binding Number,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
+              <DataGridTextColumn Header="VISITS"
+                                  Binding="{Binding VisitCount}"
+                                  IsReadOnly="True"/>
+              <DataGridTextColumn Header="LAST VISIT"
+                                  Binding="{Binding LastVisit,Converter={converters:LastVisitConverter}}"
+                                  IsReadOnly="True" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </Grid>
+      </Border>
+
+      <GridSplitter Grid.Column="0"
+                      HorizontalAlignment="Right"
+                      Width="2"
+                      VerticalAlignment="Stretch"/>
+
+      <Grid Grid.Column="1">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Visitors/Visits}"
+                  Grid.Row="1"
+                  IsReadOnly="True"
+                  CanUserDeleteRows="False"
+                  IsSynchronizedWithCurrentItem="True"
+                  ClipboardCopyMode="None">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="TIME IN" Binding="{Binding TimeIn,StringFormat=g}"
+                                IsReadOnly="True" />
+            <DataGridTemplateColumn Header="TIME OUT" SortMemberPath="TimeOut"
+                                IsReadOnly="True" >
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate>
+                  <Grid>
+                    <TextBlock Text="{Binding TimeOut,StringFormat=g,FallbackValue={}}" 
+                               Visibility="{Binding HasLeft,Converter={converters:BooleanToVisibility}}"/>
+                    <Button Style="{StaticResource MaterialDesignToolButton}"
+                            Height="Auto" Width="Auto"
+                            Padding="0"
+                            Command="{Binding Source={x:Static viewModels:VisitorsViewModel.Instance},Path=TimeOutCommand}"
+                            CommandParameter="{Binding}"
+                            Visibility="{Binding HasLeft,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
+                            HorizontalAlignment="Stretch"
+                            Content="{md:PackIcon Logout}"/>
+                  </Grid>
+                </DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTextColumn Header="PURPOSE" Binding="{Binding Purpose}"
+                                IsReadOnly="True" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Grid>
+
+      <StackPanel Orientation="Horizontal"
+                  Grid.Column="0"
+                  Grid.ColumnSpan="2"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Bottom"
+                  Margin="20">
+
+        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                Command="{Binding AddVisitorCommand}">
+          <StackPanel Orientation="Horizontal">
+            <md:PackIcon Kind="AccountPlus" />
+            <TextBlock Text=" NEW VISITOR" />
+          </StackPanel>
+        </Button>
+
+        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                Command="{Binding ReturnCardCommand}">
+          <StackPanel Orientation="Horizontal">
+            <md:PackIcon Kind="CreditCardScan" />
+            <TextBlock Text=" RETURN CARD" />
+          </StackPanel>
+        </Button>
+
+        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                Command="{Binding PrintListCommand}">
+          <StackPanel Orientation="Horizontal">
+            <md:PackIcon Kind="Printer" />
+            <TextBlock Text=" PRINT" />
+          </StackPanel>
+        </Button>
+      </StackPanel>
+    </Grid>
+  </Grid>
+</UserControl>

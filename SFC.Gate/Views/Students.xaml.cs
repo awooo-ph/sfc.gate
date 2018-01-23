@@ -30,7 +30,9 @@ namespace SFC.Gate.Material.Views
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
+            ActivityButton.Visibility = Visibility.Collapsed;
             base.OnRenderSizeChanged(sizeInfo);
+            return;
             if (!sizeInfo.WidthChanged) return;
             if (ActualWidth < 777)
             {

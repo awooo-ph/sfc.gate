@@ -5,6 +5,8 @@ using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using SFC.Gate.Configurations;
+using SFC.Gate.Models;
 
 namespace SFC.Gate.Material
 {
@@ -18,6 +20,13 @@ namespace SFC.Gate.Material
             awooo.IsRunning = true;
             awooo.Context = SynchronizationContext.Current;
             base.OnStartup(e);
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+            Config.Save();
+            Log.Add("Application Shutdown");
         }
     }
 }

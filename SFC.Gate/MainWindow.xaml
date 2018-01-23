@@ -16,7 +16,7 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"        
-        MinWidth="555" MinHeight="444"
+        MinWidth="777" MinHeight="444"
         WindowStartupLocation="CenterScreen"
         SnapsToDevicePixels="True"
         WindowStyle="None"
@@ -42,8 +42,13 @@
         <md:TransitionerSlide>
           <views:Visitors />
         </md:TransitionerSlide>
+        <!--<md:TransitionerSlide>
+          <views:Violations/>
+        </md:TransitionerSlide>-->
         <md:TransitionerSlide/>
-        <md:TransitionerSlide/>
+        <md:TransitionerSlide >
+          <views:Users/>
+        </md:TransitionerSlide>
       </md:Transitioner>
 
       <md:Snackbar Grid.Row="1" HorizontalAlignment="Stretch"
@@ -115,7 +120,7 @@
                          FontSize="7pt" />
             </StackPanel>
           </ListBoxItem>
-          <ListBoxItem>
+          <!--<ListBoxItem>
             <StackPanel Margin="4">
               <md:PackIcon Kind="AlertOutline"
                            Height="32"
@@ -125,7 +130,7 @@
                          HorizontalAlignment="Center"
                          FontSize="7pt" />
             </StackPanel>
-          </ListBoxItem>
+          </ListBoxItem>-->
           <ListBoxItem>
             <StackPanel Margin="4">
               <md:PackIcon Kind="Cellphone"

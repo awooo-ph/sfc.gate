@@ -52,16 +52,18 @@
     </md:DrawerHost.RightDrawerContent>
   <Grid>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="*"/>
-      <ColumnDefinition Width="*" MaxWidth="444"/>
+      <ColumnDefinition Width="*" MinWidth="333"/>
+      <ColumnDefinition Width="*" MaxWidth="555"/>
     </Grid.ColumnDefinitions>
 
       <Grid Grid.Column="1">
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto" />
           <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        
         <StackPanel Orientation="Horizontal" Background="{StaticResource MaterialDesignPaper}">
           <Image Source="{Binding Students/Picture,Converter={converters:BytesToImage}}"
                Height="64"
@@ -77,34 +79,113 @@
             </TextBlock>
           </StackPanel>
         </StackPanel>
+        
+        <md:Transitioner Grid.Row="2" VerticalAlignment="Stretch" 
+                         SelectedIndex="{Binding ElementName=ListBox,Path=SelectedIndex}">
+          <md:TransitionerSlide>
+            <md:TransitionerSlide.BackwardWipe>
+              <md:FadeWipe/>
+            </md:TransitionerSlide.BackwardWipe>
+            <md:TransitionerSlide.ForwardWipe>
+              <md:FadeWipe/>
+            </md:TransitionerSlide.ForwardWipe>
+            <Grid>
+              <DataGrid ItemsSource="{Binding Students/Logs}" AutoGenerateColumns="False"
+                  Grid.Row="1"
+                  IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="TIME" Binding="{Binding DateTime}" />
+                  <DataGridTextColumn Header="EVENT" Binding="{Binding Description}"/>
+                </DataGrid.Columns>
+              </DataGrid>
 
-        <DataGrid ItemsSource="{Binding Students/Logs}" AutoGenerateColumns="False"
-                Grid.Row="1"
-                IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False">
-          <DataGrid.Columns>
-            <DataGridTextColumn Header="TIME" Binding="{Binding DateTime}" />
-            <DataGridTextColumn Header="EVENT" Binding="{Binding Description}"/>
-          </DataGrid.Columns>
-        </DataGrid>
+              <UniformGrid Rows="1" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="20">
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                    Command="{Binding PrintLogCommand}"
+                    CommandParameter="{Binding Students/}">
+                  <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="Printer"/>
+                    <TextBlock Text=" PRINT"/>
+                  </StackPanel>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                    Command="{Binding ClearLogCommand}"
+                    CommandParameter="{Binding Students/}">
+                  <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="CalendarRemove" />
+                    <TextBlock Text=" CLEAR" />
+                  </StackPanel>
+                </Button>
+              </UniformGrid>
+            </Grid>
+          </md:TransitionerSlide>
+          <md:TransitionerSlide>
+            <md:TransitionerSlide.BackwardWipe>
+              <md:FadeWipe />
+            </md:TransitionerSlide.BackwardWipe>
+            <md:TransitionerSlide.ForwardWipe>
+              <md:FadeWipe />
+            </md:TransitionerSlide.ForwardWipe>
+            <Grid>
+              <DataGrid ItemsSource="{Binding Students/Violations}" AutoGenerateColumns="False"
+                        IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="DATE" Binding="{Binding DateCommitted,StringFormat={}d}" />
+                  <DataGridTextColumn Header="VIOLATION" Binding="{Binding Violation.Name}" />
+                </DataGrid.Columns>
+              </DataGrid>
 
-        <UniformGrid Rows="1" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="20">
-          <Button Style="{StaticResource MaterialDesignFlatButton}"
-                  Command="{Binding PrintLogCommand}"
-                  CommandParameter="{Binding Students/}">
-            <StackPanel Orientation="Horizontal">
-              <md:PackIcon Kind="Printer"/>
-              <TextBlock Text=" PRINT"/>
-            </StackPanel>
-          </Button>
-          <Button Style="{StaticResource MaterialDesignFlatButton}"
-                  Command="{Binding ClearLogCommand}"
-                  CommandParameter="{Binding Students/}">
-            <StackPanel Orientation="Horizontal">
-              <md:PackIcon Kind="CalendarRemove" />
-              <TextBlock Text=" CLEAR" />
-            </StackPanel>
-          </Button>
-        </UniformGrid>
+              <UniformGrid Rows="1" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="20">
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        Command="{Binding AddViolationCommand}"
+                        CommandParameter="{Binding Students/}">
+                  <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="Plus" />
+                    <TextBlock Text=" ADD" />
+                  </StackPanel>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        Command="{Binding PrintViolationsCommand}"
+                        CommandParameter="{Binding Students/}">
+                  <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="Printer" />
+                    <TextBlock Text=" PRINT" />
+                  </StackPanel>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        Command="{Binding ClearViolationsCommand}"
+                        CommandParameter="{Binding Students/}">
+                  <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="Close" />
+                    <TextBlock Text=" CLEAR" />
+                  </StackPanel>
+                </Button>
+              </UniformGrid>
+            </Grid>
+          </md:TransitionerSlide>
+        </md:Transitioner>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Grid.Row="1">
+          <TextBlock Text="VIOLATIONS" Visibility="{Binding ElementName=ListBoxItem,Path=IsSelected,Converter={converters:BooleanToVisibility}}"
+                     FontWeight="Bold"
+                     Margin="0 0 10 0"
+                     VerticalAlignment="Center"/>
+          <TextBlock Text="ACTIVITY LOG"
+                     Margin="0 0 10 0"
+                     FontWeight="Bold"
+                     VerticalAlignment="Center"
+                     Visibility="{Binding ElementName=ListBoxItem,Path=IsSelected,Converter={converters:BooleanToVisibility Collapsed,Visible}}" />
+        <ListBox Style="{StaticResource MaterialDesignToolToggleFlatListBox}" SelectedIndex="0"
+                 x:Name="ListBox">
+          <ListBoxItem Content="{md:PackIcon CalendarClock}"
+                       IsSelected="{Binding ElementName=ListBoxItem,Path=IsSelected,Converter={converters:Inverter}}" />
+          <ListBoxItem Content="{md:PackIcon AlertOutline}"
+                       x:Name="ListBoxItem"/>
+        </ListBox>
+        </StackPanel>
       </Grid>
       <Border x:Name="StudentsCard"
               BorderBrush="#e8edec" BorderThickness="0 0 2 0">
@@ -215,6 +296,9 @@
         </Grid>
       </Border>
 
+    <GridSplitter Grid.Column="0"
+                  HorizontalAlignment="Right"
+                  Width="2"/>
   </Grid>
   </md:DrawerHost>
 </UserControl>
