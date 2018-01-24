@@ -64,13 +64,13 @@ namespace SFC.Gate.Material
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            //if(Config.General.ConfirmExit && System.Windows.MessageBox.Show(
-            //        "Are you sure you want to exit?", "Confirm Exit",
-            //        MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-            //{
-            //    e.Cancel = true;
-            //    return;
-            //}
+            if(Config.General.ConfirmExit && System.Windows.MessageBox.Show(
+                    "Are you sure you want to exit?", "Confirm Exit",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            {
+                e.Cancel = true;
+                return;
+            }
             RfidScanner.UnHook();
             base.OnClosing(e);
         }

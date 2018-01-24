@@ -7,6 +7,7 @@
              mc:Ignorable="d"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:SFC.Gate.Converters"
+             DataContext="{Binding Source={x:Static viewModels:Violations.Instance}}"
              xmlns:viewModels="clr-namespace:SFC.Gate.Material.ViewModels"
              d:DesignHeight="300" d:DesignWidth="300">
   <Grid>
@@ -14,177 +15,61 @@
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
+    <TextBlock Text="Manage Violations" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+               FontWeight="Bold"
+               Margin="74 20"/>
+    <Button Grid.Row="0"
+            Margin="74 20"
+            Command="{Binding AddViolationCommand}"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Content="New Violation"/>
+    <Rectangle Grid.Row="0"
+               Height="1"
+               VerticalAlignment="Bottom"
+               Fill="{StaticResource MaterialDesignDivider}"/>
+    <Grid Margin="74 20" Grid.Row="1">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
 
-
-    <md:ColorZone Mode="Light"
-                    IsEnabled="{Binding ShowNewDialog,Converter={converters:Inverter}}"
-                    Grid.ColumnSpan="2"
-                    Background="#f5f5f3"
-                    Grid.Row="0"
-                    BorderBrush="#e8edec"
-                    BorderThickness="0 0 0 2">
-      <Grid>
+      <Grid Margin="0 7" Grid.Row="0"
+            Visibility="{Binding ShowNewItem,Converter={converters:BooleanToVisibility}}">
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="*"/>
-          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <StackPanel Orientation="Horizontal" Margin="20">
-          <md:PackIcon Kind="AccountStarVariant" Foreground="{StaticResource PrimaryHueMidBrush}" VerticalAlignment="Center"
-                         Height="48" Width="48"
-                         Margin="7 0"/>
-          <TextBlock Text=" VIOLATIONS" FontWeight="Bold" VerticalAlignment="Center"
-                       Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Column="1" 
-                          HorizontalAlignment="Right">
-          <Grid VerticalAlignment="Bottom" Margin="0 0 0 7">
-            <Grid>
-              <TextBox Width="174" md:HintAssist.Hint="SEARCH" md:HintAssist.IsFloating="False"
-                         md:TextFieldAssist.TextBoxViewMargin="0 0 100 0"
-                             Text="{Binding SearchKeyword,UpdateSourceTrigger=PropertyChanged}" />
-              <md:PackIcon Kind="Magnify" VerticalAlignment="Center"
-                                 IsHitTestVisible="False"
-                                 HorizontalAlignment="Right" />
+        <TextBox Grid.Column="0" Margin="0 0 10 0" Text="{Binding NewItem.Name,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" />
+        <Button Grid.Column="1" Content="Add violation"
+                Command="{Binding AcceptNewCommand}"
+                Style="{StaticResource MaterialDesignRaisedButton}" />
+        <Button Grid.Column="2" Content="Cancel"
+                Command="{Binding CancelViolationCommand}"
+                Margin="10 0 0 0"
+                Style="{StaticResource MaterialDesignRaisedLightButton}" />
+      </Grid>
+      
+      <ItemsControl Grid.Row="1" Grid.IsSharedSizeScope="True"
+                    ItemsSource="{Binding Items}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Grid Margin="0 7">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <TextBox Grid.Column="1" Margin="0 0 10 0" Text="{Binding Name,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"/>
+              <Button Grid.Column="2" Content="{md:PackIcon Delete}"
+                      Command="{Binding DeleteCommand}"
+                      Style="{StaticResource MaterialDesignFlatButton}" />
             </Grid>
-          </Grid>
-          <ListBox Style="{StaticResource MaterialDesignToolToggleFlatListBox}"
-                   BorderBrush="{StaticResource MaterialDesignTextAreaBorder}"
-                   Focusable="False"
-                   BorderThickness="0 0 0 1"
-                   VerticalAlignment="Bottom" Margin="0 0 10 7">
-            <ListBoxItem Padding="4 2" ToolTip="Filter visitors who have not left yet."
-                         Focusable="False"
-                         IsSelected="{Binding FilterCurrentVisitors}">
-              <md:PackIcon Kind="AccountLocation"/>
-            </ListBoxItem>
-            <ListBoxItem Padding="4 2" ToolTip="Show all visitors today"
-                         Focusable="False"
-                         IsSelected="{Binding FilterVisitorsToday}">
-              <md:PackIcon Kind="CalendarToday" />
-            </ListBoxItem>
-          </ListBox>
-        </StackPanel>
-      </Grid>
-    </md:ColorZone>
-
-    <Grid Grid.Row="1" IsEnabled="{Binding ShowNewDialog,Converter={converters:Inverter}}">
-
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="*" MaxWidth="444" />
-      </Grid.ColumnDefinitions>
-
-      <Border x:Name="VisitorsCard"
-              Grid.Column="0"
-              BorderBrush="#e8edec" BorderThickness="0 0 2 0">
-        <Grid>
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-          </Grid.RowDefinitions>
-
-
-          <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Visitors}"
-                    CanUserDeleteRows="True"
-                    CanUserAddRows="False"
-                  IsSynchronizedWithCurrentItem="True"
-                  ClipboardCopyMode="None"
-                  Grid.Row="1">
-            <DataGrid.Columns>
-
-              <DataGridTextColumn Header="NAME" Binding="{Binding Name}"
-                                  IsReadOnly="True"/>
-              <DataGridTextColumn Header="ADDRESS"
-                                  Binding="{Binding Address,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
-                                  EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
-              <DataGridTextColumn Header="CONTACT" Binding="{Binding Number,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
-                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
-              <DataGridTextColumn Header="VISITS"
-                                  Binding="{Binding VisitCount}"
-                                  IsReadOnly="True"/>
-              <DataGridTextColumn Header="LAST VISIT"
-                                  Binding="{Binding LastVisit,Converter={converters:LastVisitConverter}}"
-                                  IsReadOnly="True" />
-            </DataGrid.Columns>
-          </DataGrid>
-        </Grid>
-      </Border>
-
-      <GridSplitter Grid.Column="0"
-                      HorizontalAlignment="Right"
-                      Width="2"
-                      VerticalAlignment="Stretch"/>
-
-      <Grid Grid.Column="1">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="Auto"/>
-          <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Visitors/Visits}"
-                  Grid.Row="1"
-                  IsReadOnly="True"
-                  CanUserDeleteRows="False"
-                  IsSynchronizedWithCurrentItem="True"
-                  ClipboardCopyMode="None">
-          <DataGrid.Columns>
-            <DataGridTextColumn Header="TIME IN" Binding="{Binding TimeIn,StringFormat=g}"
-                                IsReadOnly="True" />
-            <DataGridTemplateColumn Header="TIME OUT" SortMemberPath="TimeOut"
-                                IsReadOnly="True" >
-              <DataGridTemplateColumn.CellTemplate>
-                <DataTemplate>
-                  <Grid>
-                    <TextBlock Text="{Binding TimeOut,StringFormat=g,FallbackValue={}}" 
-                               Visibility="{Binding HasLeft,Converter={converters:BooleanToVisibility}}"/>
-                    <Button Style="{StaticResource MaterialDesignToolButton}"
-                            Height="Auto" Width="Auto"
-                            Padding="0"
-                            Command="{Binding Source={x:Static viewModels:VisitorsViewModel.Instance},Path=TimeOutCommand}"
-                            CommandParameter="{Binding}"
-                            Visibility="{Binding HasLeft,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
-                            HorizontalAlignment="Stretch"
-                            Content="{md:PackIcon Logout}"/>
-                  </Grid>
-                </DataTemplate>
-              </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-            <DataGridTextColumn Header="PURPOSE" Binding="{Binding Purpose}"
-                                IsReadOnly="True" />
-          </DataGrid.Columns>
-        </DataGrid>
-      </Grid>
-
-      <StackPanel Orientation="Horizontal"
-                  Grid.Column="0"
-                  Grid.ColumnSpan="2"
-                  HorizontalAlignment="Left"
-                  VerticalAlignment="Bottom"
-                  Margin="20">
-
-        <Button Style="{StaticResource MaterialDesignFlatButton}"
-                Command="{Binding AddVisitorCommand}">
-          <StackPanel Orientation="Horizontal">
-            <md:PackIcon Kind="AccountPlus" />
-            <TextBlock Text=" NEW VISITOR" />
-          </StackPanel>
-        </Button>
-
-        <Button Style="{StaticResource MaterialDesignFlatButton}"
-                Command="{Binding ReturnCardCommand}">
-          <StackPanel Orientation="Horizontal">
-            <md:PackIcon Kind="CreditCardScan" />
-            <TextBlock Text=" RETURN CARD" />
-          </StackPanel>
-        </Button>
-
-        <Button Style="{StaticResource MaterialDesignFlatButton}"
-                Command="{Binding PrintListCommand}">
-          <StackPanel Orientation="Horizontal">
-            <md:PackIcon Kind="Printer" />
-            <TextBlock Text=" PRINT" />
-          </StackPanel>
-        </Button>
-      </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
     </Grid>
+    
   </Grid>
 </UserControl>

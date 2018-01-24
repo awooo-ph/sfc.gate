@@ -49,6 +49,9 @@
         <md:TransitionerSlide >
           <views:Users/>
         </md:TransitionerSlide>
+        <md:TransitionerSlide>
+          <views:Settings/>
+        </md:TransitionerSlide>
       </md:Transitioner>
 
       <md:Snackbar Grid.Row="1" HorizontalAlignment="Stretch"
@@ -142,17 +145,7 @@
                          FontSize="7pt" />
             </StackPanel>
           </ListBoxItem>
-          <ListBoxItem>
-            <StackPanel Margin="4">
-              <md:PackIcon Kind="AccountMultipleOutline"
-                           Height="32"
-                           HorizontalAlignment="Center"
-                           Width="32" />
-              <TextBlock Text="USERS"
-                         HorizontalAlignment="Center"
-                         FontSize="7pt" />
-            </StackPanel>
-          </ListBoxItem>
+          
           <ListBoxItem>
             <StackPanel Margin="4">
               <md:PackIcon Kind="CalendarClock"

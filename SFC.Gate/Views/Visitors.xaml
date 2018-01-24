@@ -125,7 +125,8 @@
                   Grid.Row="1"
                   IsReadOnly="True"
                   CanUserDeleteRows="False"
-                  IsSynchronizedWithCurrentItem="True"
+                  IsSynchronizedWithCurrentItem="False"
+                  SelectionUnit="Cell"
                   ClipboardCopyMode="None">
           <DataGrid.Columns>
             <DataGridTextColumn Header="TIME IN" Binding="{Binding TimeIn,StringFormat=g}"

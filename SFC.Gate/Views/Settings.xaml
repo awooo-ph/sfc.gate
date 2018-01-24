@@ -1,0 +1,159 @@
+﻿<UserControl x:Class="SFC.Gate.Material.Views.Settings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SFC.Gate.Material.Views"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:SFC.Gate.Converters"
+             xmlns:cnf="clr-namespace:SFC.Gate.Configurations;assembly=SFC.Gate.Core"
+             xmlns:gate="clr-namespace:SFC.Gate"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+  <Grid Background="{StaticResource MaterialDesignPaper}">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+
+    <materialDesign:ColorZone Mode="Light"
+                    IsEnabled="{Binding ShowNewDialog,Converter={converters:Inverter}}"
+                    Grid.ColumnSpan="2"
+                    Background="#f5f5f3"
+                    Grid.Row="0">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Orientation="Horizontal" Margin="20">
+          <materialDesign:PackIcon Kind="Settings" Foreground="{StaticResource PrimaryHueMidBrush}"
+                                   VerticalAlignment="Center"
+                                   Height="48" Width="48"
+                                   Margin="7 0" />
+          <TextBlock Text=" SETTINGS" FontWeight="Bold" VerticalAlignment="Center"
+                     Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
+        </StackPanel>
+
+        <Rectangle Fill="#a8adac" Height="1" VerticalAlignment="Bottom"
+                   Grid.Column="0"
+                   SnapsToDevicePixels="True"/>
+        <Rectangle Fill="#a8adac" Height="1" VerticalAlignment="Bottom"
+                   Grid.Column="2"
+                   SnapsToDevicePixels="True" />
+        
+        <ListBox Grid.Column="1" x:Name="ListBox"
+                 Padding="10 4"
+                 Style="{StaticResource TabHeaderListbox}"
+                 SelectedIndex="0">
+          <ListBoxItem>
+            <StackPanel>
+              <materialDesign:PackIcon Kind="Earth"/>
+              <TextBlock Text="GLOBAL"/>
+            </StackPanel>
+          </ListBoxItem>
+          <ListBoxItem>
+            <StackPanel>
+              <materialDesign:PackIcon Kind="AccountOutline" />
+              <TextBlock Text="PROFILE" />
+            </StackPanel>
+          </ListBoxItem>
+          <ListBoxItem>
+            <StackPanel>
+              <materialDesign:PackIcon Kind="CellphoneBasic"/>
+              <TextBlock Text="SMS" />
+            </StackPanel>
+          </ListBoxItem>
+          <ListBoxItem>
+            <StackPanel>
+              <materialDesign:PackIcon Kind="AlertOutline" />
+              <TextBlock Text="VIOLATIONS" />
+            </StackPanel>
+          </ListBoxItem>
+        </ListBox>
+      
+      </Grid>
+    </materialDesign:ColorZone>
+
+    <materialDesign:Transitioner Grid.Row="1" SelectedIndex="{Binding ElementName=ListBox,Path=SelectedIndex}">
+      <materialDesign:TransitionerSlide>
+        <local:GlobalSettings/>
+      </materialDesign:TransitionerSlide>
+      <materialDesign:TransitionerSlide>
+        <local:UserProfile/>
+      </materialDesign:TransitionerSlide>
+      <materialDesign:TransitionerSlide>
+        <local:SmsSettings/>
+      </materialDesign:TransitionerSlide>
+      <materialDesign:TransitionerSlide>
+        <local:Violations/>
+      </materialDesign:TransitionerSlide>
+    </materialDesign:Transitioner>
+  </Grid>
+</UserControl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
