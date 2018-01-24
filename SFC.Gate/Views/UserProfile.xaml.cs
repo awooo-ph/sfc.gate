@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using SFC.Gate.Material.ViewModels;
 
 namespace SFC.Gate.Material.Views
 {
@@ -22,6 +23,27 @@ namespace SFC.Gate.Material.Views
         public UserProfile()
         {
             InitializeComponent();
+        }
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (CurrentPassword.Password != MainViewModel.Instance.CurrentUser.Password)
+            {
+                MessageBox.Show("Invalid password");
+                return;
+            }
+            if (NewPassword.Password != NewPassword2.Password)
+            {
+                MessageBox.Show("Passwords do not match!");
+                return;
+            }
+            if (string.IsNullOrEmpty(NewPassword.Password)) return;
+            var pwd = MainViewModel.Instance.CurrentUser.Password;
+            MainViewModel.Instance.CurrentUser.Update("Password",NewPassword.Password);
+            Models.Log.Add("CHANGE PASSWORD",
+                $"{MainViewModel.Instance.CurrentUser.Username} changed his/her password.");
+            MainViewModel.ShowMessage("Password successfully changed.","UNDO",
+                ()=>MainViewModel.Instance.CurrentUser.Update("Password",pwd));
         }
     }
 }

@@ -48,7 +48,7 @@
                  Margin="0 0 0 40"
                  materialDesign:HintAssist.IsFloating="True" />
     <Button Content="CHANGE PASSWORD" Grid.Row="6"
-            Command="{Binding ChangePasswordCommand}"
+            Click="ButtonBase_OnClick"
             HorizontalAlignment="Left"/>
 
     <StackPanel Orientation="Vertical"

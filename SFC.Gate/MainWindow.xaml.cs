@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -113,6 +114,18 @@ namespace SFC.Gate.Material
         private void Menu_OnKeyDown(object sender, KeyEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            ContextMenu.PlacementTarget = (UIElement) sender;
+            ContextMenu.Placement = PlacementMode.Right;
+            ContextMenu.IsOpen = true;
+        }
+
+        private void UIElement_OnMouseUp(object sender, MouseButtonEventArgs e)
+        {
+          
         }
     }
 }

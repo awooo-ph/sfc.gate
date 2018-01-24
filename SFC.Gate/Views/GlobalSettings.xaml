@@ -19,12 +19,9 @@
         <RowDefinition Height="Auto" />
         <RowDefinition Height="*" />
       </Grid.RowDefinitions>
-         <TextBlock Text="Global Settings" Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
-      <TextBlock Text="These settings affect all users. Only Admins can see this page."
-                 Grid.Row="1"
-                 Margin="0 0 0 40"
-                 Style="{StaticResource MaterialDesignSubheadingTextBlock}"/>
-
+         <TextBlock Text="Global Settings" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                    Margin="0 0 0 40"/>
+     
       <StackPanel Grid.Row="2" MaxWidth="777" HorizontalAlignment="Left">
       <TextBlock Text="RFID scanner" Style="{StaticResource MaterialDesignBody2TextBlock}" />
       <Border BorderBrush="{StaticResource MaterialDesignDivider}" CornerRadius="4"

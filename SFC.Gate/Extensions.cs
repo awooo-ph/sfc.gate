@@ -5,6 +5,8 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Input;
+using Devcorner.NIdenticon;
+using Devcorner.NIdenticon.BrushGenerators;
 using Microsoft.Win32;
 
 namespace SFC.Gate
@@ -45,6 +47,28 @@ namespace SFC.Gate
                 return false;
             var ext = System.IO.Path.GetExtension(file)?.ToUpper();
             return File.Exists(file) && (ACCEPTED_EXTENSIONS.Contains(ext));
+
+        }
+
+        public static byte[] Generate()
+        {
+            var rnd = new Random();
+            var color = Color.FromArgb(255, rnd.Next(0, 255), rnd.Next(0, 255), rnd.Next(0, 255));
+            var gen = new IdenticonGenerator()
+                .WithBlocks(7, 7)
+                .WithSize(512, 512)
+                .WithBlockGenerators(IdenticonGenerator.ExtendedBlockGeneratorsConfig)
+                .WithBackgroundColor(Color.White)
+                .WithBrushGenerator(new StaticColorBrushGenerator(color));
+
+            using (var pic = gen.Create("awooo" + DateTime.Now.Ticks))
+            {
+                using (var stream = new MemoryStream())
+                {
+                    pic.Save(stream, ImageFormat.Jpeg);
+                    return stream.ToArray();
+                }
+            }
 
         }
 

@@ -24,6 +24,11 @@ namespace SFC.Gate.Material
 
         protected override void OnExit(ExitEventArgs e)
         {
+            foreach (var violation in Violation.Cache)
+            {
+                violation.Save();
+            }
+            
             base.OnExit(e);
             Config.Save();
             Log.Add("Application Shutdown");

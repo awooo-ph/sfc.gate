@@ -48,7 +48,7 @@
         <ListBox Grid.Column="1" x:Name="ListBox"
                  Padding="10 4"
                  Style="{StaticResource TabHeaderListbox}"
-                 SelectedIndex="0">
+                 SelectedIndex="{Binding SettingIndex}">
           <ListBoxItem>
             <StackPanel>
               <materialDesign:PackIcon Kind="Earth"/>
@@ -80,16 +80,16 @@
 
     <materialDesign:Transitioner Grid.Row="1" SelectedIndex="{Binding ElementName=ListBox,Path=SelectedIndex}">
       <materialDesign:TransitionerSlide>
-        <local:GlobalSettings/>
+        <local:GlobalSettings IsEnabled="{Binding CurrentUser.IsAdmin}"/>
       </materialDesign:TransitionerSlide>
       <materialDesign:TransitionerSlide>
         <local:UserProfile/>
       </materialDesign:TransitionerSlide>
       <materialDesign:TransitionerSlide>
-        <local:SmsSettings/>
+        <local:SmsSettings IsEnabled="{Binding CurrentUser.IsAdmin}" />
       </materialDesign:TransitionerSlide>
       <materialDesign:TransitionerSlide>
-        <local:Violations/>
+        <local:Violations IsEnabled="{Binding CurrentUser.IsAdmin}" />
       </materialDesign:TransitionerSlide>
     </materialDesign:Transitioner>
   </Grid>
