@@ -1,0 +1,200 @@
+﻿<UserControl x:Class="SFC.Gate.Material.Views.GuardMode"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:views="clr-namespace:SFC.Gate.Material.Views"
+             xmlns:converters="clr-namespace:SFC.Gate.Converters"
+             xmlns:vm="clr-namespace:SFC.Gate.Material.ViewModels"
+             mc:Ignorable="d"
+             Background="{StaticResource MaterialDesignDarkBackground}"
+             DataContext="{Binding Source={x:Static vm:Guard.Instance}}"
+             d:DesignHeight="300" d:DesignWidth="300">
+  <UserControl.Triggers>
+    <EventTrigger RoutedEvent="UserControl.Loaded">
+      <EventTrigger.Actions>
+        <BeginStoryboard>
+          <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+            <DoubleAnimation To="0" From="1" Duration="0:0:0.4"
+                                        Storyboard.TargetName="RfidSignal"
+                                        AutoReverse="True"
+                                        RepeatBehavior="Forever"
+                                        Storyboard.TargetProperty="Opacity"/>
+            <DoubleAnimation To="0" From="1" Duration="0:0:0.7"
+                                         Storyboard.TargetName="RfidText"
+                                         AutoReverse="True"
+                                         RepeatBehavior="Forever"
+                                         Storyboard.TargetProperty="Opacity"/>
+            <DoubleAnimation To="0" From="1" Duration="0:0:0.7"
+                                         Storyboard.TargetName="RfidText"
+                                         AutoReverse="True"
+                                         RepeatBehavior="Forever"
+                                         Storyboard.TargetProperty="Opacity"/>
+
+          </Storyboard>
+        </BeginStoryboard>
+      </EventTrigger.Actions>
+    </EventTrigger>
+  </UserControl.Triggers>
+  <Grid>
+    <Grid Visibility="{Binding StandbyVisibility}">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <Viewbox Margin="0 20 0 0">
+        <StackPanel x:Name="Clock">
+          <Viewbox>
+            <views:Clock Margin="10" Height="471" Width="471"/>
+          </Viewbox>
+          <Viewbox>
+            <TextBlock x:Name="DateText" FontSize="74pt" HorizontalAlignment="Center"
+                       Foreground="White"/>
+          </Viewbox>
+        </StackPanel>
+      </Viewbox>
+      <Viewbox x:Name="Swipe" Opacity="1" Margin="20"
+                 Height="74"
+                 Grid.Row="1">
+        <StackPanel Orientation="Horizontal">
+          <Viewbox HorizontalAlignment="Center" x:Name="RfidSignal">
+            <Rectangle Fill="White" Stretch="Uniform" Height="174" Width="174">
+              <Rectangle.OpacityMask>
+                <ImageBrush ImageSource="pack://application:,,,/contactless-icon.png"
+                                        RenderOptions.BitmapScalingMode="LowQuality"/>
+              </Rectangle.OpacityMask>
+            </Rectangle>
+          </Viewbox>
+          <Viewbox HorizontalAlignment="Center" x:Name="RfidText" Margin="20 0">
+            <StackPanel>
+              <TextBlock Text="PLEASE SWIPE YOUR" FontSize="30pt"
+                           TextAlignment="Center"
+                           Foreground="White"/>
+              <TextBlock Text="IDENTIFICATION CARD" FontSize="30pt"
+                                   FontWeight="Bold"
+                                   TextAlignment="Center"
+                                   Foreground="White"/>
+            </StackPanel>
+          </Viewbox>
+        </StackPanel>
+      </Viewbox>
+    </Grid>
+    <Grid Visibility="{Binding StudentInfoVisibility}">
+
+
+      <Viewbox >
+        <Grid IsHitTestVisible="False" HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Margin="10">
+          <Grid.Resources>
+            <Style TargetType="{x:Type TextBlock}">
+              <Setter Property="FontSize" Value="40pt"/>
+              <Setter Property="Foreground" Value="White"/>
+            </Style>
+            <Style TargetType="{x:Type TextBox}">
+              <Setter Property="FontSize" Value="47pt"/>
+            </Style>
+          </Grid.Resources>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+
+          <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                            Margin="0 0 74 0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            BorderBrush="White" BorderThickness="4">
+              <Image Source="{Binding Student.Picture, Converter={converters:BytesToImage}}"
+                       Stretch="Uniform"
+                       Height="471"/>
+            </Border>
+
+            <Rectangle Grid.Column="1" 
+                                   Fill="Black" Opacity="0.1"
+                                 RadiusX="7" RadiusY="7"/>
+
+            <Grid Grid.Column="1" Margin="40">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+              </Grid.RowDefinitions>
+
+              <TextBlock Grid.Column="1" Grid.Row="1" Margin="20" VerticalAlignment="Center"
+                           Text="ID Number"/>
+              <TextBlock Grid.Column="1" Grid.Row="2" Margin="20" VerticalAlignment="Center"
+                           Text="Name"/>
+              <TextBlock Grid.Column="1" Grid.Row="3" Margin="20" VerticalAlignment="Center"
+                           Text="Year Level"/>
+              <TextBlock Grid.Column="1" Grid.Row="4" Margin="20" VerticalAlignment="Center"
+                           Text="Department"/>
+
+              <TextBox Grid.Column="2" Grid.Row="1" Margin="20" IsReadOnly="True" Focusable="False" KeyboardNavigation.IsTabStop="False"
+                         VerticalAlignment="Center"
+                Text="{Binding Student.StudentId}"/>
+              <TextBox Grid.Column="2" Grid.Row="2" Margin="20" IsReadOnly="True" Focusable="False" KeyboardNavigation.IsTabStop="False"
+                         VerticalAlignment="Center"
+                         Text="{Binding Student.Fullname, Mode=OneWay}"/>
+              <TextBox Grid.Column="2" Grid.Row="3" Margin="20" IsReadOnly="True" Focusable="False" KeyboardNavigation.IsTabStop="False"
+                         VerticalAlignment="Center"
+                         Text="{Binding Student.YearLevel}"/>
+              <TextBox Grid.Column="2" Grid.Row="4" Margin="20" IsReadOnly="True" Focusable="False" KeyboardNavigation.IsTabStop="False"
+                         VerticalAlignment="Center"
+                         Text="{Binding Student.Department}"/>
+
+            </Grid>
+
+          </Grid>
+
+          <Grid Grid.Column="0" Grid.Row="0" Margin="40"
+                      HorizontalAlignment="Center">
+            <Rectangle  Stroke="Transparent" StrokeThickness="0" RadiusX="7" RadiusY="7"
+                                    Fill="Black" Opacity="0.4"/>
+            <Rectangle Stroke="White" RadiusX="7" RadiusY="7"
+                               StrokeThickness="4"/>
+
+            <TextBlock Text="St. Francis College - Guihulngan"
+                               FontFamily="Times New Roman"
+                               Foreground="White"
+                           FontSize="74pt"
+                               Margin="74 30"/>
+          </Grid>
+
+
+          <Grid Grid.Column="0" Grid.Row="2" 
+                      Margin="40"
+                      HorizontalAlignment="Center">
+            <Rectangle  Stroke="Transparent" StrokeThickness="0" RadiusX="7" RadiusY="7"
+                                Fill="Black" Opacity="0.4"/>
+            <Rectangle Stroke="White" StrokeThickness="2" RadiusX="7" RadiusY="7"/>
+
+            <TextBlock Text="{Binding Welcome}" Margin="74 30"
+                           Foreground="White"
+                           FontSize="74pt"
+                           FontFamily="Comic Sans"
+                           FontWeight="Bold"
+                           FontStretch="UltraExpanded"
+                           
+                           />
+          </Grid>
+        </Grid>
+      </Viewbox>
+    </Grid>
+  </Grid>
+</UserControl>

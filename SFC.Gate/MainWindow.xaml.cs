@@ -109,5 +109,10 @@ namespace SFC.Gate.Material
         {
             WindowState = WindowState.Minimized;
         }
+
+        private void Menu_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            e.Handled = true;
+        }
     }
 }

@@ -81,7 +81,7 @@
                        Text="Minimum time, in seconds, between valid scans." />
           </StackPanel>
 
-      <StackPanel Margin="0 0 40 40">
+      <StackPanel Margin="0 0 40 40" Visibility="Collapsed">
         <TextBlock FontWeight="Bold">
                             <Run Text="Activate Guard Mode When Idle For "/>
                             <Run Text="{Binding Source={x:Static cnf:Config.General},Path=GuardModeOnIdle}"/>
