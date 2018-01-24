@@ -90,8 +90,12 @@
               <md:FadeWipe/>
             </md:TransitionerSlide.ForwardWipe>
             <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+              </Grid.RowDefinitions>
               <DataGrid ItemsSource="{Binding Students/Logs}" AutoGenerateColumns="False"
-                  Grid.Row="1"
+                  Grid.Row="0"
                   IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False">
                 <DataGrid.Columns>
                   <DataGridTextColumn Header="TIME" Binding="{Binding DateTime}" />
@@ -99,18 +103,16 @@
                 </DataGrid.Columns>
               </DataGrid>
 
-              <UniformGrid Rows="1" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="20">
+              <UniformGrid Rows="1" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10">
                 <Button Style="{StaticResource MaterialDesignFlatButton}"
-                    Command="{Binding PrintLogCommand}"
-                    CommandParameter="{Binding Students/}">
+                    Command="{Binding PrintLogCommand}">
                   <StackPanel Orientation="Horizontal">
                     <md:PackIcon Kind="Printer"/>
                     <TextBlock Text=" PRINT"/>
                   </StackPanel>
                 </Button>
                 <Button Style="{StaticResource MaterialDesignFlatButton}"
-                    Command="{Binding ClearLogCommand}"
-                    CommandParameter="{Binding Students/}">
+                    Command="{Binding ClearLogCommand}">
                   <StackPanel Orientation="Horizontal">
                     <md:PackIcon Kind="CalendarRemove" />
                     <TextBlock Text=" CLEAR" />
@@ -127,7 +129,13 @@
               <md:FadeWipe />
             </md:TransitionerSlide.ForwardWipe>
             <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+              </Grid.RowDefinitions>
+              
               <DataGrid ItemsSource="{Binding Students/Violations}" AutoGenerateColumns="False"
+                        IsEnabled="{Binding ShowViolationSelector,Converter={converters:Inverter}}"
                         IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False">
                 <DataGrid.Columns>
                   <DataGridTextColumn Header="DATE" Binding="{Binding DateCommitted,StringFormat={}d}" />
@@ -135,32 +143,71 @@
                 </DataGrid.Columns>
               </DataGrid>
 
-              <UniformGrid Rows="1" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="20">
+              <UniformGrid Rows="1" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                           IsEnabled="{Binding ShowViolationSelector,Converter={converters:Inverter}}"
+                           Margin="10">
                 <Button Style="{StaticResource MaterialDesignFlatButton}"
-                        Command="{Binding AddViolationCommand}"
-                        CommandParameter="{Binding Students/}">
+                        Command="{Binding AddViolationCommand}">
                   <StackPanel Orientation="Horizontal">
                     <md:PackIcon Kind="Plus" />
                     <TextBlock Text=" ADD" />
                   </StackPanel>
                 </Button>
                 <Button Style="{StaticResource MaterialDesignFlatButton}"
-                        Command="{Binding PrintViolationsCommand}"
-                        CommandParameter="{Binding Students/}">
+                        Command="{Binding PrintViolationsCommand}">
                   <StackPanel Orientation="Horizontal">
                     <md:PackIcon Kind="Printer" />
                     <TextBlock Text=" PRINT" />
                   </StackPanel>
                 </Button>
                 <Button Style="{StaticResource MaterialDesignFlatButton}"
-                        Command="{Binding ClearViolationsCommand}"
-                        CommandParameter="{Binding Students/}">
+                        Command="{Binding ClearViolationsCommand}">
                   <StackPanel Orientation="Horizontal">
                     <md:PackIcon Kind="Close" />
                     <TextBlock Text=" CLEAR" />
                   </StackPanel>
                 </Button>
               </UniformGrid>
+              
+              <Grid Background="#77777777" Visibility="{Binding ShowViolationSelector,Converter={converters:BooleanToVisibility}}"
+                    Grid.RowSpan="2">
+                <md:Card VerticalAlignment="Center"
+                         UniformCornerRadius="4"
+                         HorizontalAlignment="Center">
+                  <StackPanel>
+                    <TextBlock Text="ADD VIOLATION"
+                               Margin="10"
+                               Foreground="{StaticResource PrimaryHueMidBrush}"
+                               Style="{StaticResource MaterialDesignTitleTextBlock}"
+                               VerticalAlignment="Center" />
+                    <Rectangle Fill="{StaticResource PrimaryHueMidBrush}" Height="1"/>
+                    <ListBox ItemsSource="{Binding ViolationsList}"
+                           MinWidth="222"
+                           MaxWidth="333"
+                           MaxHeight="333">
+                        <ListBox.ItemTemplate>
+                        <DataTemplate>
+                          <StackPanel Orientation="Horizontal">
+                            <RadioButton Margin="0 0 10 0"
+                                         IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem},Path=IsSelected}"/>
+                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                          </StackPanel>
+                        </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <UniformGrid Rows="1">
+                      <Button Style="{StaticResource MaterialDesignFlatButton}"
+                              Command="{Binding CancelAddViolationCommand}"
+                              IsCancel="True"
+                              Content="CANCEL" />
+                      <Button Style="{StaticResource MaterialDesignFlatButton}"
+                              Command="{Binding AcceptAddViolationCommand}"
+                              Content="ACCEPT" />
+                    </UniformGrid>
+                    
+                  </StackPanel>
+                </md:Card>
+              </Grid>
             </Grid>
           </md:TransitionerSlide>
         </md:Transitioner>

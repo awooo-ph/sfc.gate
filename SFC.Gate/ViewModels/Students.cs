@@ -142,5 +142,79 @@ namespace SFC.Gate.Material.ViewModels
         {
             StudentActivityOpen = true;
         }));
+
+        private bool _ShowViolationSelector;
+
+        public bool ShowViolationSelector
+        {
+            get => _ShowViolationSelector;
+            set
+            {
+                if(value == _ShowViolationSelector)
+                    return;
+                _ShowViolationSelector = value;
+                OnPropertyChanged(nameof(ShowViolationSelector));
+            }
+        }
+
+        private ListCollectionView _violationsList;
+        public ListCollectionView ViolationsList
+        {
+            get
+            {
+                if (_violationsList != null) return _violationsList;
+                _violationsList = new ListCollectionView(Violation.Cache);
+                return _violationsList;
+            }
+        }
+
+        private ICommand _acceptAddViolationCommand;
+
+        public ICommand AcceptAddViolationCommand =>
+            _acceptAddViolationCommand ?? (_acceptAddViolationCommand = new DelegateCommand(
+                d =>
+                {
+                    if (_violationsList.CurrentItem == null)
+                        return;
+                    var stud = Students.CurrentItem as Student;
+                    var v = (Violation) _violationsList.CurrentItem;
+                    stud?.AddViolation(v);
+                    ShowViolationSelector = false;
+                }));
+
+        private ICommand _clearLogCommand;
+
+        public ICommand ClearLogCommand => _clearLogCommand ?? (_clearLogCommand = new DelegateCommand(d =>
+        {
+            var stud = Students.CurrentItem as Student;
+            stud.ClearLog();
+        }));
+
+        private ICommand _addViolationCommand;
+
+        public ICommand AddViolationCommand => _addViolationCommand ?? (_addViolationCommand = new DelegateCommand(d =>
+        {
+            ViolationsList.MoveCurrentTo(null);
+            ShowViolationSelector = true;
+        }));
+
+        private ICommand _cancelAddViolationCommand;
+
+        public ICommand CancelAddViolationCommand =>
+            _cancelAddViolationCommand ?? (_cancelAddViolationCommand = new DelegateCommand(
+                d =>
+                {
+                    ShowViolationSelector = false;
+                }));
+
+        private ICommand _clearViolationsCommand;
+
+        public ICommand ClearViolationsCommand =>
+            _clearViolationsCommand ?? (_clearViolationsCommand = new DelegateCommand(
+                d =>
+                {
+                    var stud = Students.CurrentItem as Student;
+                    stud?.ClearViolations();
+                }));
     }
 }

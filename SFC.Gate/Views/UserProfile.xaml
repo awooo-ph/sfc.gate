@@ -4,9 +4,76 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SFC.Gate.Material.Views"
+             xmlns:converters="clr-namespace:SFC.Gate.Converters"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:cnf="clr-namespace:SFC.Gate.Configurations;assembly=SFC.Gate.Core"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-            
-    </Grid>
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+  <Grid Margin="74 47">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="Auto"/>
+    </Grid.ColumnDefinitions>
+    <TextBlock Text="Edit Your Profile" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+               Margin="0 0 0 40" />
+    
+    <TextBox materialDesign:HintAssist.Hint="USERNAME"
+             Grid.Row="1"
+             Text="{Binding CurrentUser.Username}"
+             Margin="0 0 0 74"
+             materialDesign:HintAssist.IsFloating="True"/>
+    <PasswordBox materialDesign:HintAssist.Hint="CURRENT PASSWORD"
+                 x:Name="CurrentPassword"
+             Grid.Row="3"
+             Margin="0 0 0 40"
+             materialDesign:HintAssist.IsFloating="True" />
+    <PasswordBox materialDesign:HintAssist.Hint="NEW PASSWORD"
+                 x:Name="NewPassword"
+                 Grid.Row="4"
+                 Margin="0 0 0 40"
+                 materialDesign:HintAssist.IsFloating="True" />
+    <PasswordBox materialDesign:HintAssist.Hint="CONFIRM PASSWORD"
+                 x:Name="NewPassword2"
+                 Grid.Row="5"
+                 Margin="0 0 0 40"
+                 materialDesign:HintAssist.IsFloating="True" />
+    <Button Content="CHANGE PASSWORD" Grid.Row="6"
+            Command="{Binding ChangePasswordCommand}"
+            HorizontalAlignment="Left"/>
+
+    <StackPanel Orientation="Vertical"
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="40 0 0 0"
+                Grid.RowSpan="5">
+      <Grid HorizontalAlignment="Center">
+        <materialDesign:PackIcon Kind="Account" Height="177" Width="177"/>
+      <Image RenderOptions.BitmapScalingMode="HighQuality"
+             Stretch="Uniform"
+             Height="177"
+             Source="{Binding CurrentUser.Picture,Converter={converters:BytesToImage}}"/>
+        <Button HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Height="Auto"
+                MinHeight="177"
+                Command="{Binding GeneratePictureCommand}"
+                Style="{StaticResource MaterialDesignToolButton}"/>
+      </Grid>
+      <Button HorizontalAlignment="Center"
+              Command="{Binding ChangePictureCommand}"
+              Style="{StaticResource MaterialDesignFlatButton}"
+              Content="Change Photo"/>
+    </StackPanel>
+  </Grid>
+  </ScrollViewer>
 </UserControl>

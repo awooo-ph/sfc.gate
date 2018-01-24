@@ -125,6 +125,9 @@
     <Compile Include="Views\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Sms.xaml.cs">
+      <DependentUpon>Sms.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SmsSettings.xaml.cs">
       <DependentUpon>SmsSettings.xaml</DependentUpon>
     </Compile>
@@ -142,6 +145,9 @@
     </Compile>
     <Compile Include="Views\Violations.xaml.cs">
       <DependentUpon>Violations.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ViolationSelector.xaml.cs">
+      <DependentUpon>ViolationSelector.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Visitors.xaml.cs">
       <DependentUpon>Visitors.xaml</DependentUpon>
@@ -174,6 +180,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Sms.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\SmsSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -195,6 +205,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Violations.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ViolationSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

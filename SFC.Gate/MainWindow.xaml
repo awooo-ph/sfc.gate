@@ -45,7 +45,9 @@
         <!--<md:TransitionerSlide>
           <views:Violations/>
         </md:TransitionerSlide>-->
-        <md:TransitionerSlide/>
+        <md:TransitionerSlide>
+          <views:Sms/>
+        </md:TransitionerSlide>
         <md:TransitionerSlide >
           <views:Users/>
         </md:TransitionerSlide>

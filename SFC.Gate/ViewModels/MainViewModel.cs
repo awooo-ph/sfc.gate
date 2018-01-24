@@ -43,8 +43,6 @@ namespace SFC.Gate.Material.ViewModels
             }
         }
         
-        
-
         private SnackbarMessageQueue _messageQueue;
         public SnackbarMessageQueue MessageQueue => _messageQueue ?? (_messageQueue = new SnackbarMessageQueue());
 
@@ -57,7 +55,6 @@ namespace SFC.Gate.Material.ViewModels
         {
             Instance.MessageQueue.Enqueue(message,actionContent,action,param,promote);
         }
-
-      
+        
     }
 }
