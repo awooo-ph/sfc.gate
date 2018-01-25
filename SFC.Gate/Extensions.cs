@@ -13,6 +13,17 @@ namespace SFC.Gate
 {
     static class Extensions
     {
+
+        public static void Print(string path)
+        {
+            var info = new ProcessStartInfo(path);
+            //info.Arguments = "\"" + Config.PrinterName + "\"";
+            info.CreateNoWindow = true;
+            info.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+            info.UseShellExecute = true;
+            info.Verb = "PrintTo";
+            Process.Start(info);
+        }
         
         public static string GetPicture()
         {

@@ -332,7 +332,7 @@
           </DataGrid>
 
           <Button Style="{StaticResource MaterialDesignFlatButton}"
-                  Command="{Binding PrintListCommand}"
+                  Command="{Binding PrintCommand}"
                   Grid.Row="1"
                   HorizontalAlignment="Left"
                   VerticalAlignment="Bottom"

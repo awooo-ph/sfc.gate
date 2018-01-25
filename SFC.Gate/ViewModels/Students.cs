@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Data;
 using System.Windows.Input;
 using SFC.Gate.Models;
+using Xceed.Words.NET;
 
 namespace SFC.Gate.Material.ViewModels
 {
@@ -216,5 +219,61 @@ namespace SFC.Gate.Material.ViewModels
                     var stud = Students.CurrentItem as Student;
                     stud?.ClearViolations();
                 },d=>MainViewModel.Instance.CurrentUser?.IsAdmin??false));
+
+        private ICommand _printCommand;
+
+        public ICommand PrintCommand => _printCommand ?? (_printCommand = new DelegateCommand(d =>
+        {
+            PrintList(Student.Cache);
+        }, d => Student.Cache.Count > 0));
+
+        private ICommand _printSelectedCommand;
+
+        public ICommand PrintSelectedCommand => _printSelectedCommand ?? (_printSelectedCommand = new DelegateCommand(
+                                                    d =>
+                                                    {
+                                                        PrintList(Student.Cache.Where(x => x.IsSelected));
+                                                    }, d => Student.Cache.Any(x => x.IsSelected)));
+
+        private static void PrintList(IEnumerable<Student> students)
+        {
+            if(!Directory.Exists("Temp"))
+                Directory.CreateDirectory("Temp");
+            var temp = Path.Combine("Temp", $"List of Students [{DateTime.Now:d-MMM-yyyy}].docx");
+            using(var doc = DocX.Load(@"Templates\Students.docx"))
+            {
+                var tbl = doc.Tables.First();
+
+                var pt = (1F / 72F);
+                foreach(var item in students)
+                {
+                    var r = tbl.InsertRow();
+                    var p = r.Cells[0].Paragraphs.First().Append(item.Rfid);
+                    p.LineSpacingAfter = 0;
+                    p.Alignment = Alignment.center;
+
+                    p = r.Cells[1].Paragraphs.First().Append(item.Fullname);
+                    p.LineSpacingAfter = 0;
+                    p.Alignment = Alignment.left;
+
+                    r.Cells[2].Paragraphs.First().Append(item.YearLevel).LineSpacingAfter = 0;
+
+                    p = r.Cells[3].Paragraphs.First().Append(item.Department);
+                    p.Alignment = Alignment.left;
+                    p.LineSpacingAfter = 0;
+                }
+                var border = new Xceed.Words.NET.Border(BorderStyle.Tcbs_single, BorderSize.one, 0, System.Drawing.Color.Black);
+                tbl.SetBorder(TableBorderType.Bottom, border);
+                tbl.SetBorder(TableBorderType.Left, border);
+                tbl.SetBorder(TableBorderType.Right, border);
+                tbl.SetBorder(TableBorderType.Top, border);
+                tbl.SetBorder(TableBorderType.InsideV, border);
+                tbl.SetBorder(TableBorderType.InsideH, border);
+                File.Delete(temp);
+                doc.SaveAs(temp);
+            }
+            Extensions.Print(temp);
+        }
+
     }
 }
