@@ -17,7 +17,14 @@ namespace SFC.Gate.Material.ViewModels
 {
     class MainViewModel : INotifyPropertyChanged
     {
-        private MainViewModel() { }
+        private MainViewModel()
+        {
+            Messenger.Default.AddListener<string>(Messages.SMS, msg =>
+            {
+                if (string.IsNullOrEmpty(msg)) return;
+                MessageQueue.Enqueue($"SMS Notification: {msg}");
+            });
+        }
 
         private static MainViewModel _instance;
         public static MainViewModel Instance => _instance ?? (_instance = new MainViewModel());

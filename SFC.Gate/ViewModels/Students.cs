@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows.Data;
 using System.Windows.Input;
 using SFC.Gate.Models;
+using SFC.Gate.ViewModels;
 using Xceed.Words.NET;
 
 namespace SFC.Gate.Material.ViewModels
@@ -183,6 +184,10 @@ namespace SFC.Gate.Material.ViewModels
                     var v = (Violation) _violationsList.CurrentItem;
                     stud?.AddViolation(v);
                     ShowViolationSelector = false;
+                    var msg = SFC.Gate.Configurations.Sms.Default.ViolationTemplate.Replace("[STUDENT]", stud.Fullname)
+                        .Replace("[VIOLATION]", v.Name)
+                        .Replace("[TIME]",DateTime.Now.ToString("g"));
+                    SMS.Send(msg,stud.ContactNumber);
                 }));
 
         private ICommand _clearLogCommand;
@@ -275,5 +280,97 @@ namespace SFC.Gate.Material.ViewModels
             Extensions.Print(temp);
         }
 
+        private ICommand _printViolationsCommand;
+
+        public ICommand PrintViolationsCommand => _printViolationsCommand ?? (_printViolationsCommand = new DelegateCommand(d =>
+        {
+            var stud = Students.CurrentItem as Student;
+            PrintList(stud.Violations.Cast<StudentsViolations>());
+            Log.Add($"Printed {stud.Fullname}'s violations.", "");
+        }, CanPrint));
+
+        private bool CanPrint(object obj)
+        {
+            var stud = Students.CurrentItem as Student;
+            if (stud == null) return false;
+            return stud.Violations.Count > 0;
+        }
+
+        private static void PrintList(IEnumerable<StudentsViolations> violations)
+        {
+            if(!Directory.Exists("Temp")) Directory.CreateDirectory("Temp");
+            var stud = Instance.Students.CurrentItem as Student;
+            if (stud == null) return;
+            
+            var temp = Path.Combine("Temp", $"{stud.Fullname}'s Violations [{DateTime.Now:d-MMM-yyyy}].docx");
+            using(var doc = DocX.Load(@"Templates\StudentViolations.docx"))
+            {
+                doc.ReplaceText("[NAME]",stud.Fullname);
+                doc.ReplaceText("[DATE]",DateTime.Now.ToShortDateString());
+                
+                var tbl = doc.Tables.First();// doc.InsertTable(1, 6);
+               
+                foreach(var item in violations)
+                {
+                    var r = tbl.InsertRow();
+                    var p = r.Cells[0].Paragraphs.First().Append(item.DateCommitted.ToString("g"));
+                    p.LineSpacingAfter = 0;
+                    p.Alignment = Alignment.center;
+                    
+                    r.Cells[1].Paragraphs.First().Append(item.Violation.Name).LineSpacingAfter = 0;
+
+                }
+                var border = new Xceed.Words.NET.Border(BorderStyle.Tcbs_single, BorderSize.one, 0, System.Drawing.Color.Black);
+                tbl.SetBorder(TableBorderType.Bottom, border);
+                tbl.SetBorder(TableBorderType.Left, border);
+                tbl.SetBorder(TableBorderType.Right, border);
+                tbl.SetBorder(TableBorderType.Top, border);
+                tbl.SetBorder(TableBorderType.InsideV, border);
+                tbl.SetBorder(TableBorderType.InsideH, border);
+                File.Delete(temp);
+                doc.SaveAs(temp);
+            }
+            Extensions.Print(temp);
+        }
+
+        private static void PrintLog(Student stud)
+        {
+            if(!Directory.Exists("Temp")) Directory.CreateDirectory("Temp");
+            var temp = Path.Combine("Temp", $"{stud.Fullname}'s Activity Log [{DateTime.Now:d-MMM-yyyy}].docx");
+            using(var doc = DocX.Load(@"Templates\StudentLog.docx"))
+            {
+                var tbl = doc.Tables.First();// doc.InsertTable(1, 6);
+                
+                doc.ReplaceText("[NAME]",stud.Fullname);
+                
+                foreach(Log item in stud.Logs)
+                {
+                    var r = tbl.InsertRow();
+                    var p = r.Cells[0].Paragraphs.First().Append(item.DateTime.ToString("g"));
+                    p.LineSpacingAfter = 0;
+                    p.Alignment = Alignment.center;
+                    
+                    r.Cells[1].Paragraphs.First().Append(item.Description).LineSpacingAfter = 0;
+
+                }
+                var border = new Xceed.Words.NET.Border(BorderStyle.Tcbs_single, BorderSize.one, 0, System.Drawing.Color.Black);
+                tbl.SetBorder(TableBorderType.Bottom, border);
+                tbl.SetBorder(TableBorderType.Left, border);
+                tbl.SetBorder(TableBorderType.Right, border);
+                tbl.SetBorder(TableBorderType.Top, border);
+                tbl.SetBorder(TableBorderType.InsideV, border);
+                tbl.SetBorder(TableBorderType.InsideH, border);
+                File.Delete(temp);
+                doc.SaveAs(temp);
+            }
+            Extensions.Print(temp);
+        }
+
+        private ICommand _printLogCommand;
+
+        public ICommand PrintLogCommand => _printLogCommand ?? (_printCommand = new DelegateCommand(d =>
+        {
+            PrintLog((Student) Students.CurrentItem);
+        },d=>(Students.CurrentItem as Student)?.Logs.Count>0));
     }
 }

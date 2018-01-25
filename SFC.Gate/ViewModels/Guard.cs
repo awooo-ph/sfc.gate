@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Media;
 using SFC.Gate.Configurations;
 using SFC.Gate.Models;
+using Sms = SFC.Gate.Material.Views.Sms;
 
 namespace SFC.Gate.Material.ViewModels
 {
@@ -35,6 +36,7 @@ namespace SFC.Gate.Material.ViewModels
 
 
                     var pass = Student.Pass();
+                    var msg = "";
                     switch (pass)
                     {
                         case Student.PassReturnValues.Ignored:
@@ -42,12 +44,21 @@ namespace SFC.Gate.Material.ViewModels
                             return;
                         case Student.PassReturnValues.Entry:
                             Welcome = "WELCOME";
+                            msg = SFC.Gate.Configurations.Sms.Default.EntryTemplate;
+                            msg = msg.Replace("[STUDENT]", Student.Fullname);
+                            msg = msg.Replace("[TIME]", DateTime.Now.ToString("g"));
                             break;
                         case Student.PassReturnValues.Exit:
                             Welcome = "GOODBYE";
+                            msg = SFC.Gate.Configurations.Sms.Default.ExitTemplate;
+                            msg = msg.Replace("[STUDENT]", Student.Fullname);
+                            msg = msg.Replace("[TIME]", DateTime.Now.ToString("g"));
                             break;
                     }
-                    
+                    if (msg != "")
+                    {
+                        SFC.Gate.ViewModels.SMS.Send(msg,Student.ContactNumber);
+                    }
                     Instance.Index = StudentIndex;
                     _infoTimer?.Dispose();
                     if (Config.Rfid.StudentInfoDelay > 0)
