@@ -35,6 +35,7 @@
                                    Height="48" Width="48"
                                    Margin="7 0" />
           <TextBlock Text=" SETTINGS" FontWeight="Bold" VerticalAlignment="Center"
+                     Visibility="Collapsed"
                      Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
         </StackPanel>
 
@@ -73,6 +74,12 @@
               <TextBlock Text="VIOLATIONS" />
             </StackPanel>
           </ListBoxItem>
+          <ListBoxItem>
+            <StackPanel>
+              <materialDesign:PackIcon Kind="HelpCircle" />
+              <TextBlock Text="SYSTEM INFO" />
+            </StackPanel>
+          </ListBoxItem>
         </ListBox>
       
       </Grid>
@@ -90,6 +97,9 @@
       </materialDesign:TransitionerSlide>
       <materialDesign:TransitionerSlide>
         <local:Violations/>
+      </materialDesign:TransitionerSlide>
+      <materialDesign:TransitionerSlide>
+        <local:About/>
       </materialDesign:TransitionerSlide>
     </materialDesign:Transitioner>
   </Grid>

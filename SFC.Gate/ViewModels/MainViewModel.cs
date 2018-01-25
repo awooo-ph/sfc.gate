@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -25,6 +26,23 @@ namespace SFC.Gate.Material.ViewModels
                 MessageQueue.Enqueue($"SMS Notification: {msg}");
             });
         }
+
+        private ICommand _runExternalCOmmand;
+
+        public ICommand RunExternalCommand => _runExternalCOmmand ?? (_runExternalCOmmand = new DelegateCommand<string>(
+        cmd =>
+        {
+            if (string.IsNullOrWhiteSpace(cmd)) return;
+            try
+            {
+                Process.Start(cmd);
+            }
+            catch (Exception e)
+            {
+                //
+            }
+            
+        }));
 
         private static MainViewModel _instance;
         public static MainViewModel Instance => _instance ?? (_instance = new MainViewModel());
@@ -70,12 +88,8 @@ namespace SFC.Gate.Material.ViewModels
             get => _Screen;
             set
             {
-                if(value == _Screen)
-                    return;
                 _Screen = value;
                 OnPropertyChanged(nameof(Screen));
-                if (Screen == 4)
-                    SettingIndex = 0;
             }
         }
 
@@ -123,8 +137,6 @@ namespace SFC.Gate.Material.ViewModels
             get => _SettingIndex;
             set
             {
-                if(value == _SettingIndex)
-                    return;
                 _SettingIndex = value;
                 OnPropertyChanged(nameof(SettingIndex));
             }
@@ -147,5 +159,14 @@ namespace SFC.Gate.Material.ViewModels
         {
             ShowUserMenu = !ShowUserMenu;
         }));
+
+        private ICommand _showDevCommand;
+
+        public ICommand ShowDevCommand => _showDevCommand ?? (_showDevCommand = new DelegateCommand(d =>
+        {
+            Screen = 4;
+            SettingIndex = 4;
+        }));
+
     }
 }
