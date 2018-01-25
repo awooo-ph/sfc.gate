@@ -7,6 +7,7 @@
              xmlns:converters="clr-namespace:SFC.Gate.Converters"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:cnf="clr-namespace:SFC.Gate.Configurations;assembly=SFC.Gate.Core"
+             xmlns:viewModels="clr-namespace:SFC.Gate.Material.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
   <Grid>
@@ -20,6 +21,7 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   Grid.Row="3">
       <StackPanel Orientation="Vertical"
+                  IsEnabled="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin}"
                   Margin="74 47">
         <TextBlock Text="SMS Notifications Settings" Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
         <StackPanel Margin="0 0 0 40">

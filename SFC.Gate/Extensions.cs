@@ -55,7 +55,7 @@ namespace SFC.Gate
             var rnd = new Random();
             var color = Color.FromArgb(255, rnd.Next(0, 255), rnd.Next(0, 255), rnd.Next(0, 255));
             var gen = new IdenticonGenerator()
-                .WithBlocks(7, 7)
+                .WithBlocks(5, 5)
                 .WithSize(512, 512)
                 .WithBlockGenerators(IdenticonGenerator.ExtendedBlockGeneratorsConfig)
                 .WithBackgroundColor(Color.White)

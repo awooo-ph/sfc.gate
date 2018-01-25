@@ -8,18 +8,19 @@
              xmlns:cnf="clr-namespace:SFC.Gate.Configurations;assembly=SFC.Gate.Core"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:SFC.Gate.Converters"
-             xmlns:viewModels="clr-namespace:SFC.Gate.Material.ViewModels"
-             DataContext="{Binding Source={x:Static viewModels:SettingsViewModel.Instance}}"
+             xmlns:vm="clr-namespace:SFC.Gate.Material.ViewModels"
+             DataContext="{Binding Source={x:Static vm:Users.Instance}}"
+             xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
              d:DesignHeight="300" d:DesignWidth="300">
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto" />
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
 
 
     <md:ColorZone Mode="Light"
-                    IsEnabled="{Binding ShowNewDialog,Converter={converters:Inverter}}"
                     Grid.ColumnSpan="2"
                     Background="#f5f5f3"
                     Grid.Row="0"
@@ -31,252 +32,119 @@
           <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Horizontal" Margin="20">
-          <md:PackIcon Kind="Settings" Foreground="{StaticResource PrimaryHueMidBrush}" VerticalAlignment="Center"
+          <md:PackIcon Kind="AccountMultipleOutline" Foreground="{StaticResource PrimaryHueMidBrush}" VerticalAlignment="Center"
                          Height="48" Width="48"
                          Margin="7 0"/>
-          <TextBlock Text=" SETTINGS" FontWeight="Bold" VerticalAlignment="Center"
+          <TextBlock Text=" USER ACCOUNTS" FontWeight="Bold" VerticalAlignment="Center"
                        Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
         </StackPanel>
-      
+        <Button Grid.Column="1" Margin="10" VerticalAlignment="Bottom"
+                Command="{Binding AddUserCommand}">
+          <StackPanel Orientation="Horizontal">
+            <md:PackIcon Kind="Plus" Margin="4 0"/>
+            <TextBlock Text=" New User"/>
+          </StackPanel>
+        </Button>
       </Grid>
     </md:ColorZone>
 
-    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-    <StackPanel Grid.Row="1" Orientation="Horizontal">
-      <md:Card Margin="10" Width="{Binding ElementName=UsersCard,Path=ActualWidth}"
-               VerticalAlignment="Stretch">
-        <Grid>
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-          </Grid.RowDefinitions>
-          <StackPanel Orientation="Horizontal">
-            <md:PackIcon Kind="Cellphone"
-                             Height="32"
-                             Margin="10"
-                             VerticalAlignment="Center"
-                             Width="32" />
-            <TextBlock Text="SMS NOTIFICATIONS" VerticalAlignment="Center" Margin="0 0 47 0"
-                           Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
-          </StackPanel>
+    <Grid Margin="74 10" Grid.Row="1" Visibility="{Binding ShowAddItem,Converter={converters:BooleanToVisibility}}">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
 
-          <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-          <StackPanel Grid.Row="1">
+      <Grid Height="32" Width="32" Margin="10" Background="{StaticResource MaterialDesignDarkBackground}">
+        <Grid.OpacityMask>
+          <VisualBrush>
+            <VisualBrush.Visual>
+              <Ellipse Width="7" Height="7" Fill="Red" />
+            </VisualBrush.Visual>
+          </VisualBrush>
+        </Grid.OpacityMask>
+        <md:PackIcon Kind="AccountOutline" Height="40" Width="40"
+                     Foreground="{StaticResource MaterialDesignDarkForeground}"
+                     Margin="-4 0" />
+        <Image Source="{Binding NewItem.Picture,Converter={converters:BytesToImage}}"
+               Height="32" Stretch="UniformToFill" />
+        <Button Style="{StaticResource MaterialDesignToolButton}" Height="Auto"
+                VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                Command="{Binding GeneratePictureCommand}"/>
+      </Grid>
+      
+      <TextBox Text="{Binding NewItem.Username,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" FontSize="15pt" FontWeight="Bold"
+                 VerticalAlignment="Center"
+                 Grid.Column="1" />
+      <Button Content="Add User"
+              Grid.Column="2"
+              Margin="10 0"
+              VerticalAlignment="Center"
+              Command="{Binding AcceptAddCommand}" />
+      <Button Content="Cancel" Style="{StaticResource MaterialDesignRaisedLightButton}"
+              Grid.Column="3"
+              VerticalAlignment="Center"
+              Command="{Binding CancelAddCommand}" />
+    </Grid>
+    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+    <ItemsControl Grid.Row="1" Margin="74 0" ItemsSource="{Binding Source={x:Static models:User.Cache}}"
+                  HorizontalAlignment="Stretch">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Grid Margin="10">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
 
-              <CheckBox Content="Send SMS Notifications" IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
-                        Margin="7"/>
-
-              <Grid Margin="7">
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="*"/>
-                  <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=Port}" 
-                       md:HintAssist.Hint="MODEM COM PORT"
-                       md:HintAssist.IsFloating="True"/>
-
-                <Button Command="{Binding Source={x:Static local:Extensions.OpenModemsCommand}}"
-                        Grid.Column="1"
-                        Style="{StaticResource MaterialDesignToolButton}"
-                        Content="{md:PackIcon OpenInNew}" ToolTip="Open Installed Modems"/>
+              <Grid Height="32" Width="32" Margin="10" Background="{StaticResource MaterialDesignDarkBackground}">
+                <Grid.OpacityMask>
+                  <VisualBrush>
+                    <VisualBrush.Visual>
+                      <Ellipse Width="7" Height="7" Fill="Red"/>
+                    </VisualBrush.Visual>
+                  </VisualBrush>
+                </Grid.OpacityMask>
+                <md:PackIcon Kind="AccountOutline" Height="40" Width="40" Foreground="{StaticResource MaterialDesignDarkForeground}"
+                             Margin="-4 0"/>
+                <Image Source="{Binding Picture,Converter={converters:BytesToImage}}"
+                       Height="32" Stretch="UniformToFill"/>
               </Grid>
-              <TextBox Margin="7" Text="{Binding Source={x:Static cnf:Config.Sms},Path=Baudrate}" 
-                       md:HintAssist.Hint="MODEM BAUDRATE"
-                       md:HintAssist.IsFloating="True"/>
-              
-            <StackPanel Margin="7">
-              <TextBlock Text="School Entry Message Template" Margin="4" FontWeight="Bold"/>
-              <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=EntryTemplate}"
-                                         TextWrapping="Wrap" TextAlignment="Left"
-                                         AcceptsReturn="True" 
-                                         HorizontalScrollBarVisibility="Disabled"/>
-              
-            </StackPanel>
-
-            <StackPanel Margin="7">
-              <TextBlock Text="School Exit Message Template" Margin="4" FontWeight="Bold"/>
-              <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=ExitTemplate}"
-                                         TextWrapping="Wrap"
-                                         AcceptsReturn="True" TextAlignment="Left"
-                                         HorizontalScrollBarVisibility="Disabled"/>
-             
-
-            </StackPanel>
-
-            <StackPanel Margin="7">
-
-              <TextBlock Text="Violation Message Template" Margin="4" FontWeight="Bold"/>
-              <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=ViolationTemplate}"
-                                         TextWrapping="Wrap"
-                       TextAlignment="Left"
-                                         AcceptsReturn="True" VerticalScrollBarVisibility="Disabled"
-                                         HorizontalScrollBarVisibility="Disabled"/>
-            
-            </StackPanel>
-
-          </StackPanel>
-
-          </ScrollViewer>
-        </Grid>
-      </md:Card>
-
-        <md:Card Margin="10" VerticalAlignment="Stretch">
-        <Grid>
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-          </Grid.RowDefinitions>
-          <StackPanel Orientation="Horizontal">
-            <md:PackIcon Kind="BarcodeScan"
-                             Height="32"
-                             Margin="10"
-                             VerticalAlignment="Center"
-                             Width="32" />
-            <TextBlock Text="RFID SCANNER" VerticalAlignment="Center" Margin="0 0 47 0"
-                           Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
-          </StackPanel>
-
-          <StackPanel Grid.Row="1">
-            <StackPanel Margin="7">
-              <TextBlock FontWeight="Bold">
-                <Run Text="Scan Interval (" />
-                <Run Text="{Binding Source={x:Static cnf:Config.General},Path=ScanInterval}" />
-                <Run Text="seconds)" />
-              </TextBlock>
-
-              <Slider Margin="4" Minimum="1" Interval="1"
-                      Maximum="777" TickFrequency="47" TickPlacement="BottomRight"
-                      Value="{Binding Source={x:Static cnf:Config.General},Path=ScanInterval}" />
-
-              <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
+              <TextBlock Text="{Binding Username}" Style="{StaticResource MaterialDesignTitleTextBlock}"
                          VerticalAlignment="Center"
-                         Text="Minimum time, in seconds, between valid scans." />
-            </StackPanel>
-            
-              <TextBox IsReadOnly="True" md:HintAssist.Hint="DEVICE ID" md:HintAssist.IsFloating="True"
-                     Text="{Binding ScannerId,Mode=OneWay}"
-                     Margin="10"/>
-            <TextBox IsReadOnly="True" md:HintAssist.Hint="TYPE" md:HintAssist.IsFloating="True"
-                     Text="{Binding ScannerDescription,Mode=OneWay}"
-                     Margin="10" />
-            <UniformGrid Grid.Row="2" Rows="1">
-              <Button Content="REGISTER SCANNER" Command="{Binding RegisterCommand}"
-                      Style="{StaticResource MaterialDesignFlatButton}"
-                      Visibility="{Binding IsRegistering,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
-                      Focusable="False" KeyboardNavigation.IsTabStop="False" />
-              <Button Content="CANCEL REGISTRATION" Command="{Binding CancelRegisterCommand}"
-                      Style="{StaticResource MaterialDesignFlatButton}"
-                      Visibility="{Binding IsRegistering,Converter={converters:BooleanToVisibility}}"
-                      Focusable="False" KeyboardNavigation.IsTabStop="False" />
-
-            </UniformGrid>
-            
-            
-          </StackPanel>
-
-          
-        </Grid>
-      </md:Card>
-
-        <md:Flipper Margin="20" IsFlipped="{Binding ShowUserDetails}" VerticalAlignment="Stretch">
-        <md:Flipper.FrontContent>
-            <md:Card x:Name="UsersCard" Width="333" VerticalAlignment="Stretch">
-            <Grid>
-              <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-              </Grid.RowDefinitions>
-              <StackPanel Orientation="Horizontal">
-                <md:PackIcon Kind="AccountMultipleOutline"
-                             Height="32"
-                             Margin="10"
-                             VerticalAlignment="Center"
-                             Width="32" />
-                <TextBlock Text="USERS" VerticalAlignment="Center" Margin="0 0 47 0"
-                           Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
-              </StackPanel>
-             
-              <ListBox Grid.Row="1" ItemsSource="{Binding Users}"
-                       HorizontalContentAlignment="Stretch"
-                       IsSynchronizedWithCurrentItem="True">
-                <ListBox.ItemTemplate>
-                  <DataTemplate>
-                    <Grid>
-                      <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                      </Grid.ColumnDefinitions>
-                      <TextBlock Text="{Binding Username}" VerticalAlignment="Center"/>
-                      <Button Content="{md:PackIcon Close}"
-                              Grid.Column="1"
-                              Padding="4 2"
-                              Height="Auto"
-                              Visibility="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem},Path=IsMouseOver,Converter={converters:BooleanToVisibility}}"
-                              Command="{Binding DeleteCommand}"/>
-                    </Grid>
-                  </DataTemplate>
-                </ListBox.ItemTemplate>
-              </ListBox>
-              <UniformGrid Grid.Row="2" Rows="1">
-                <Button Style="{StaticResource MaterialDesignFlatButton}" Content="ADD"
-                        Command="{Binding AddUserCommand}" />
-                <Button Style="{StaticResource MaterialDesignFlatButton}" Content="EDIT"
-                        Command="{Binding EditUserCommand}"
-                        CommandParameter="{Binding Users/}" />
-              </UniformGrid>
+                         Grid.Column="1"/>
+              <md:ColorZone Grid.Column="2" CornerRadius="7"
+                            Padding="7 4"
+                            Margin="10 0"
+                            VerticalAlignment="Center"
+                            Visibility="{Binding IsAdmin,Converter={converters:BooleanToVisibility}}"
+                      Mode="PrimaryLight">
+                <TextBlock Text="Admin" Foreground="White"/>
+              </md:ColorZone>
+              <Button Content="{md:PackIcon Delete}" Style="{StaticResource MaterialDesignFlatButton}"
+                      Grid.Column="3"
+                      Command="{Binding DeleteCommand}"/>
+              <md:PopupBox Grid.Column="4">
+                <md:PopupBox.PopupContent>
+                  <StackPanel>
+                    <Button Content="Change Account Type"
+                            Command="{Binding ToggleAdminCommand}"/>
+                    <Button Content="Reset Password"
+                            Command="{Binding ResetPasswordCommand}"/>
+                    <Separator/>
+                    <Button Content="Delete Account"
+                            Command="{Binding DeleteCommand}"/>
+                  </StackPanel>
+                </md:PopupBox.PopupContent>
+              </md:PopupBox>
             </Grid>
-          </md:Card>
-        </md:Flipper.FrontContent>
-        <md:Flipper.BackContent>
-          <md:Card Height="{Binding ElementName=UsersCard,Path=ActualHeight}"
-                Width="{Binding ElementName=UsersCard,Path=ActualWidth}">
-            <Grid>
-              <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-              </Grid.RowDefinitions>
-              <StackPanel Orientation="Horizontal">
-                <md:PackIcon Kind="Pencil"
-                             Height="32"
-                             Margin="10"
-                             VerticalAlignment="Center"
-                             Width="32" />
-                <TextBlock Text="{Binding Users/Username}" VerticalAlignment="Center" Margin="0 0 47 0"
-                           Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
-              </StackPanel>
-
-              <StackPanel Grid.Row="1" DataContext="{Binding Users/}">
-                <TextBox Text="{Binding Username,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
-                         Margin="7"
-                         md:HintAssist.Hint="USERNAME"
-                         md:HintAssist.IsFloating="True" />
-                <CheckBox Content="ADMINISTRATOR" IsChecked="{Binding IsAdmin}"
-                          Margin="7"/>
-                <CheckBox Content="STUDENTS" IsChecked="{Binding StudentsAccess}"
-                          Margin="7" />
-                <CheckBox Content="VISITORS" IsChecked="{Binding VisitorsAccess}"
-                          Margin="7" />
-                <CheckBox Content="SEND SMS" IsChecked="{Binding SmsAccess}"
-                          Margin="7" />
-              </StackPanel>
-              <UniformGrid Grid.Row="2" Rows="1">
-                <Button Style="{StaticResource MaterialDesignFlatButton}" Content="CANCEL"
-                        ToolTip="Cancel"
-                        Command="{Binding CancelUserCommand}" />
-                <Button Style="{StaticResource MaterialDesignFlatButton}" Content="SAVE"
-                        Command="{Binding SaveUserCommand}"
-                        CommandParameter="{Binding Users/}" />
-              </UniformGrid>
-            </Grid>
-          </md:Card>
-        </md:Flipper.BackContent>
-      </md:Flipper>
-    </StackPanel>
-
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
     </ScrollViewer>
   </Grid>
 </UserControl>

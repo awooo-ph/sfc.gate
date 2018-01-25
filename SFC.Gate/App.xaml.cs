@@ -24,10 +24,7 @@ namespace SFC.Gate.Material
 
         protected override void OnExit(ExitEventArgs e)
         {
-            foreach (var violation in Violation.Cache)
-            {
-                violation.Save();
-            }
+           // Violation.SaveAll();
             
             base.OnExit(e);
             Config.Save();

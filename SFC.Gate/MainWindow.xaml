@@ -44,7 +44,7 @@
           <views:Visitors />
         </md:TransitionerSlide>
         <md:TransitionerSlide>
-          <views:Sms/>
+          <views:Users/>
         </md:TransitionerSlide>
         <md:TransitionerSlide >
           <views:GuardMode/>
@@ -131,13 +131,13 @@
             </StackPanel>
           </ListBoxItem>
 
-          <ListBoxItem>
+          <ListBoxItem IsEnabled="{Binding CurrentUser.IsAdmin}">
             <StackPanel Margin="4">
-              <md:PackIcon Kind="CellphoneBasic"
+              <md:PackIcon Kind="AccountMultipleOutline"
                            Height="32"
                            HorizontalAlignment="Center"
                            Width="32" />
-              <TextBlock Text="SMS"
+              <TextBlock Text="USERS"
                          HorizontalAlignment="Center"
                          FontSize="7pt" />
             </StackPanel>
@@ -178,10 +178,12 @@
           <Button.ContextMenu>
             <ContextMenu x:Name="ContextMenu">
               <MenuItem Header="My Profile" Command="{Binding ShowUserProfileCommand}"/>
-              <MenuItem Header="Change Password"/>
-              <Separator/>
               <MenuItem Header="Sign Out"
-                        Command="{Binding LogoutCommand}"/>
+                        Command="{Binding LogoutCommand}" />
+              <Separator/>
+              <MenuItem Header="About Us" Command="{Binding ShowDevCommand}"/>
+              <MenuItem Header="User Guide" Command="{Binding RunExternalCommand}" CommandParameter="https://github.com/awooo-ph/sfc.gate/wiki"/>
+              <MenuItem Header="View Source" Command="{Binding RunExternalCommand}" CommandParameter="https://github.com/awooo-ph/sfc.gate" />
             </ContextMenu>
           </Button.ContextMenu>
           <StackPanel>

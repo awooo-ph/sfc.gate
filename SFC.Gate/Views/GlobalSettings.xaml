@@ -35,7 +35,8 @@
           <TextBlock Text="{Binding ScannerId}" Style="{StaticResource MaterialDesignTitleTextBlock}"
                      TextAlignment="Center"
                      Margin="20" />
-          <UniformGrid Grid.Column="1" Rows="1">
+          <UniformGrid Grid.Column="1" Rows="1"
+                       IsEnabled="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin}">
             <Button Command="{Binding RegisterCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
                     Height="Auto"
@@ -70,6 +71,7 @@
             </TextBlock>
 
             <Slider Margin="4" Minimum="1" Interval="1"
+                    IsEnabled="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin}"
                     Maximum="777" TickFrequency="47" TickPlacement="BottomRight"
                     Value="{Binding Source={x:Static cnf:Config.General},Path=ScanInterval}" />
 

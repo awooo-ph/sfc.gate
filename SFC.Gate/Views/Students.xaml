@@ -280,10 +280,12 @@
         </md:ColorZone>
 
           <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Students}"
+                    CanUserAddRows="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,FallbackValue=False}"
                   InitializingNewItem="DataGrid_OnInitializingNewItem"
                   IsSynchronizedWithCurrentItem="True"
                   ClipboardCopyMode="None"
                   AllowDrop="True"
+                    IsReadOnly="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}"
                   PreviewDrop="StudentsDrop"
                   PreviewDragOver="StudentsDragEnter"
                   Grid.Row="1">

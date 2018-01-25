@@ -86,10 +86,10 @@
         <local:UserProfile/>
       </materialDesign:TransitionerSlide>
       <materialDesign:TransitionerSlide>
-        <local:SmsSettings IsEnabled="{Binding CurrentUser.IsAdmin}" />
+        <local:SmsSettings/>
       </materialDesign:TransitionerSlide>
       <materialDesign:TransitionerSlide>
-        <local:Violations IsEnabled="{Binding CurrentUser.IsAdmin}" />
+        <local:Violations/>
       </materialDesign:TransitionerSlide>
     </materialDesign:Transitioner>
   </Grid>

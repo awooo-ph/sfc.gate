@@ -188,7 +188,7 @@ namespace SFC.Gate.Material.ViewModels
         {
             var stud = Students.CurrentItem as Student;
             stud.ClearLog();
-        }));
+        },d=>MainViewModel.Instance.CurrentUser?.IsAdmin??false));
 
         private ICommand _addViolationCommand;
 
@@ -215,6 +215,6 @@ namespace SFC.Gate.Material.ViewModels
                 {
                     var stud = Students.CurrentItem as Student;
                     stud?.ClearViolations();
-                }));
+                },d=>MainViewModel.Instance.CurrentUser?.IsAdmin??false));
     }
 }
