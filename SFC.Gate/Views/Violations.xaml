@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SFC.Gate.Material.Views"
              mc:Ignorable="d"
+             IsEnabled="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin}"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:SFC.Gate.Converters"
              DataContext="{Binding Source={x:Static viewModels:Violations.Instance}}"
@@ -50,25 +51,51 @@
                 Margin="10 0 0 0"
                 Style="{StaticResource MaterialDesignRaisedLightButton}" />
       </Grid>
-      
-      <ItemsControl Grid.Row="1" Grid.IsSharedSizeScope="True"
+      <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+      <ItemsControl Grid.IsSharedSizeScope="True"
                     ItemsSource="{Binding Items}">
         <ItemsControl.ItemTemplate>
           <DataTemplate>
-            <Grid Margin="0 7">
+              <Grid>
+                <Grid Margin="0 7" Grid.Row="0"
+                      Visibility="{Binding EditMode,Converter={converters:BooleanToVisibility}}">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <TextBox Grid.Column="0" Margin="0 0 10 0"
+                           Text="{Binding Name,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" />
+                  <Button Grid.Column="1" Content="Save"
+                          Command="{Binding SaveCommand}"
+                          Style="{StaticResource MaterialDesignRaisedButton}" />
+                  <Button Grid.Column="2" Content="Cancel"
+                          Command="{Binding ResetCommand}"
+                          Margin="10 0 0 0"
+                          Style="{StaticResource MaterialDesignRaisedLightButton}" />
+                </Grid>
+
+                <Grid Margin="0 7" Visibility="{Binding EditMode,Converter={converters:BooleanToVisibility Collapsed,Visible}}">
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-              </Grid.ColumnDefinitions>
-              <TextBox Grid.Column="1" Margin="0 0 10 0" Text="{Binding Name,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"/>
-              <Button Grid.Column="2" Content="{md:PackIcon Delete}"
+                <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+              <TextBlock Grid.Column="1" Margin="0 0 10 0" Text="{Binding Name}"/>
+                  <Button Grid.Column="2" Content="{md:PackIcon Pencil}"
+                          Command="{Binding EditCommand}"
+                          Margin="10 0"
+                          Style="{StaticResource MaterialDesignFlatButton}" />
+              <Button Grid.Column="3" Content="{md:PackIcon Delete}"
                       Command="{Binding DeleteCommand}"
                       Style="{StaticResource MaterialDesignFlatButton}" />
             </Grid>
-          </DataTemplate>
+              </Grid>
+            </DataTemplate>
         </ItemsControl.ItemTemplate>
       </ItemsControl>
+      </ScrollViewer>
     </Grid>
     
   </Grid>

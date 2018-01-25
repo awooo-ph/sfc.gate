@@ -119,6 +119,7 @@
     <Compile Include="ViewModels\Settings.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Students.cs" />
+    <Compile Include="ViewModels\Users.cs" />
     <Compile Include="ViewModels\Violations.cs" />
     <Compile Include="ViewModels\Visitors.cs" />
     <Compile Include="Views\Clock.xaml.cs">
@@ -286,13 +287,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="sfc.png" />
+    <SplashScreen Include="sfc.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="contactless-icon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <SplashScreen Include="SplashScreen.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icon.ico" />
