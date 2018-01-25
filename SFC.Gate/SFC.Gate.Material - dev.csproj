@@ -109,7 +109,6 @@
     <Compile Include="Converters\PathToBitmapConverter.cs" />
     <Compile Include="Converters\RgbConverter.cs" />
     <Compile Include="Converters\SizeConverter.cs" />
-    <Compile Include="Converters\StringToColor.cs" />
     <Compile Include="Converters\WindowStateToPackIcon.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="RfidScanner.cs" />
