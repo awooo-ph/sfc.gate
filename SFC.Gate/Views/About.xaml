@@ -93,7 +93,8 @@
                       VerticalAlignment="Bottom">
             <TextBlock Text="Jessa Chan" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
                        TextAlignment="Right"/>
-            <TextBlock Text="Project Manager" Foreground="White" Style="{StaticResource MaterialDesignSubheadingTextBlock}" />
+            <TextBlock Text="Project Manager" Foreground="White" Style="{StaticResource MaterialDesignSubheadingTextBlock}"
+                       TextAlignment="Right" />
           </StackPanel>
         </Grid>
 
@@ -121,7 +122,7 @@
                       VerticalAlignment="Bottom">
             <TextBlock Text="Tan Nea" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
                        TextAlignment="Right" />
-            <TextBlock Text="Programmer" Foreground="White"
+            <TextBlock Text="Programmer" Foreground="White" TextAlignment="Right" 
                        Style="{StaticResource MaterialDesignSubheadingTextBlock}" />
           </StackPanel>
         </Grid>
@@ -150,7 +151,7 @@
                       VerticalAlignment="Bottom">
             <TextBlock Text="Jhonnah Bohol" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
                        TextAlignment="Right" />
-            <TextBlock Text="Graphic Designer" Foreground="White"
+            <TextBlock Text="Graphic Designer" Foreground="White" TextAlignment="Right" 
                        Style="{StaticResource MaterialDesignSubheadingTextBlock}" />
           </StackPanel>
         </Grid>
@@ -181,6 +182,7 @@
             <TextBlock Text="Ëllãh Dênch" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
                        TextAlignment="Right" />
             <TextBlock Text="Programmer" Foreground="White"
+                       TextAlignment="Right" 
                        Style="{StaticResource MaterialDesignSubheadingTextBlock}" />
           </StackPanel>
         </Grid>

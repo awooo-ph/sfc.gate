@@ -35,7 +35,24 @@
                          Margin="7 0"/>
             <TextBlock Text=" VISITORS" FontWeight="Bold" VerticalAlignment="Center"
                        Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
-          </StackPanel>
+            
+          <Grid VerticalAlignment="Center">
+            <TextBlock Text=" [ALL]"
+                       FontWeight="Bold"
+                       Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
+            <TextBlock Text=" [CURRENT]"
+                       Background="#f5f5f3"
+                       FontWeight="Bold"
+                       Visibility="{Binding FilterCurrentVisitors,Converter={converters:BooleanToVisibility}}"
+                       Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
+          <TextBlock Text=" [TODAY]"
+                     Background="#f5f5f3"
+                     FontWeight="Bold"
+                     Visibility="{Binding FilterVisitorsToday,Converter={converters:BooleanToVisibility}}"
+                     Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
+            
+          </Grid>
+        </StackPanel>
           <StackPanel Orientation="Horizontal" Grid.Column="1" 
                           HorizontalAlignment="Right">
             <Grid VerticalAlignment="Bottom" Margin="0 0 0 7">
