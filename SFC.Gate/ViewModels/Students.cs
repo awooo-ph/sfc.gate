@@ -59,7 +59,8 @@ namespace SFC.Gate.Material.ViewModels
                             }
                         });
                     }
-                    _students.Filter = FilterStudents;
+                    if(!_students.IsAddingNew)
+                        _students.Filter = FilterStudents;
                 };
                 return _students;
             }
