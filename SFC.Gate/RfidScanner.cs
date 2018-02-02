@@ -52,14 +52,16 @@ namespace SFC.Gate
                 Config.Rfid.Description = e.Device.Description;
                 Config.Rfid.ScannerType = e.Device.Type.ToString();
                 Config.Rfid.Fullname = e.Device.Name;
+                Config.Rfid.Handle = e.Device.Handle.ToInt64();
                 Config.Rfid.Save();
                 IsWaitingForScanner = false;
                 Messenger.Default.Broadcast(Messages.ScannerRegistered);
                 _input.Clear();
+                e.Handled = true;
                 return;
             }
 
-            if (GetScannerId(e.Device) == Config.Rfid.ScannerId)
+            if (Config.Rfid.Handle == e.Device.Handle.ToInt64())
             {
                 if (e.KeyPressState != KeyPressState.Down) return;
                 if (e.Key != Key.Enter)
@@ -71,7 +73,10 @@ namespace SFC.Gate
                     Messenger.Default.Broadcast(Messages.Scan, _input.ToString());
                     _input.Clear();
                 }
-                //  TrapKey = true;
+
+                if (Config.Rfid.UseExclusive)
+                    e.Handled = true;
+
             }
 
         }

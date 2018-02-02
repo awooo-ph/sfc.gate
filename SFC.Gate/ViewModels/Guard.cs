@@ -18,6 +18,20 @@ namespace SFC.Gate.Material.ViewModels
     {
         private const long ClockIndex = 0, StudentIndex = 1, InvalidIndex = 2;
         private Timer _infoTimer;
+
+        private bool _Defer;
+
+        public bool IgnoreScans
+        {
+            get => _Defer;
+            set
+            {
+                if(value == _Defer)
+                    return;
+                _Defer = value;
+                OnPropertyChanged(nameof(IgnoreScans));
+            }
+        }
         
         private Guard()
         {
@@ -28,6 +42,10 @@ namespace SFC.Gate.Material.ViewModels
             };
             Messenger.Default.AddListener<string>(Messages.Scan, id =>
             {
+                if (IgnoreScans) return;
+                if(!Config.Rfid.GlobalScan && MainViewModel.Instance.Screen!=3) return;
+                if (Config.Rfid.RequireUser && !MainViewModel.Instance.HasLoggedIn) return;
+                
                 Student = Student.Cache.FirstOrDefault(x => x.Rfid.ToUpper() == id);
                 if (Student == null)
                     Instance.Index = InvalidIndex;

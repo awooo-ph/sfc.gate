@@ -50,7 +50,7 @@ namespace SFC.Gate.Material.ViewModels
                     return "Waiting for Scanner...";
                 if (string.IsNullOrEmpty(Config.Rfid.ScannerId))
                     return "No Scanner Registered";
-                return Config.Rfid.ScannerId;
+                return $"{Config.Rfid.Description} {{{Config.Rfid.Handle}}}";
             }
         }
         

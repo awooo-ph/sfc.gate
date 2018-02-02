@@ -12,6 +12,8 @@
              DataContext="{Binding Source={x:Static viewModels:SettingsViewModel.Instance}}"
              d:DesignHeight="300" d:DesignWidth="300">
 
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="0"
+                HorizontalScrollBarVisibility="Disabled">
     <Grid Margin="74 47">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto"/>
@@ -19,10 +21,10 @@
         <RowDefinition Height="Auto" />
         <RowDefinition Height="*" />
       </Grid.RowDefinitions>
-         <TextBlock Text="Global Settings" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
-                    Margin="0 0 0 40"/>
-     
-      <StackPanel Grid.Row="2" MaxWidth="777" HorizontalAlignment="Left">
+      <TextBlock Text="Global Settings" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                 Margin="0 0 0 40" />
+
+        <StackPanel Grid.Row="2" >
       <TextBlock Text="RFID scanner" Style="{StaticResource MaterialDesignBody2TextBlock}" />
       <Border BorderBrush="{StaticResource MaterialDesignDivider}" CornerRadius="4"
               
@@ -58,12 +60,39 @@
       </Border>
       </StackPanel>
 
-    <ScrollViewer VerticalScrollBarVisibility="Disabled" Grid.Row="3"
-                  HorizontalScrollBarVisibility="Auto">
-      <WrapPanel Orientation="Vertical" Grid.Row="3"
+    
+      <StackPanel Orientation="Vertical" Grid.Row="3"
                  Margin="0 40 0 0">
-      
-          <StackPanel Margin="0 0 40 40">
+
+        <StackPanel Margin="0 0 40 40">
+          <CheckBox Margin="4" Content="Use Scanner Exclusively" FontWeight="Bold"
+                    VerticalAlignment="Center"
+                    IsChecked="{Binding Source={x:Static cnf:Config.Rfid},Path=UseExclusive}" />
+          <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
+                     VerticalAlignment="Center"
+                     TextWrapping="Wrap"
+                     Text="Use the device exclusively for recording gate passes only. When unchecked, the device will be used as a normal keyboard." />
+        </StackPanel>
+        
+        <StackPanel Margin="0 0 40 40">
+          <CheckBox Margin="4" Content="Global Scan" FontWeight="Bold"
+                    VerticalAlignment="Center"
+                    IsChecked="{Binding Source={x:Static cnf:Config.Rfid},Path=GlobalScan}" />
+          <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
+                     VerticalAlignment="Center"
+                     Text="Check to detect RFID scans anywhere in the program. Uncheck to record scans in Guard Mode only." />
+        </StackPanel>
+
+        <StackPanel Margin="0 0 40 40">
+          <CheckBox Margin="4" Content="Require User" FontWeight="Bold"
+                    VerticalAlignment="Center"
+                    IsChecked="{Binding Source={x:Static cnf:Config.Rfid},Path=GlobalScan}" />
+          <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
+                     VerticalAlignment="Center"
+                     Text="An authenticated user is required to record RFID swipes. Uncheck to enable recording even when no user has logged in." />
+        </StackPanel>
+
+        <StackPanel Margin="0 0 40 40">
             <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}">
               <Run Text="Scan Interval (" />
               <Run Text="{Binding Source={x:Static cnf:Config.General},Path=ScanInterval}" />
@@ -106,8 +135,9 @@
       </StackPanel>
 
      
-    </WrapPanel>
-    </ScrollViewer>
+    </StackPanel>
+  
   </Grid>
+</ScrollViewer>
 
 </UserControl>

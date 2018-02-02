@@ -82,7 +82,7 @@ namespace SFC.Gate.Material.ViewModels
         public SnackbarMessageQueue MessageQueue => _messageQueue ?? (_messageQueue = new SnackbarMessageQueue());
 
         private int _Screen = 5;
-
+        public const int GUARD_MODE = 3;
         public int Screen
         {
             get => _Screen;

@@ -22,6 +22,7 @@
         WindowStyle="None"
         Icon="/icon.ico"
         ResizeMode="CanResize"
+        Topmost="{Binding Screen,Converter={converters:EqualityConverter ReturnType=Boolean, Operand={x:Static viewModels:MainViewModel.GUARD_MODE}, Operation=Equals}}"
         DataContext="{Binding Source={x:Static viewModels:MainViewModel.Instance}}"
         Title="Saint Francis College" Height="555" Width="777">
     <Grid>

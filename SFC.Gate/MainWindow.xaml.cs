@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SFC.Gate.Configurations;
+using SFC.Gate.Material.ViewModels;
 using SFC.Gate.Models;
 
 namespace SFC.Gate.Material
@@ -108,6 +109,7 @@ namespace SFC.Gate.Material
 
         private void MinimizeClicked(object sender, RoutedEventArgs e)
         {
+            if (MainViewModel.Instance.Screen == 3) return;
             WindowState = WindowState.Minimized;
         }
 
@@ -126,6 +128,12 @@ namespace SFC.Gate.Material
         private void UIElement_OnMouseUp(object sender, MouseButtonEventArgs e)
         {
           
+        }
+
+        protected override void OnDeactivated(EventArgs e)
+        {
+            base.OnDeactivated(e);
+            if (MainViewModel.Instance.Screen == 3) Activate();
         }
     }
 }
