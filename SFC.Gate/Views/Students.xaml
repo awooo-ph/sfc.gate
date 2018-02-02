@@ -55,11 +55,12 @@
     </md:DrawerHost.RightDrawerContent>
   <Grid>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="*" MinWidth="333"/>
+      <ColumnDefinition Width="2*" MinWidth="333"/>
       <ColumnDefinition Width="*" MaxWidth="555"/>
     </Grid.ColumnDefinitions>
 
-      <Grid Grid.Column="1">
+      <Grid Grid.Column="1"
+            Visibility="{Binding Students/,Converter={converters:IsNullConverter ReturnVisibility=True,Invert=True},FallbackValue=Collapsed}">
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto"/>
           <RowDefinition Height="Auto" />
@@ -275,7 +276,9 @@
                    VerticalAlignment="Bottom"
                    Grid.Row="1"/>
       </Grid>
+    
       <Border x:Name="StudentsCard"
+              Grid.ColumnSpan="{Binding Students/,Converter={converters:IsNullConverter TrueValue=2,FalseValue=1},FallbackValue=2}"
               BorderBrush="#e8edec" BorderThickness="0 0 2 0">
         <Grid>
         <Grid.RowDefinitions>
@@ -326,9 +329,11 @@
                   IsSynchronizedWithCurrentItem="True"
                   ClipboardCopyMode="None"
                   AllowDrop="True"
+                    SelectionMode="Single"
                     IsReadOnly="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}"
                   PreviewDrop="StudentsDrop"
                   PreviewDragOver="StudentsDragEnter"
+                    FrozenColumnCount="1"
                   Grid.Row="1">
             <DataGrid.Resources>
               <ObjectDataProvider x:Key="Departments" MethodName="GetValues"
@@ -339,7 +344,22 @@
               </ObjectDataProvider>
             </DataGrid.Resources>
             <DataGrid.Columns>
-              <DataGridTemplateColumn Header="{md:PackIcon AccountCardDetails}">
+              
+              <DataGridCheckBoxColumn EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"
+                                      Binding="{Binding IsSelected,UpdateSourceTrigger=PropertyChanged}"
+                                      ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}">
+                <DataGridCheckBoxColumn.Header>
+                  
+                    <CheckBox VerticalAlignment="Center"
+                              HorizontalAlignment="Center"
+                              Focusable="False"
+                              Margin="2 0 0 0"
+                              IsChecked="{Binding Source={x:Static vm:StudentsViewModel.Instance},Path=SelectionState}"
+                              Padding="0" />
+                </DataGridCheckBoxColumn.Header>
+              </DataGridCheckBoxColumn>
+              
+              <DataGridTemplateColumn Header="{md:PackIcon Face}">
                 <DataGridTemplateColumn.CellTemplate>
                   <DataTemplate>
                     <Button Style="{StaticResource MaterialDesignToolButton}" Padding="0"
@@ -396,6 +416,7 @@
       </Border>
 
     <GridSplitter Grid.Column="0"
+                  Visibility="{Binding Students/,Converter={converters:IsNullConverter ReturnVisibility=True,Invert=True},FallbackValue=Collapsed}"
                   HorizontalAlignment="Right"
                   Width="2"/>
   </Grid>

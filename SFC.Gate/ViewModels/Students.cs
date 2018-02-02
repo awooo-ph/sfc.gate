@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Data;
 using System.Windows.Input;
+using MaterialDesignThemes.Wpf;
 using SFC.Gate.Models;
 using SFC.Gate.ViewModels;
 using Xceed.Words.NET;
@@ -26,6 +27,28 @@ namespace SFC.Gate.Material.ViewModels
 
         private StudentsViewModel()
         {
+            Messenger.Default.AddListener<Student>(Messages.ModelSelected, s =>
+            {
+                var students = Student.Cache.Where(FilterStudents).ToList();
+                bool? sel = null;
+                foreach (var student in students)
+                {
+                    if (sel == null)
+                    {
+                        sel = student.IsSelected;
+                    }
+                    else
+                    {
+                        if (sel != student.IsSelected)
+                        {
+                            sel = null;
+                            break;
+                        }
+                    }
+                }
+                _SelectionState = sel;
+                OnPropertyChanged(nameof(SelectionState));
+            });
         }
 
         private static StudentsViewModel _instance;
@@ -124,6 +147,7 @@ namespace SFC.Gate.Material.ViewModels
                 return true;
             if (s.ContactNumber.ToLower().Contains(StudentsKeyword.ToLower()))
                 return true;
+            s.Select(false);
             return false;
         }
 
@@ -436,7 +460,7 @@ namespace SFC.Gate.Material.ViewModels
 
         private ListCollectionView _messages;
 
-        public ListCollectionView Messages
+        public ListCollectionView SmsMessages
         {
             get
             {
@@ -499,5 +523,27 @@ namespace SFC.Gate.Material.ViewModels
                     msg.Save();
                     NotificationMessage = "";
                 },d=>CanSend()));
+        
+
+        private bool? _SelectionState;
+
+        public bool? SelectionState
+        {
+            get => _SelectionState;
+            set
+            {
+                if(value == _SelectionState)
+                    return;
+                _SelectionState = value;
+                OnPropertyChanged(nameof(SelectionState));
+                
+                var students = Student.Cache.Where(FilterStudents);
+                foreach (var student in students)
+                {
+                    student.Select(_SelectionState??false);
+                }
+            }
+        }
+        
     }
 }

@@ -21,7 +21,7 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   Grid.ColumnSpan="2"
                   HorizontalScrollBarVisibility="Disabled">
-      <ItemsControl ItemsSource="{Binding Messages}"
+      <ItemsControl ItemsSource="{Binding SmsMessages}"
                     HorizontalContentAlignment="Stretch">
         <ItemsControl.ItemTemplate>
           <DataTemplate>
@@ -39,7 +39,7 @@
                 <TextBlock Text="{Binding Time,StringFormat=g}"
                            VerticalAlignment="Center"
                            Opacity="0.7"/>
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <StackPanel Grid.Column="1" Orientation="Horizontal" ToolTip="The user who sent this message">
                   <Border Height="16" Width="16" Margin="0 0 4 0">
                     <Border.OpacityMask>
                       <VisualBrush>
