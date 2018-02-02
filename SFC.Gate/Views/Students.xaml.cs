@@ -30,22 +30,22 @@ namespace SFC.Gate.Material.Views
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
-            ActivityButton.Visibility = Visibility.Collapsed;
+            //ActivityButton.Visibility = Visibility.Collapsed;
             base.OnRenderSizeChanged(sizeInfo);
-            return;
-            if (!sizeInfo.WidthChanged) return;
-            if (ActualWidth < 777)
-            {
-                Grid.SetColumnSpan(StudentsCard, 2);
-                StudentsViewModel.Instance.StudentActivityOpen = false;
-                ActivityButton.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Grid.SetColumnSpan(StudentsCard,1);
-                StudentsViewModel.Instance.StudentActivityOpen = false;
-                ActivityButton.Visibility = Visibility.Collapsed;
-            }
+            //return;
+            //if (!sizeInfo.WidthChanged) return;
+            //if (ActualWidth < 777)
+            //{
+            //    Grid.SetColumnSpan(StudentsCard, 2);
+            //    StudentsViewModel.Instance.StudentActivityOpen = false;
+            //    ActivityButton.Visibility = Visibility.Visible;
+            //}
+            //else
+            //{
+            //    Grid.SetColumnSpan(StudentsCard,1);
+            //    StudentsViewModel.Instance.StudentActivityOpen = false;
+            //    ActivityButton.Visibility = Visibility.Collapsed;
+            //}
         }
 
         private void DataGrid_OnInitializingNewItem(object sender, InitializingNewItemEventArgs e)

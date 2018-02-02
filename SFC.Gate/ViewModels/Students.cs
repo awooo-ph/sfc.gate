@@ -127,12 +127,80 @@ namespace SFC.Gate.Material.ViewModels
             }
         }
 
+        private string _Title = "ALL STUDENTS";
+
+        public string Title
+        {
+            get
+            {
+                if (FilterCollege && FilterElementary && FilterHighSchool) return " STUDENTS [ ALL ]";
+                var title = "";
+                if (FilterElementary)
+                    title += " [ ELEMENTARY";
+                if (FilterHighSchool)
+                {
+                    if (title.Length > 0)
+                    {
+                        title += " | ";
+                    }
+                    else
+                    {
+                        title = " [ ";
+                    }
+                    title += "HIGH SCHOOL";
+                }
+                if (FilterCollege)
+                {
+                    if (title.Length > 0)
+                    {
+                        title += " | ";
+                    }
+                    else
+                    {
+                        title = " [ ";
+                    }
+                    title += "COLLEGE";
+                }
+                if (title.Length > 0)
+                {
+                    title += " ]";
+                }
+                else
+                {
+                    title = " [ ALL ]";
+                }
+                title = " STUDENTS" + title;
+                return title;
+            }
+            set
+            {
+                if(value == _Title)
+                    return;
+                _Title = value;
+                OnPropertyChanged(nameof(Title));
+            }
+        }
+
+        
+
         private bool FilterStudents(object o)
         {
-            if (string.IsNullOrEmpty(StudentsKeyword))
-                return true;
             if (!(o is Student s))
                 return false;
+
+            var fe = FilterElementary || (!FilterElementary && !FilterCollege && !FilterHighSchool);
+            var fh = FilterHighSchool || (!FilterElementary && !FilterCollege && !FilterHighSchool);
+            var fc = FilterCollege || (!FilterElementary && !FilterCollege && !FilterHighSchool);
+
+            if (!fe && s.Level == Departments.Elementary)
+                return false;
+            if (!fh && s.Level == Departments.HighSchool)
+                return false;
+            if (!fc && s.Level == Departments.College)
+                return false;
+
+            if(string.IsNullOrEmpty(StudentsKeyword))
+                return true;
             if (s.Firstname.ToLower().Contains(StudentsKeyword.ToLower()))
                 return true;
             if (s.Lastname.ToLower().Contains(StudentsKeyword.ToLower()))
@@ -147,10 +215,59 @@ namespace SFC.Gate.Material.ViewModels
                 return true;
             if (s.ContactNumber.ToLower().Contains(StudentsKeyword.ToLower()))
                 return true;
+            
             s.Select(false);
             return false;
         }
 
+        private bool _FilterElementary;
+
+        public bool FilterElementary
+        {
+            get => _FilterElementary;
+            set
+            {
+                if(value == _FilterElementary)
+                    return;
+                _FilterElementary = value;
+                OnPropertyChanged(nameof(FilterElementary));
+                Students.Filter = FilterStudents;
+                OnPropertyChanged(nameof(Title));
+            }
+        }
+
+        private bool _FilterHighSchool;
+
+        public bool FilterHighSchool
+        {
+            get => _FilterHighSchool;
+            set
+            {
+                if(value == _FilterHighSchool)
+                    return;
+                _FilterHighSchool = value;
+                OnPropertyChanged(nameof(FilterHighSchool));
+                Students.Filter = FilterStudents;
+                OnPropertyChanged(nameof(Title));
+            }
+        }
+
+        private bool _FilterCollege;
+
+        public bool FilterCollege
+        {
+            get => _FilterCollege;
+            set
+            {
+                if(value == _FilterCollege)
+                    return;
+                _FilterCollege = value;
+                OnPropertyChanged(nameof(FilterCollege));
+                Students.Filter = FilterStudents;
+                OnPropertyChanged(nameof(Title));
+            }
+        }
+        
         private bool _StudentActivityOpen;
 
         public bool StudentActivityOpen
