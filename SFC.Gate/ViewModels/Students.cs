@@ -385,5 +385,119 @@ namespace SFC.Gate.Material.ViewModels
         {
             PrintLog((Student) Students.CurrentItem);
         },d=>(Students.CurrentItem as Student)?.Logs.Count>0));
+
+        private bool _LogTab = true;
+
+        public bool LogTab
+        {
+            get => _LogTab;
+            set
+            {
+                if(value == _LogTab)
+                    return;
+                _LogTab = value;
+                OnPropertyChanged(nameof(LogTab));
+                if (!SmsTab && !ViolationsTab && !LogTab)
+                    LogTab = true;
+            }
+        }
+
+        private bool _ViolationsTab;
+
+        public bool ViolationsTab
+        {
+            get => _ViolationsTab;
+            set
+            {
+                if(value == _ViolationsTab)
+                    return;
+                _ViolationsTab = value;
+                OnPropertyChanged(nameof(ViolationsTab));
+                if (!SmsTab && !ViolationsTab && !LogTab)
+                    ViolationsTab = true;
+            }
+        }
+
+        private bool _SmsTab;
+
+        public bool SmsTab
+        {
+            get => _SmsTab;
+            set
+            {
+                if(value == _SmsTab)
+                    return;
+                _SmsTab = value;
+                OnPropertyChanged(nameof(SmsTab));
+                if (!value && !ViolationsTab && !LogTab)
+                    SmsTab = true;
+            }
+        }
+
+        private ListCollectionView _messages;
+
+        public ListCollectionView Messages
+        {
+            get
+            {
+                if (_messages != null) return _messages;
+                _messages = new ListCollectionView(SmsNotification.Cache);
+                _messages.Filter = FilterMessage;
+                Students.CurrentChanged += (sender, args) =>
+                {
+                    _messages.Filter = FilterMessage;
+                    NotificationMessage = "";
+                };
+                return _messages;
+            }
+        }
+
+        private bool FilterMessage(object o)
+        {
+            if (!(o is SmsNotification msg)) return false;
+            if (!(Students.CurrentItem is Student s)) return false;
+            return s.Id == msg.StudentId;
+        }
+
+        private string _NotificationMessage;
+
+        public string NotificationMessage
+        {
+            get => _NotificationMessage;
+            set
+            {
+                if(value == _NotificationMessage)
+                    return;
+                _NotificationMessage = value;
+                OnPropertyChanged(nameof(NotificationMessage));
+            }
+        }
+
+        private ICommand _sendNotificationCommand;
+        private DateTime _lastSent = DateTime.MinValue;
+        
+        private bool CanSend()
+        {
+            if ((DateTime.Now - _lastSent).TotalSeconds < 7) return false;
+            return Students.CurrentItem != null && !string.IsNullOrWhiteSpace(NotificationMessage);
+        }
+        
+        public ICommand SendNotificationCommand =>
+            _sendNotificationCommand ?? (_sendNotificationCommand = new DelegateCommand(
+                d =>
+                {
+                    if (!CanSend()) return;
+                    
+                    if (!(Students.CurrentItem is Student s)) return;
+                    _lastSent = DateTime.Now;
+                    var msg = new SmsNotification()
+                    {
+                        UserId = MainViewModel.Instance.CurrentUser.Id,
+                        StudentId =s.Id,
+                        Message = NotificationMessage
+                    };
+                    msg.Save();
+                    NotificationMessage = "";
+                },d=>CanSend()));
     }
 }

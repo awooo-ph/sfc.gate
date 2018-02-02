@@ -9,6 +9,7 @@
              xmlns:converters="clr-namespace:SFC.Gate.Converters"
              xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:views="clr-namespace:SFC.Gate.Material.Views"
              DataContext="{Binding Source={x:Static vm:StudentsViewModel.Instance}}"
              d:DesignHeight="300" d:DesignWidth="300">
   <md:DrawerHost IsRightDrawerOpen="{Binding StudentActivityOpen}">
@@ -89,46 +90,8 @@
         </StackPanel>
         
         <md:Transitioner Grid.Row="2" VerticalAlignment="Stretch" 
-                         SelectedIndex="{Binding ElementName=ListBox,Path=SelectedIndex}">
-          <md:TransitionerSlide>
-            <md:TransitionerSlide.BackwardWipe>
-              <md:FadeWipe/>
-            </md:TransitionerSlide.BackwardWipe>
-            <md:TransitionerSlide.ForwardWipe>
-              <md:FadeWipe/>
-            </md:TransitionerSlide.ForwardWipe>
-            <Grid>
-              <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-              </Grid.RowDefinitions>
-              <DataGrid ItemsSource="{Binding Students/Logs}" AutoGenerateColumns="False"
-                  Grid.Row="0"
-                  IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False">
-                <DataGrid.Columns>
-                  <DataGridTextColumn Header="TIME" Binding="{Binding DateTime}" />
-                  <DataGridTextColumn Header="EVENT" Binding="{Binding Description}"/>
-                </DataGrid.Columns>
-              </DataGrid>
-
-              <UniformGrid Rows="1" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10">
-                <Button Style="{StaticResource MaterialDesignFlatButton}"
-                    Command="{Binding PrintLogCommand}">
-                  <StackPanel Orientation="Horizontal">
-                    <md:PackIcon Kind="Printer"/>
-                    <TextBlock Text=" PRINT"/>
-                  </StackPanel>
-                </Button>
-                <Button Style="{StaticResource MaterialDesignFlatButton}"
-                    Command="{Binding ClearLogCommand}">
-                  <StackPanel Orientation="Horizontal">
-                    <md:PackIcon Kind="CalendarRemove" />
-                    <TextBlock Text=" CLEAR" />
-                  </StackPanel>
-                </Button>
-              </UniformGrid>
-            </Grid>
-          </md:TransitionerSlide>
+                         SelectedIndex="{Binding ElementName=Tabs,Path=SelectedIndex}">
+          
           <md:TransitionerSlide>
             <md:TransitionerSlide.BackwardWipe>
               <md:FadeWipe />
@@ -218,6 +181,55 @@
               </Grid>
             </Grid>
           </md:TransitionerSlide>
+          <md:TransitionerSlide>
+            <md:TransitionerSlide.BackwardWipe>
+              <md:FadeWipe />
+            </md:TransitionerSlide.BackwardWipe>
+            <md:TransitionerSlide.ForwardWipe>
+              <md:FadeWipe />
+            </md:TransitionerSlide.ForwardWipe>
+            <views:StudentSMS/>
+          </md:TransitionerSlide>
+
+          <md:TransitionerSlide>
+            <md:TransitionerSlide.BackwardWipe>
+              <md:FadeWipe />
+            </md:TransitionerSlide.BackwardWipe>
+            <md:TransitionerSlide.ForwardWipe>
+              <md:FadeWipe />
+            </md:TransitionerSlide.ForwardWipe>
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+              </Grid.RowDefinitions>
+              <DataGrid ItemsSource="{Binding Students/Logs}" AutoGenerateColumns="False"
+                        Grid.Row="0"
+                        IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="TIME" Binding="{Binding DateTime}" />
+                  <DataGridTextColumn Header="EVENT" Binding="{Binding Description}" />
+                </DataGrid.Columns>
+              </DataGrid>
+
+              <UniformGrid Rows="1" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10">
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        Command="{Binding PrintLogCommand}">
+                  <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="Printer" />
+                    <TextBlock Text=" PRINT" />
+                  </StackPanel>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        Command="{Binding ClearLogCommand}">
+                  <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="CalendarRemove" />
+                    <TextBlock Text=" CLEAR" />
+                  </StackPanel>
+                </Button>
+              </UniformGrid>
+            </Grid>
+          </md:TransitionerSlide>
         </md:Transitioner>
 
         <StackPanel Orientation="Horizontal"
@@ -232,15 +244,36 @@
                      Margin="0 0 10 0"
                      FontWeight="Bold"
                      VerticalAlignment="Center"
-                     Visibility="{Binding ElementName=ListBoxItem,Path=IsSelected,Converter={converters:BooleanToVisibility Collapsed,Visible}}" />
-        <ListBox Style="{StaticResource MaterialDesignToolToggleFlatListBox}" SelectedIndex="0"
-                 x:Name="ListBox">
-          <ListBoxItem Content="{md:PackIcon CalendarClock}"
-                       IsSelected="{Binding ElementName=ListBoxItem,Path=IsSelected,Converter={converters:Inverter}}" />
+                     Visibility="{Binding ElementName=LogTab,Path=IsSelected,Converter={converters:BooleanToVisibility}}" />
+          <TextBlock Text="SMS NOTIFICATIONS"
+                     Margin="0 0 10 0"
+                     FontWeight="Bold"
+                     VerticalAlignment="Center"
+                     Visibility="{Binding ElementName=SmsTab,Path=IsSelected,Converter={converters:BooleanToVisibility}}" />
+          <ListBox Style="{StaticResource MaterialDesignToolToggleFlatListBox}" x:Name="Tabs">
+         
           <ListBoxItem Content="{md:PackIcon AlertOutline}"
+                       IsSelected="{Binding ViolationsTab}"
+                       Cursor="Hand"
+                       ToolTip="Violations"
                        x:Name="ListBoxItem"/>
-        </ListBox>
+          <ListBoxItem Content="{md:PackIcon CellphoneBasic}"
+                       Cursor="Hand"
+                       ToolTip="SMS Notifications"
+                       IsSelected="{Binding SmsTab}"
+                       x:Name="SmsTab" />
+            <ListBoxItem Content="{md:PackIcon CalendarClock}"
+                         Cursor="Hand"
+                         IsSelected="{Binding LogTab}"
+                         ToolTip="Activity Log"
+                         x:Name="LogTab" />
+          </ListBox>
         </StackPanel>
+
+        <Rectangle Fill="{StaticResource MaterialDesignDivider}"
+                   Height="1" HorizontalAlignment="Stretch"
+                   VerticalAlignment="Bottom"
+                   Grid.Row="1"/>
       </Grid>
       <Border x:Name="StudentsCard"
               BorderBrush="#e8edec" BorderThickness="0 0 2 0">
