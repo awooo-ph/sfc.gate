@@ -65,6 +65,23 @@
                  Margin="0 40 0 0">
 
         <StackPanel Margin="0 0 40 40">
+          <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}">
+            <Run Text="Scan Interval (" />
+            <Run Text="{Binding Source={x:Static cnf:Config.General},Path=ScanInterval}" />
+            <Run Text="seconds)" />
+          </TextBlock>
+
+          <Slider Margin="4" Minimum="1" Interval="1"
+                  IsEnabled="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin}"
+                  Maximum="777" TickFrequency="47" TickPlacement="BottomRight"
+                  Value="{Binding Source={x:Static cnf:Config.General},Path=ScanInterval}" />
+
+          <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
+                     VerticalAlignment="Center"
+                     Text="Minimum time, in seconds, between valid scans." />
+        </StackPanel>
+
+        <StackPanel Margin="0 0 40 40">
           <CheckBox Margin="4" Content="Use Scanner Exclusively" FontWeight="Bold"
                     VerticalAlignment="Center"
                     IsChecked="{Binding Source={x:Static cnf:Config.Rfid},Path=UseExclusive}" />
@@ -91,23 +108,6 @@
                      VerticalAlignment="Center"
                      Text="An authenticated user is required to record RFID swipes. Uncheck to enable recording even when no user has logged in." />
         </StackPanel>
-
-        <StackPanel Margin="0 0 40 40">
-            <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}">
-              <Run Text="Scan Interval (" />
-              <Run Text="{Binding Source={x:Static cnf:Config.General},Path=ScanInterval}" />
-              <Run Text="seconds)" />
-            </TextBlock>
-
-            <Slider Margin="4" Minimum="1" Interval="1"
-                    IsEnabled="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin}"
-                    Maximum="777" TickFrequency="47" TickPlacement="BottomRight"
-                    Value="{Binding Source={x:Static cnf:Config.General},Path=ScanInterval}" />
-
-            <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
-                       VerticalAlignment="Center"
-                       Text="Minimum time, in seconds, between valid scans." />
-          </StackPanel>
 
       <StackPanel Margin="0 0 40 40" Visibility="Collapsed">
         <TextBlock FontWeight="Bold">

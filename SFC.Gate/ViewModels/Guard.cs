@@ -75,7 +75,8 @@ namespace SFC.Gate.Material.ViewModels
                     }
                     if (msg != "")
                     {
-                        SFC.Gate.ViewModels.SMS.Send(msg,Student.ContactNumber);
+                        if(Config.Sms.Enabled)
+                            SFC.Gate.ViewModels.SMS.Send(msg,Student.ContactNumber);
                     }
                     Instance.Index = StudentIndex;
                     _infoTimer?.Dispose();
