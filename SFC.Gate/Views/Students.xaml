@@ -13,47 +13,7 @@
              SnapsToDevicePixels="True"
              DataContext="{Binding Source={x:Static vm:StudentsViewModel.Instance}}"
              d:DesignHeight="300" d:DesignWidth="300">
-  <md:DrawerHost IsRightDrawerOpen="{Binding StudentActivityOpen}">
-    <md:DrawerHost.RightDrawerContent>
-      <Grid Grid.Column="1">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Background="{StaticResource MaterialDesignPaper}">
-          <ToggleButton Style="{StaticResource MaterialDesignFlatToggleButton}"
-                        Content="{md:PackIcon ChevronRight}"
-                        md:ToggleButtonAssist.OnContent="{md:PackIcon ChevronRight}"
-                        IsChecked="{Binding StudentActivityOpen}"
-                        VerticalAlignment="Center"
-                        Margin="10"/>
-          
-          <Image Source="{Binding Students/Picture,Converter={converters:BytesToImage}}"
-                 Height="64"
-                 Margin="10" />
-          <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-            <TextBlock VerticalAlignment="Center"
-                       Text="{Binding Students/Fullname,Mode=OneWay}"
-                       Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
-            <TextBlock>
-              <Run Text="{Binding Students/YearLevel}" />
-              <Run Text=" / " />
-              <Run Text="{Binding Students/Department}" />
-            </TextBlock>
-          </StackPanel>
-        </StackPanel>
-
-        <DataGrid ItemsSource="{Binding Students/Logs}" AutoGenerateColumns="False"
-                  Grid.Row="1"
-                  IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False">
-          <DataGrid.Columns>
-            <DataGridTextColumn Header="TIME" Binding="{Binding DateTime}" />
-            <DataGridTextColumn Header="EVENT" Binding="{Binding Description}" />
-          </DataGrid.Columns>
-        </DataGrid>
-      </Grid>
-    </md:DrawerHost.RightDrawerContent>
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="2*" MinWidth="333"/>
@@ -261,7 +221,7 @@
                        x:Name="ListBoxItem"/>
           <ListBoxItem Content="{md:PackIcon CellphoneBasic}"
                        Cursor="Hand"
-                       ToolTip="SMS Notifications"
+                       ToolTip="SMS Messages"
                        IsSelected="{Binding SmsTab}"
                        x:Name="SmsTab" />
             <ListBoxItem Content="{md:PackIcon CalendarClock}"
@@ -441,24 +401,34 @@
             </DataGrid.Columns>
           </DataGrid>
 
+        <UniformGrid Grid.Row="1" Rows="1"
+                     Margin="20"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Bottom">
           <Button Style="{StaticResource MaterialDesignFlatButton}"
-                  Command="{Binding PrintCommand}"
-                  Grid.Row="1"
-                  HorizontalAlignment="Left"
-                  VerticalAlignment="Bottom"
-                  Margin="20">
+                  Command="{Binding PrintCommand}">
             <StackPanel Orientation="Horizontal">
               <md:PackIcon Kind="Printer" />
               <TextBlock Text=" PRINT LIST" />
             </StackPanel>
           </Button>
-        </Grid>
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  Command="{Binding SendBulkCommand}">
+            <StackPanel Orientation="Horizontal">
+              <md:PackIcon Kind="MessageText" />
+              <TextBlock Text=" SEND MESSAGE" />
+            </StackPanel>
+          </Button>
+        </UniformGrid>
+      </Grid>
       </Border>
 
     <GridSplitter Grid.Column="0"
                   Visibility="{Binding Students/,Converter={converters:IsNullConverter ReturnVisibility=True,Invert=True},FallbackValue=Collapsed}"
                   HorizontalAlignment="Right"
                   Width="2"/>
+
+    <views:SmsSender Grid.ColumnSpan="2"
+      Visibility="{Binding ShowSmsDialog,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}" />
   </Grid>
-  </md:DrawerHost>
 </UserControl>

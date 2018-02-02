@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
 using MaterialDesignThemes.Wpf;
@@ -22,7 +24,10 @@ namespace SFC.Gate.Material.ViewModels
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            awooo.Context.Post(d =>
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            },null);   
         }
 
         private StudentsViewModel()
@@ -48,6 +53,7 @@ namespace SFC.Gate.Material.ViewModels
                 }
                 _SelectionState = sel;
                 OnPropertyChanged(nameof(SelectionState));
+                OnPropertyChanged(nameof(HasSelected));
             });
         }
 
@@ -640,9 +646,9 @@ namespace SFC.Gate.Material.ViewModels
                     msg.Save();
                     NotificationMessage = "";
                 },d=>CanSend()));
-        
 
-        private bool? _SelectionState;
+
+        private bool? _SelectionState = false;
 
         public bool? SelectionState
         {
@@ -659,8 +665,244 @@ namespace SFC.Gate.Material.ViewModels
                 {
                     student.Select(_SelectionState??false);
                 }
+                OnPropertyChanged(nameof(HasSelected));
+            }
+        }
+
+        private bool _ShowSmsDialog;
+
+        public bool ShowSmsDialog
+        {
+            get => _ShowSmsDialog;
+            set
+            {
+                if(value == _ShowSmsDialog)
+                    return;
+                _ShowSmsDialog = value;
+                OnPropertyChanged(nameof(ShowSmsDialog));
+            }
+        }
+
+        private ICommand _sendBulkCommand;
+
+        public ICommand SendBulkCommand => _sendBulkCommand ?? (_sendBulkCommand = new DelegateCommand(d =>
+        {
+            _aborting = false;
+            ShowSmsDialog = true;
+            BulkMessage = "";
+            if (SelectionState ?? true)
+                BulkSendTo = 4;
+            else
+                BulkSendTo = 0;
+        }));
+
+        private int _BulkSendTo;
+
+        public int BulkSendTo
+        {
+            get => _BulkSendTo;
+            set
+            {
+                _BulkSendTo = value;
+                OnPropertyChanged(nameof(BulkSendTo));
+                if (value == -1)
+                    BulkSendTo = 0;
+            }
+        }
+
+        private bool _HasSelected;
+
+        public bool HasSelected
+        {
+            get
+            {
+                var students = Student.Cache.Where(FilterStudents);
+                return students.Any(x => x.IsSelected);
+            }
+            set
+            {
+                _HasSelected = value;
+                OnPropertyChanged(nameof(HasSelected));
             }
         }
         
+        private string _BulkMessage;
+
+        public string BulkMessage
+        {
+            get => _BulkMessage;
+            set
+            {
+                if(value == _BulkMessage)
+                    return;
+                _BulkMessage = value;
+                OnPropertyChanged(nameof(BulkMessage));
+            }
+        }
+
+        private ICommand _cancelSendBulkCommand;
+
+        public ICommand CancelBulkSendCommand =>
+            _cancelSendBulkCommand ?? (_cancelSendBulkCommand = new DelegateCommand(
+                d =>
+                {
+                    ShowSmsDialog = false;
+                    BulkMessage = null;
+                }));
+
+        private ICommand _acceptSendBulkCommand;
+        private Task _bulkSenderTask;
+        private CancellationTokenSource _bulkToken;
+        public ICommand AcceptBulkSendCommand =>
+            _acceptSendBulkCommand ?? (_acceptSendBulkCommand = new DelegateCommand(
+                d =>
+                {
+                    
+                    IsBulkSending = true;
+                    SendingProgressIndeterminate = true;
+                    SendingProgress = 0;
+                    _bulkToken = new CancellationTokenSource();
+                    
+                    _bulkSenderTask = Task.Factory.StartNew(async () =>
+                    {
+                        List<Student> students = null;
+                        switch (BulkSendTo)
+                        {
+                            case 0:
+                                students = Student.Cache.ToList();
+                                break;
+                            case 1:
+                                students = Student.Cache.Where(x => x.Level == Departments.Elementary).ToList();
+                                break;
+                            case 2:
+                                students = Student.Cache.Where(x => x.Level == Departments.HighSchool).ToList();
+                                break;
+                            case 3:
+                                students = Student.Cache.Where(x => x.Level == Departments.College).ToList();
+                                break;
+                            case 4:
+                                students = Student.Cache.Where(x => x.IsSelected).ToList();
+                                break;
+                        }
+
+                        if (students == null)
+                        {
+                            IsBulkSending = false;
+                            return;
+                        }
+                        
+                        SendingProgressMaximum = students.Count;
+                        for (var i = 0; i < SendingProgressMaximum; i++)
+                        {
+                            var student = students[i];
+                            SendingProgressText = $"Sending {i + 1}/{SendingProgressMaximum} ...";
+                            await SMS.SendAsync(BulkMessage, student.ContactNumber);
+
+                            new SmsNotification()
+                            {
+                                UserId = MainViewModel.Instance.CurrentUser.Id,
+                                StudentId = student.Id,
+                                Message = BulkMessage
+                            }.Save();
+                            
+                            if (_bulkToken.IsCancellationRequested)
+                            {
+                                SendingProgressText = "Aborted";
+                                await TaskEx.Delay(1000);
+                                IsBulkSending = false;
+                                ShowSmsDialog = false;
+                                return;
+                            }
+                        }
+                        
+                        SendingProgressText = "Done";
+                        await TaskEx.Delay(1000);
+                        
+                        IsBulkSending = false;
+                        ShowSmsDialog = false;
+                        BulkMessage = "";
+                    }, _bulkToken.Token);
+                    
+                },d=>!string.IsNullOrWhiteSpace(BulkMessage)));
+
+        private bool _IsBulkSending;
+
+        public bool IsBulkSending
+        {
+            get => _IsBulkSending;
+            set
+            {
+                if(value == _IsBulkSending)
+                    return;
+                _IsBulkSending = value;
+                OnPropertyChanged(nameof(IsBulkSending));
+            }
+        }
+
+        private string _SendingProgressText;
+
+        public string SendingProgressText
+        {
+            get => _SendingProgressText;
+            set
+            {
+                if(value == _SendingProgressText)
+                    return;
+                _SendingProgressText = value;
+                OnPropertyChanged(nameof(SendingProgressText));
+            }
+        }
+
+        private bool _SendingProgressIndeterminate;
+
+        public bool SendingProgressIndeterminate
+        {
+            get => _SendingProgressIndeterminate;
+            set
+            {
+                if(value == _SendingProgressIndeterminate)
+                    return;
+                _SendingProgressIndeterminate = value;
+                OnPropertyChanged(nameof(SendingProgressIndeterminate));
+            }
+        }
+
+        private double _SendingProgressMaximum;
+
+        public double SendingProgressMaximum
+        {
+            get => _SendingProgressMaximum;
+            set
+            {
+                if(value == _SendingProgressMaximum)
+                    return;
+                _SendingProgressMaximum = value;
+                OnPropertyChanged(nameof(SendingProgressMaximum));
+            }
+        }
+
+        private double _SendingProgress;
+
+        public double SendingProgress
+        {
+            get => _SendingProgress;
+            set
+            {
+                if(value == _SendingProgress)
+                    return;
+                _SendingProgress = value;
+                OnPropertyChanged(nameof(SendingProgress));
+            }
+        }
+
+        private ICommand _abortSendingCommand;
+        private bool _aborting = false;
+        public ICommand AbortSendingCommand => _abortSendingCommand ?? (_abortSendingCommand = new DelegateCommand(d =>
+        {
+            _aborting = true;
+            _bulkToken?.Cancel();
+            SendingProgressText = "Aborting...";
+        },d=>!_aborting));
+
     }
 }
