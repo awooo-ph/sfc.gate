@@ -8,6 +8,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:cnf="clr-namespace:SFC.Gate.Configurations;assembly=SFC.Gate.Core"
              xmlns:viewModels="clr-namespace:SFC.Gate.Material.ViewModels"
+             xmlns:viewModels1="clr-namespace:SFC.Gate.ViewModels;assembly=SFC.Gate.Core"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
   <Grid>
@@ -37,11 +38,22 @@
                 CornerRadius="7">
           <StackPanel Margin="20">
             <TextBlock Text="MODEM COM PORT" Margin="4" FontWeight="Bold" />
-            <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=Port}" />
-          <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+            <ComboBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=Port}" 
+                      ItemsSource="{Binding Source={x:Static viewModels1:SMS.Instance},Path=Ports}"/>
+              <TextBlock Grid.Column="1" Text="{Binding Source={x:Static viewModels1:SMS.Instance},Path=Status}"
+                         Margin="10 0 0 0" VerticalAlignment="Center"/>
+            </Grid>
+            <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
                        VerticalAlignment="Center">
               <Run Text="COM port the GSM Modem is attached into." />
-              <Hyperlink Command="{Binding Source={x:Static local:Extensions.OpenModemsCommand}}">See Installed Modems.</Hyperlink>
+              <Hyperlink Command="{Binding Source={x:Static local:Extensions.OpenModemsCommand}}">See Installed Modems</Hyperlink>
+              <Run Text=". Click "/><Hyperlink Command="{Binding Source={x:Static viewModels1:SMS.Instance},Path=RefreshPortsCommand}">here</Hyperlink>
+            <Run> to refresh the list.</Run>
           </TextBlock>
         </StackPanel>
         </Border>
