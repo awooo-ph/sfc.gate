@@ -169,8 +169,20 @@ namespace SFC.Gate.Material.ViewModels
             {
                 if (_violationsList != null) return _violationsList;
                 _violationsList = new ListCollectionView(Violation.Cache);
+                _violationsList.Filter = Filter;
+                Students.CurrentChanged += (sender, args) =>
+                {
+                    _violationsList.Filter = Filter;
+                };
                 return _violationsList;
             }
+        }
+
+        private bool Filter(object o)
+        {
+            if (Students.CurrentItem == null) return false;
+            if (!(o is Violation v)) return false;
+            return v.Level == ((Student) Students.CurrentItem).Level;
         }
 
         private ICommand _acceptAddViolationCommand;

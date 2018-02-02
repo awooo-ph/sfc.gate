@@ -10,7 +10,59 @@
              xmlns:converters="clr-namespace:SFC.Gate.Converters"
              DataContext="{Binding Source={x:Static viewModels:Violations.Instance}}"
              xmlns:viewModels="clr-namespace:SFC.Gate.Material.ViewModels"
+             xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
              d:DesignHeight="300" d:DesignWidth="300">
+  <UserControl.Resources>
+    <DataTemplate DataType="{x:Type models:Violation}">
+      <Grid>
+        <Grid Margin="0 7" Grid.Row="0"
+                      Visibility="{Binding EditMode,Converter={converters:BooleanToVisibility}}">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" SharedSizeGroup="a"/>
+            <ColumnDefinition Width="Auto" SharedSizeGroup="a"/>
+          </Grid.ColumnDefinitions>
+          <TextBox Grid.Column="0" Margin="0 0 10 0"
+                           Text="{Binding Name,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" />
+          <Button Grid.Column="1" Content="{md:PackIcon Check}"
+                          Command="{Binding SaveCommand}"
+                          Style="{StaticResource MaterialDesignRaisedButton}" />
+          <Button Grid.Column="2" Content="{md:PackIcon Close}"
+                          Command="{Binding ResetCommand}"
+                          Margin="10 0 0 0"
+                          Style="{StaticResource MaterialDesignRaisedLightButton}" />
+        </Grid>
+
+        <Grid Margin="0 7" Visibility="{Binding EditMode,Converter={converters:BooleanToVisibility Collapsed,Visible}}">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+          <TextBlock Grid.Column="1" Margin="0 0 10 0" Text="{Binding Name}"
+                     VerticalAlignment="Center"/>
+          <Button Grid.Column="2" Content="{md:PackIcon Pencil}"
+                          Command="{Binding EditCommand}"
+                          Margin="10 0"
+                  VerticalAlignment="Center"
+                          Style="{StaticResource MaterialDesignFlatButton}" />
+          <Button Grid.Column="3" Content="{md:PackIcon Delete}"
+                  VerticalAlignment="Center"
+                      Command="{Binding DeleteCommand}"
+                      Style="{StaticResource MaterialDesignFlatButton}" />
+        </Grid>
+      </Grid>
+    </DataTemplate>
+
+    <ObjectDataProvider x:Key="Departments" MethodName="GetValues"
+                        ObjectType="{x:Type system:Enum}">
+      <ObjectDataProvider.MethodParameters>
+        <x:Type Type="models:Departments" />
+      </ObjectDataProvider.MethodParameters>
+    </ObjectDataProvider>
+  </UserControl.Resources>
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
@@ -24,77 +76,61 @@
             Command="{Binding AddViolationCommand}"
             HorizontalAlignment="Right"
             VerticalAlignment="Center"
-            Content="New Violation"/>
+            Content="NEW VIOLATION"/>
     <Rectangle Grid.Row="0"
                Height="1"
                VerticalAlignment="Bottom"
                Fill="{StaticResource MaterialDesignDivider}"/>
-    <Grid Margin="74 20" Grid.Row="1">
+    <Grid Grid.Row="1" IsSharedSizeScope="True">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="*" />
       </Grid.RowDefinitions>
 
-      <Grid Margin="0 7" Grid.Row="0"
+      <Grid Margin="74 20" Grid.Row="0"
             Visibility="{Binding ShowNewItem,Converter={converters:BooleanToVisibility}}">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="*" />
           <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="Auto" SharedSizeGroup="a"/>
+          <ColumnDefinition Width="Auto" SharedSizeGroup="a"/>
         </Grid.ColumnDefinitions>
-        <TextBox Grid.Column="0" Margin="0 0 10 0" Text="{Binding NewItem.Name,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" />
-        <Button Grid.Column="1" Content="Add violation"
+        <TextBox Grid.Column="0" Margin="0 0 0 0" Text="{Binding NewItem.Name,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" 
+                 md:HintAssist.Hint="VIOLATION"
+                 md:HintAssist.IsFloating="True"/>
+        
+        <ComboBox Grid.Column="1" SelectedItem="{Binding NewItem.Level}"
+                  Margin="10 0 20 0"
+                  md:HintAssist.Hint="DEPARTMENT"
+                  md:HintAssist.IsFloating="True"
+                  Style="{StaticResource MaterialDesignComboBox}"
+                  ItemsSource="{Binding Source={StaticResource Departments}}"/>
+        <Button Grid.Column="2" Content="{md:PackIcon Check}"
                 Command="{Binding AcceptNewCommand}"
                 Style="{StaticResource MaterialDesignRaisedButton}" />
-        <Button Grid.Column="2" Content="Cancel"
+        <Button Grid.Column="3" Content="{md:PackIcon Close}"
                 Command="{Binding CancelViolationCommand}"
                 Margin="10 0 0 0"
                 Style="{StaticResource MaterialDesignRaisedLightButton}" />
       </Grid>
       <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
-      <ItemsControl Grid.IsSharedSizeScope="True"
-                    ItemsSource="{Binding Items}">
-        <ItemsControl.ItemTemplate>
-          <DataTemplate>
-              <Grid>
-                <Grid Margin="0 7" Grid.Row="0"
-                      Visibility="{Binding EditMode,Converter={converters:BooleanToVisibility}}">
-                  <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                  </Grid.ColumnDefinitions>
-                  <TextBox Grid.Column="0" Margin="0 0 10 0"
-                           Text="{Binding Name,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" />
-                  <Button Grid.Column="1" Content="Save"
-                          Command="{Binding SaveCommand}"
-                          Style="{StaticResource MaterialDesignRaisedButton}" />
-                  <Button Grid.Column="2" Content="Cancel"
-                          Command="{Binding ResetCommand}"
-                          Margin="10 0 0 0"
-                          Style="{StaticResource MaterialDesignRaisedLightButton}" />
-                </Grid>
-
-                <Grid Margin="0 7" Visibility="{Binding EditMode,Converter={converters:BooleanToVisibility Collapsed,Visible}}">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                  </Grid.ColumnDefinitions>
-              <TextBlock Grid.Column="1" Margin="0 0 10 0" Text="{Binding Name}"/>
-                  <Button Grid.Column="2" Content="{md:PackIcon Pencil}"
-                          Command="{Binding EditCommand}"
-                          Margin="10 0"
-                          Style="{StaticResource MaterialDesignFlatButton}" />
-              <Button Grid.Column="3" Content="{md:PackIcon Delete}"
-                      Command="{Binding DeleteCommand}"
-                      Style="{StaticResource MaterialDesignFlatButton}" />
-            </Grid>
-              </Grid>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-      </ItemsControl>
+        <StackPanel Margin="74 20">
+          <TextBlock Text="ELEMENTARY" Style="{StaticResource MaterialDesignTitleTextBlock}"/>
+          <ItemsControl Grid.IsSharedSizeScope="True"
+                        Margin="20 0 0 20"
+                    ItemsSource="{Binding ElementaryItems}">
+          </ItemsControl>
+          <TextBlock Text="HIGH SCHOOL" Style="{StaticResource MaterialDesignTitleTextBlock}"/>
+          <ItemsControl Grid.IsSharedSizeScope="True"
+                        Margin="20 0 0 20"
+                    ItemsSource="{Binding HighSchoolItems}">
+          </ItemsControl>
+          <TextBlock Text="COLLEGE" Style="{StaticResource MaterialDesignTitleTextBlock}"/>
+          <ItemsControl Grid.IsSharedSizeScope="True"
+                        Margin="20 0 0 20"
+                    ItemsSource="{Binding CollegeItems}">
+          </ItemsControl>
+        </StackPanel>
       </ScrollViewer>
     </Grid>
     

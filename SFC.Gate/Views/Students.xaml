@@ -68,16 +68,22 @@
         
         <StackPanel Orientation="Horizontal" Background="{StaticResource MaterialDesignPaper}">
           <Image Source="{Binding Students/Picture,Converter={converters:BytesToImage}}"
+                 Visibility="{Binding Students/HasPicture,Converter={converters:BooleanToVisibility}}"
                Height="64"
                Margin="10"/>
+          <md:PackIcon Kind="Face"
+                       Margin="10"
+                       Visibility="{Binding Students/HasPicture,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
+                       HorizontalAlignment="Center"
+                       Height="64" Width="64" />
           <StackPanel Orientation="Vertical" VerticalAlignment="Center">
             <TextBlock VerticalAlignment="Center"
                    Text="{Binding Students/Fullname,Mode=OneWay}"
                    Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
             <TextBlock>
-            <Run Text="{Binding Students/YearLevel}"/>
+            <Run Text="{Binding Students/Level}"/>
             <Run Text=" / "/>
-            <Run Text="{Binding Students/Department}"/>
+            <Run Text="{Binding Students/YearLevel}"/>
             </TextBlock>
           </StackPanel>
         </StackPanel>
@@ -313,8 +319,9 @@
                         <Image Source="{Binding Picture,Converter={converters:BytesToImage}}"/>
                       </Button.ToolTip>
                       <Grid Margin="0 0 4 0">
-                        <md:PackIcon Kind="AccountCardDetails" Visibility="{Binding HasPicture,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
+                        <md:PackIcon Kind="Face" Visibility="{Binding HasPicture,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
                                      HorizontalAlignment="Center"
+                                     ToolTip="Click to change photo"
                                      Height="16"/>
                         <Image Source="{Binding Picture,Converter={converters:BytesToImage}}"
                              HorizontalAlignment="Center"

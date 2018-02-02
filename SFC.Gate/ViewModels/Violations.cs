@@ -31,13 +31,56 @@ namespace SFC.Gate.Material.ViewModels
 
         private ListCollectionView _items;
 
-        public ListCollectionView Items
+        public ListCollectionView ElementaryItems
         {
             get
             {
                 if (_items != null) return _items;
                 _items = new ListCollectionView(Violation.Cache);
+                _items.Filter = o =>
+                {
+                    if (!(o is Violation v)) return false;
+                    return v.Level == Departments.Elementary;
+                };
                 return _items;
+            }
+        }
+
+        private ListCollectionView _highSchool;
+
+        public ListCollectionView HighSchoolItems
+        {
+            get
+            {
+                if (_highSchool != null)
+                    return _highSchool;
+                _highSchool = new ListCollectionView(Violation.Cache);
+                _highSchool.Filter = o =>
+                {
+                    if (!(o is Violation v))
+                        return false;
+                    return v.Level == Departments.HighSchool;
+                };
+                return _highSchool;
+            }
+        }
+
+        private ListCollectionView _college;
+
+        public ListCollectionView CollegeItems
+        {
+            get
+            {
+                if (_college != null)
+                    return _college;
+                _college = new ListCollectionView(Violation.Cache);
+                _college.Filter = o =>
+                {
+                    if (!(o is Violation v))
+                        return false;
+                    return v.Level == Departments.College;
+                };
+                return _college;
             }
         }
 
