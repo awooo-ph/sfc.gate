@@ -7,6 +7,8 @@
              xmlns:vm="clr-namespace:SFC.Gate.Material.ViewModels"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:SFC.Gate.Converters"
+             xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
              DataContext="{Binding Source={x:Static vm:StudentsViewModel.Instance}}"
              d:DesignHeight="300" d:DesignWidth="300">
   <md:DrawerHost IsRightDrawerOpen="{Binding StudentActivityOpen}">
@@ -289,6 +291,14 @@
                   PreviewDrop="StudentsDrop"
                   PreviewDragOver="StudentsDragEnter"
                   Grid.Row="1">
+            <DataGrid.Resources>
+              <ObjectDataProvider x:Key="Departments" MethodName="GetValues"
+                                  ObjectType="{x:Type system:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                  <x:Type Type="models:Departments"/>
+                </ObjectDataProvider.MethodParameters>
+              </ObjectDataProvider>
+            </DataGrid.Resources>
             <DataGrid.Columns>
               <DataGridTemplateColumn Header="{md:PackIcon AccountCardDetails}">
                 <DataGridTemplateColumn.CellTemplate>
@@ -324,8 +334,8 @@
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
               <DataGridTextColumn Header="YEAR LEVEL" Binding="{Binding YearLevel,UpdateSourceTrigger=PropertyChanged}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
-              <DataGridTextColumn Header="DEPARTMENT" Binding="{Binding Department,UpdateSourceTrigger=PropertyChanged}"
-                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              <md:MaterialDataGridComboBoxColumn Header="DEPARTMENT" SelectedItemBinding="{Binding Level}"
+                                                 ItemsSourceBinding="{Binding Source={StaticResource Departments}}"/>
               <DataGridTextColumn Header="CONTACT NUMBER" Binding="{Binding ContactNumber,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
             </DataGrid.Columns>
