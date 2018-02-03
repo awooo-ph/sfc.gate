@@ -61,8 +61,10 @@ namespace SFC.Gate
                 return;
             }
 
-            if (Config.Rfid.Handle == e.Device.Handle.ToInt64())
+            if (Config.Rfid.Fullname == e.Device.Name)
             {
+                Config.Rfid.Handle = e.Device.Handle.ToInt64();
+                
                 if (e.KeyPressState != KeyPressState.Down) return;
                 if (e.Key != Key.Enter)
                 {
