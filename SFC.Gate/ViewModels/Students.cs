@@ -904,5 +904,34 @@ namespace SFC.Gate.Material.ViewModels
             SendingProgressText = "Aborting...";
         },d=>!_aborting));
 
+        public void ShowStudent(Student student)
+        {
+            if (!MainViewModel.Instance.HasLoggedIn) return;
+            
+            awooo.Context.Post(d =>
+            {
+                if(!Students.MoveCurrentTo(student))
+                {
+                    StudentsKeyword = "";
+                    if(!Students.MoveCurrentTo(student))
+                    switch(student.Level)
+                    {
+                        case Departments.Elementary:
+                            FilterElementary = true;
+                            break;
+                        case Departments.HighSchool:
+                            FilterHighSchool = true;
+                            break;
+                        case Departments.College:
+                            FilterCollege = true;
+                            break;
+                    }
+                }
+
+                Students.MoveCurrentTo(student);
+
+                MainViewModel.Instance.Screen = MainViewModel.STUDENTS;
+            }, null);
+        }
     }
 }

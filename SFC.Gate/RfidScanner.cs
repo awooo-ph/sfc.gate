@@ -70,8 +70,10 @@ namespace SFC.Gate
                 }
                 else
                 {
+                    e.Handled = true;
                     Messenger.Default.Broadcast(Messages.Scan, _input.ToString());
                     _input.Clear();
+                   
                 }
 
                 if (Config.Rfid.UseExclusive)

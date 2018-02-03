@@ -44,7 +44,9 @@ namespace SFC.Gate.Material.ViewModels
             };
             Messenger.Default.AddListener<string>(Messages.Scan, id =>
             {
-                if (IgnoreScans) return;
+                if (MainViewModel.Instance.Screen==MainViewModel.VISITORS && 
+                    (VisitorsViewModel.Instance.IsAddingVisitor || VisitorsViewModel.Instance.IsReturningCard)) return;
+                
                 if(!Config.Rfid.GlobalScan && MainViewModel.Instance.Screen!=3) return;
                 if (Config.Rfid.RequireUser && !MainViewModel.Instance.HasLoggedIn) return;
                 
@@ -80,10 +82,24 @@ namespace SFC.Gate.Material.ViewModels
                         if(Config.Sms.Enabled)
                             SFC.Gate.ViewModels.SMS.Send(msg,Student.ContactNumber);
                     }
+                    
                     Instance.Index = StudentIndex;
                     _infoTimer?.Dispose();
                     if (Config.Rfid.StudentInfoDelay > 0)
-                        _infoTimer = new Timer(HideStudentInfo, null, Config.Rfid.StudentInfoDelay*1000, int.MaxValue);
+                        _infoTimer = new Timer(HideStudentInfo, null, Config.Rfid.StudentInfoDelay * 1000,
+                            int.MaxValue);
+                    
+                    if(MainViewModel.Instance.Screen != MainViewModel.GUARD_MODE)
+                    {
+                        var m = Welcome == "WELCOME" ? "entered" : "left";
+                        MainViewModel.ShowMessage($"{Student.Fullname} {Student.Department} - {Student.YearLevel} has {m} the campus.",
+                            "VIEW STUDENT", s =>
+                            {
+                                StudentsViewModel.Instance.ShowStudent(s);
+                            },Student);
+                    }
+                    
+                    
 
                 }
             });
