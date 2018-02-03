@@ -205,5 +205,34 @@
         </Grid>
       </Viewbox>
     </Grid>
+    <Grid Visibility="{Binding IsInvalidShown,Converter={converters:BooleanToVisibility}}">
+      
+    <md:Card Margin="47"
+             HorizontalAlignment="Center"
+             VerticalAlignment="Center"
+             Height="Auto">
+      
+          <StackPanel Margin="20">
+          
+            <StackPanel Orientation="Horizontal">
+              <md:PackIcon Kind="Alert" Foreground="{StaticResource ValidationErrorBrush}"
+                           Margin="10"
+                           Height="48" Width="48"
+                           VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding InvalidTitle}" VerticalAlignment="Center"
+                         Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                         FontWeight="Bold"
+                         FontSize="20pt"
+                         Foreground="{StaticResource ValidationErrorBrush}"
+                         Margin="0 0 10 0"/>
+            </StackPanel>
+            <TextBlock Text="{Binding InvalidMessage}" FontSize="17pt"
+                   TextWrapping="Wrap" Margin="10"/>
+          
+        </StackPanel>
+      
+      </md:Card>
+      
+    </Grid>
   </Grid>
 </UserControl>
