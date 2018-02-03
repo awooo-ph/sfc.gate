@@ -98,7 +98,7 @@ namespace SFC.Gate.Material.ViewModels
         }));
         
         private SnackbarMessageQueue _messageQueue;
-        public SnackbarMessageQueue MessageQueue => _messageQueue ?? (_messageQueue = new SnackbarMessageQueue());
+        public SnackbarMessageQueue MessageQueue => _messageQueue ?? (_messageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(7777)));
 
         private int _Screen = 5;
         public const int GUARD_MODE = 3;
@@ -107,6 +107,8 @@ namespace SFC.Gate.Material.ViewModels
             get => _Screen;
             set
             {
+                if (value != LOGIN && !HasLoggedIn)
+                    _Screen = LOGIN;
                 _Screen = value;
                 OnPropertyChanged(nameof(Screen));
                 Messenger.Default.Broadcast(Messages.ScreenChanged,value);
@@ -181,6 +183,8 @@ namespace SFC.Gate.Material.ViewModels
         }));
 
         private ICommand _showDevCommand;
+        public const int STUDENTS = 0;
+        public const int VISITORS = 1;
 
         public ICommand ShowDevCommand => _showDevCommand ?? (_showDevCommand = new DelegateCommand(d =>
         {
