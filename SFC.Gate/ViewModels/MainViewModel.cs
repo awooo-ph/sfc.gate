@@ -19,6 +19,14 @@ namespace SFC.Gate.Material.ViewModels
 {
     class MainViewModel : INotifyPropertyChanged
     {
+        public const int GUARD_MODE = 4;
+        public const int SETTINGS = 5;
+        public const int STUDENTS = 0;
+        public const int FACULTY = 1;
+        public const int VISITORS = 2;
+        public const int LOGIN = 6;
+        public const int USERS = 3;
+        
         private MainViewModel()
         {
             Messenger.Default.AddListener<string>(Messages.SMS, msg =>
@@ -29,7 +37,7 @@ namespace SFC.Gate.Material.ViewModels
         }
 
         private bool _ShowSideBar;
-        public const int LOGIN = 5;
+        
         public bool ShowSideBar
         {
             get
@@ -88,7 +96,7 @@ namespace SFC.Gate.Material.ViewModels
                 OnPropertyChanged(nameof(ShowSideBar));
                 OnPropertyChanged(nameof(IsContactVisible));
                 if (value == null)
-                    Screen = 5;
+                    Screen = LOGIN;
             }
         }
 
@@ -104,8 +112,8 @@ namespace SFC.Gate.Material.ViewModels
         private SnackbarMessageQueue _messageQueue;
         public SnackbarMessageQueue MessageQueue => _messageQueue ?? (_messageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(7777)));
 
-        private int _Screen = 5;
-        public const int GUARD_MODE = 3;
+        private int _Screen = LOGIN;
+        
         public int Screen
         {
             get => _Screen;
@@ -189,7 +197,7 @@ namespace SFC.Gate.Material.ViewModels
             _showUserProfileCommand ?? (_showUserProfileCommand = new DelegateCommand(
                 d =>
                 {
-                    Screen = 4;
+                    Screen = SETTINGS;
                     SettingIndex = 1;
                     
                 }));
@@ -202,12 +210,10 @@ namespace SFC.Gate.Material.ViewModels
         }));
 
         private ICommand _showDevCommand;
-        public const int STUDENTS = 0;
-        public const int VISITORS = 1;
-
+       
         public ICommand ShowDevCommand => _showDevCommand ?? (_showDevCommand = new DelegateCommand(d =>
         {
-            Screen = 4;
+            Screen = SETTINGS;
             SettingIndex = 4;
         }));
 

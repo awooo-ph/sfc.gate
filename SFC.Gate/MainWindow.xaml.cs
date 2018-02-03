@@ -46,10 +46,14 @@ namespace SFC.Gate.Material
             
             Messenger.Default.AddListener<int>(Messages.ScreenChanged, s =>
             {
-                
+
                 if (s == MainViewModel.GUARD_MODE)
                 {
                     Task.Factory.StartNew(HideSideBar);
+                }
+                else
+                {
+                    SideBar.Visibility = Visibility.Visible;
                 }
             });
             
@@ -171,7 +175,7 @@ namespace SFC.Gate.Material
 
         private void MinimizeClicked(object sender, RoutedEventArgs e)
         {
-            if (MainViewModel.Instance.Screen == 3) return;
+            if (MainViewModel.Instance.Screen == MainViewModel.GUARD_MODE) return;
             WindowState = WindowState.Minimized;
         }
 
@@ -195,7 +199,7 @@ namespace SFC.Gate.Material
         protected override void OnDeactivated(EventArgs e)
         {
             base.OnDeactivated(e);
-            if (MainViewModel.Instance.Screen == 3) Activate();
+            if (MainViewModel.Instance.Screen == MainViewModel.GUARD_MODE) Activate();
         }
     }
 }

@@ -23,8 +23,9 @@ namespace SFC.Gate.Material.ViewModels
         {
             Messenger.Default.AddListener<string>(Messages.Scan, code =>
             {
+                if (!MainViewModel.Instance.HasLoggedIn) return;
                 if (MainViewModel.Instance.Screen == MainViewModel.VISITORS || Configurations.Config.Rfid.GlobalScan)
-                if (Visit.Cache.Any(x => !x.HasLeft && x.Rfid.ToLower() == code?.ToLower()))
+                if (!IsAddingVisitor && Visit.Cache.Any(x => !x.HasLeft && x.Rfid.ToLower() == code?.ToLower()))
                 {
                     MainViewModel.Instance.Screen = MainViewModel.VISITORS;
                     
@@ -37,9 +38,9 @@ namespace SFC.Gate.Material.ViewModels
                 if(MainViewModel.Instance.Screen != MainViewModel.VISITORS)
                     return;
 
-                if (IsAddingVisitor)
+                if (IsAddingVisitor && !IsReturningCard)
                     ScanAddVisitor(code);
-                else if (IsReturningCard)
+                else if (IsReturningCard && !IsAddingVisitor)
                     ScanReturnCard(code);
             });
         }

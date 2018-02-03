@@ -73,7 +73,7 @@ namespace SFC.Gate.Material.ViewModels
             if(user != null)
             {
                 MainViewModel.Instance.CurrentUser = user;
-                MainViewModel.Instance.Screen = 0;
+                MainViewModel.Instance.Screen = MainViewModel.STUDENTS;
                 Log.Add("Login Successful", $"{Username} has logged in.", "Users", user.Id);
                 Username = "";
                 pwd.Password = "";

@@ -416,7 +416,7 @@
           <Button Style="{StaticResource MaterialDesignFlatButton}"
                   Command="{Binding SendBulkCommand}">
             <StackPanel Orientation="Horizontal">
-              <md:PackIcon Kind="MessageText" />
+              <md:PackIcon Kind="Bullhorn" />
               <TextBlock Text=" SEND MESSAGE" />
             </StackPanel>
           </Button>

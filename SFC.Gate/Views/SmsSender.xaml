@@ -22,7 +22,7 @@
           <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-          <materialDesign:PackIcon Kind="MessageText" Height="48" Width="48"
+          <materialDesign:PackIcon Kind="Bullhorn" Height="48" Width="48"
                          Margin="10"
                          Foreground="{StaticResource PrimaryHueMidBrush}"
                          VerticalAlignment="Center"/>

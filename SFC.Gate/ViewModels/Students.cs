@@ -119,8 +119,12 @@ namespace SFC.Gate.Material.ViewModels
                     });
                 }, s => s != null));
 
+        
+        private DateTime _lastSearch = DateTime.Now;
+        private Task _searchTask;
+        
         private string _StudentsKeyword;
-
+        private bool _searchStarted;
         public string StudentsKeyword
         {
             get => _StudentsKeyword;
@@ -130,10 +134,23 @@ namespace SFC.Gate.Material.ViewModels
                     return;
                 _StudentsKeyword = value;
                 OnPropertyChanged(nameof(StudentsKeyword));
-                Students.Filter = FilterStudents;
+
+                _lastSearch = DateTime.Now;
+
+                if (_searchStarted)
+                    return;
+                _searchStarted = true;
+
+                Task.Factory.StartNew(async () =>
+                {
+                    while ((DateTime.Now - _lastSearch).TotalMilliseconds < 777)
+                        await TaskEx.Delay(10);
+                    awooo.Context.Post(d=> Students.Filter = FilterStudents,null);
+                    _searchStarted = false;
+                });
             }
         }
-
+        
         private string _Title = "ALL STUDENTS";
 
         public string Title
@@ -195,6 +212,8 @@ namespace SFC.Gate.Material.ViewModels
             if (!(o is Student s))
                 return false;
 
+            if (s.Level > Departments.College) return false;
+            
             var fe = FilterElementary || (!FilterElementary && !FilterCollege && !FilterHighSchool);
             var fh = FilterHighSchool || (!FilterElementary && !FilterCollege && !FilterHighSchool);
             var fc = FilterCollege || (!FilterElementary && !FilterCollege && !FilterHighSchool);

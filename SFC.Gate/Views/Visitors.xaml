@@ -30,7 +30,7 @@
             <ColumnDefinition Width="Auto"/>
           </Grid.ColumnDefinitions>
           <StackPanel Orientation="Horizontal" Margin="20">
-            <md:PackIcon Kind="AccountStarVariant" Foreground="{StaticResource PrimaryHueMidBrush}" VerticalAlignment="Center"
+            <md:PackIcon Kind="Incognito" Foreground="{StaticResource PrimaryHueMidBrush}" VerticalAlignment="Center"
                          Height="48" Width="48"
                          Margin="7 0"/>
             <TextBlock Text=" VISITORS" FontWeight="Bold" VerticalAlignment="Center"
