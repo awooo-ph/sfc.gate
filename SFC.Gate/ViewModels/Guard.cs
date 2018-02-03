@@ -35,6 +35,8 @@ namespace SFC.Gate.Material.ViewModels
         
         private Guard()
         {
+            Index = InvalidIndex;
+            
           //  Messenger.Default.AddListener(Messages.ConfigChanged,);
             Config.General.PropertyChanged += (sender, args) =>
             {
@@ -87,7 +89,7 @@ namespace SFC.Gate.Material.ViewModels
             });
         }
 
-        private string _welcome;
+        private string _welcome = "WELCOME";
 
         public string Welcome
         {
@@ -108,11 +110,11 @@ namespace SFC.Gate.Material.ViewModels
 
 
         public SolidColorBrush Background => Config.General.GuardModeBackground;
-
+        
         private static Guard _instance;
         public static Guard Instance => _instance ?? (_instance = new Guard());
 
-        private long _index;
+        private long _index = StudentIndex;
 
         public long Index
         {

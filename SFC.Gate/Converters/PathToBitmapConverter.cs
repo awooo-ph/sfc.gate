@@ -18,6 +18,7 @@ namespace SFC.Gate.Converters {
 
         protected override object Convert(object value, Type targetType, object parameter)
         {
+            if (!File.Exists(value?.ToString())) return null;
             var bmp = new BitmapImage();
             bmp.BeginInit();
             bmp.CacheOption = BitmapCacheOption.OnLoad;

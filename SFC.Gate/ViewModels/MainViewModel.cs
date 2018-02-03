@@ -27,6 +27,24 @@ namespace SFC.Gate.Material.ViewModels
             });
         }
 
+        private bool _ShowSideBar;
+        public const int LOGIN = 5;
+        public bool ShowSideBar
+        {
+            get
+            {
+                if (Screen == LOGIN) return false;
+                return (_ShowSideBar && HasLoggedIn) || (Screen != GUARD_MODE);
+            }
+            set
+            {
+                if(value == _ShowSideBar)
+                    return;
+                _ShowSideBar = value;
+                OnPropertyChanged(nameof(ShowSideBar));
+            }
+        }
+
         private ICommand _runExternalCOmmand;
 
         public ICommand RunExternalCommand => _runExternalCOmmand ?? (_runExternalCOmmand = new DelegateCommand<string>(
@@ -66,6 +84,7 @@ namespace SFC.Gate.Material.ViewModels
                 _CurrentUser = value;
                 OnPropertyChanged(nameof(CurrentUser));
                 OnPropertyChanged(nameof(HasLoggedIn));
+                OnPropertyChanged(nameof(ShowSideBar));
                 if (value == null)
                     Screen = 5;
             }
@@ -90,6 +109,7 @@ namespace SFC.Gate.Material.ViewModels
             {
                 _Screen = value;
                 OnPropertyChanged(nameof(Screen));
+                Messenger.Default.Broadcast(Messages.ScreenChanged,value);
             }
         }
 

@@ -6,7 +6,9 @@
              xmlns:views="clr-namespace:SFC.Gate.Material.Views"
              xmlns:converters="clr-namespace:SFC.Gate.Converters"
              xmlns:vm="clr-namespace:SFC.Gate.Material.ViewModels"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
+             xmlns:cnf="clr-namespace:SFC.Gate.Configurations;assembly=SFC.Gate.Core"
              Background="{StaticResource MaterialDesignDarkBackground}"
              DataContext="{Binding Source={x:Static vm:Guard.Instance}}"
              d:DesignHeight="300" d:DesignWidth="300">
@@ -37,19 +39,20 @@
     </EventTrigger>
   </UserControl.Triggers>
   <Grid>
+    <Image Source="{Binding Source={x:Static cnf:Config.General},Path=GuardBackgroundImage,Converter={converters:PathToBitmapConverter}}"
+           RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill"/>
     <Grid Visibility="{Binding StandbyVisibility}">
       <Grid.RowDefinitions>
         <RowDefinition Height="*"/>
         <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
-      <Viewbox Margin="0 20 0 0">
+      <Viewbox Margin="0 20 0 0" VerticalAlignment="Center">
         <StackPanel x:Name="Clock">
           <Viewbox>
             <views:Clock Margin="10" Height="471" Width="471"/>
           </Viewbox>
           <Viewbox>
-            <TextBlock x:Name="DateText" FontSize="74pt" HorizontalAlignment="Center"
-                       Foreground="White"/>
+          
           </Viewbox>
         </StackPanel>
       </Viewbox>
@@ -82,8 +85,12 @@
     <Grid Visibility="{Binding StudentInfoVisibility}">
 
 
-      <Viewbox >
-        <Grid IsHitTestVisible="False" HorizontalAlignment="Center"
+      <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+               Margin="20"
+               Width="Auto">
+        <Grid>
+        
+            <Grid IsHitTestVisible="False" HorizontalAlignment="Center"
                   VerticalAlignment="Center"
                   Margin="10">
           <Grid.Resources>
@@ -101,6 +108,8 @@
             <RowDefinition Height="Auto"/>
           </Grid.RowDefinitions>
 
+          
+
           <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="Auto"/>
@@ -114,14 +123,15 @@
                             BorderBrush="White" BorderThickness="4">
               <Image Source="{Binding Student.Picture, Converter={converters:BytesToImage}}"
                        Stretch="Uniform"
-                       Height="471"/>
+                       Height="{Binding ElementName=Rectangle,Path=ActualHeight}"/>
             </Border>
 
             <Rectangle Grid.Column="1" 
-                                   Fill="Black" Opacity="0.1"
+                                   Fill="Black" Opacity="0.4"
                                  RadiusX="7" RadiusY="7"/>
 
-            <Grid Grid.Column="1" Margin="40">
+            <Grid Grid.Column="1" Margin="40"
+                  x:Name="Rectangle">
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto"/>
@@ -162,20 +172,18 @@
 
           </Grid>
 
-          <Grid Grid.Column="0" Grid.Row="0" Margin="40"
-                      HorizontalAlignment="Center">
-            <Rectangle  Stroke="Transparent" StrokeThickness="0" RadiusX="7" RadiusY="7"
-                                    Fill="Black" Opacity="0.4"/>
-            <Rectangle Stroke="White" RadiusX="7" RadiusY="7"
-                               StrokeThickness="4"/>
-
-            <TextBlock Text="St. Francis College - Guihulngan"
-                               FontFamily="Times New Roman"
-                               Foreground="White"
+          <!--<md:ColorZone Grid.Column="0" Grid.Row="0"
+                        md:ShadowAssist.ShadowDepth="Depth4"
+                        Margin="40"
+                        HorizontalAlignment="Center"
+                        Mode="Dark">
+            <Grid>
+                <TextBlock Text="{Binding Welcome}"
                            FontSize="74pt"
-                               Margin="74 30"/>
-          </Grid>
-
+                         TextAlignment="Center"
+                           Margin="20"/>
+            </Grid>
+          </md:ColorZone>-->
 
           <Grid Grid.Column="0" Grid.Row="2" 
                       Margin="40"
@@ -193,6 +201,7 @@
                            
                            />
           </Grid>
+        </Grid>
         </Grid>
       </Viewbox>
     </Grid>

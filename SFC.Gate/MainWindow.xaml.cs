@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -11,9 +12,11 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MaterialDesignThemes.Wpf;
 using SFC.Gate.Configurations;
 using SFC.Gate.Material.ViewModels;
 using SFC.Gate.Models;
@@ -25,9 +28,12 @@ namespace SFC.Gate.Material
     /// </summary>
     public partial class MainWindow : Window
     {
+        private DateTime _lastActivity = DateTime.Now;
+        private double SideBarWidth=0.0;
         public MainWindow()
         {
             InitializeComponent();
+            
             WindowState = Config.General.WindowMaximized ? WindowState.Maximized : WindowState.Normal;
             if(WindowState != WindowState.Maximized)
             {
@@ -37,6 +43,62 @@ namespace SFC.Gate.Material
                 Width = Config.General.WindowWidth;
             }
             Log.Add("Application Started");
+            
+            Messenger.Default.AddListener<int>(Messages.ScreenChanged, s =>
+            {
+                
+                if (s == MainViewModel.GUARD_MODE)
+                {
+                    Task.Factory.StartNew(HideSideBar);
+                }
+            });
+            
+            
+        }
+
+        private DateTime _hideCompleted = DateTime.Now;
+        private async void HideSideBar()
+        {
+            _lastActivity = DateTime.Now;
+            while ((DateTime.Now - _lastActivity).TotalMilliseconds < 4444)
+                await TaskEx.Delay(10);
+
+            if (MainViewModel.Instance.Screen != MainViewModel.GUARD_MODE)
+                return;
+
+            awooo.Context.Post(d =>
+            {
+                if (SideBarWidth == 0 && SideBar.ActualWidth > 0)
+                {
+                    SideBarWidth = SideBar.ActualWidth;
+                  //  SideBar.Width = SideBarWidth;
+                }
+
+                //var anim = new DoubleAnimation(0, TimeSpan.FromMilliseconds(100));
+                //anim.Completed += (sender, args) =>
+                //{
+                    _hideCompleted = DateTime.Now;
+
+                SideBar.Visibility = Visibility.Collapsed;
+                //};
+                //SideBar.BeginAnimation(WidthProperty, anim);
+            }, null);
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+            _lastActivity = DateTime.Now;
+            if (SideBar.ActualWidth == 0 && SideBarWidth>0)
+            {
+                if ((DateTime.Now - _hideCompleted).TotalMilliseconds < 777) return;
+
+                SideBar.Visibility = Visibility.Visible;
+                //var anim = new DoubleAnimation(SideBarWidth, TimeSpan.FromMilliseconds(100));
+                //SideBar.BeginAnimation(WidthProperty, anim);
+                
+                Task.Factory.StartNew(HideSideBar);
+            }
         }
 
         protected override void OnStateChanged(EventArgs e)

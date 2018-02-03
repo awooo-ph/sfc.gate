@@ -25,8 +25,8 @@
 				</Ellipse.Fill>
 			</Ellipse>
 			
-		    <Image Source="pack://application:,,,/sfc.png" Height="80" Width="80"
-		           Canvas.Top="10" Canvas.Right="10" Opacity="0.7"/>
+		    <!--<Image Source="pack://application:,,,/sfc.png" Height="80" Width="80"
+		           Canvas.Top="10" Canvas.Right="10" Opacity="0.7"/>-->
 		    
 			<Canvas x:Name="_markersCanvas" />
 			

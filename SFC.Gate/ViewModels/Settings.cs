@@ -126,8 +126,9 @@ namespace SFC.Gate.Material.ViewModels
                 d =>
                 {
                     var filename = Extensions.GetPicture();
-                    File.Copy("bg.jpg","bgx.jpg",true);
-                    File.Copy(filename,"bg.jpg",true);
+                    //File.Copy("bg.jpg","bgx.jpg",true);
+                    //File.Copy(filename,"bg.jpg",true);
+                    Config.General.GuardBackgroundImage = filename;
                     OnPropertyChanged(nameof(BackgroundPath));
                 }));
         
