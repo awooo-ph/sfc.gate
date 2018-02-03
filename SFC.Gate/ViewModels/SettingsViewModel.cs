@@ -33,6 +33,9 @@ namespace SFC.Gate.Material.ViewModels
             
             Messenger.Default.AddListener<User>(Messages.ModelDeleted, 
                 user => MainViewModel.ShowMessage("User deleted","UNDO", user.Undelete));
+            
+            Messenger.Default.AddListener<User>(Messages.UserSaved,
+                user => MainViewModel.ShowMessage("Changes to current user's profile was successfully saved.","UNDO", user.Restore));
         }
 
         private static SettingsViewModel _instance;

@@ -19,7 +19,8 @@
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
-    </Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*"/>
       <ColumnDefinition Width="Auto"/>
@@ -29,25 +30,36 @@
     
     <TextBox materialDesign:HintAssist.Hint="USERNAME"
              Grid.Row="1"
-             Text="{Binding CurrentUser.Username}"
-             Margin="0 0 0 74"
+             Text="{Binding CurrentUser.Username,Mode=OneWay}"
+             IsReadOnly="True"
+             Margin="0 0 0 40"
              materialDesign:HintAssist.IsFloating="True"/>
-    <PasswordBox materialDesign:HintAssist.Hint="CURRENT PASSWORD"
+    <TextBox materialDesign:HintAssist.Hint="FULL NAME"
+             Grid.Row="2"
+             Text="{Binding CurrentUser.Name}"
+             Margin="0 0 0 40"
+             materialDesign:HintAssist.IsFloating="True" />
+    <Button Content="SAVE CHANGES" Grid.Row="3"
+            Margin="0 0 0 74"
+            Command="{Binding CurrentUser.SaveCommand}"
+            HorizontalAlignment="Left" />
+
+      <PasswordBox materialDesign:HintAssist.Hint="CURRENT PASSWORD"
                  x:Name="CurrentPassword"
-             Grid.Row="3"
+             Grid.Row="4"
              Margin="0 0 0 40"
              materialDesign:HintAssist.IsFloating="True" />
     <PasswordBox materialDesign:HintAssist.Hint="NEW PASSWORD"
                  x:Name="NewPassword"
-                 Grid.Row="4"
+                 Grid.Row="5"
                  Margin="0 0 0 40"
                  materialDesign:HintAssist.IsFloating="True" />
     <PasswordBox materialDesign:HintAssist.Hint="CONFIRM PASSWORD"
                  x:Name="NewPassword2"
-                 Grid.Row="5"
+                 Grid.Row="6"
                  Margin="0 0 0 40"
                  materialDesign:HintAssist.IsFloating="True" />
-    <Button Content="CHANGE PASSWORD" Grid.Row="6"
+    <Button Content="CHANGE PASSWORD" Grid.Row="7"
             Click="ButtonBase_OnClick"
             HorizontalAlignment="Left"/>
 
