@@ -1,29 +1,48 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFC.Gate", "SFC.Gate\SFC.Gate.csproj", "{A9F2464B-0060-46A6-97F4-EA031CD1F487}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaterialDesignColors.Wpf", "MaterialDesignInXamlToolkit\MaterialDesignColors.Wpf\MaterialDesignColors.Wpf.csproj", "{90B53209-C60C-4655-B28D-A1B3E1044BA3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EB802F83-E581-4C4B-9B16-7D00D66C9329}"
-	ProjectSection(SolutionItems) = preProject
-		LICENSE = LICENSE
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaterialDesignThemes.Wpf", "MaterialDesignInXamlToolkit\MaterialDesignThemes.Wpf\MaterialDesignThemes.Wpf.csproj", "{F079FB0A-A8ED-4216-B6A5-345756751A04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFC.Gate.Material", "SFC.Gate\SFC.Gate.Material.csproj", "{BABBB60D-8DF1-4CCD-B15E-1A0FC913D332}"
 EndProject
 Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		AppVeyor|Any CPU = AppVeyor|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A9F2464B-0060-46A6-97F4-EA031CD1F487}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A9F2464B-0060-46A6-97F4-EA031CD1F487}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A9F2464B-0060-46A6-97F4-EA031CD1F487}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A9F2464B-0060-46A6-97F4-EA031CD1F487}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90B53209-C60C-4655-B28D-A1B3E1044BA3}.AppVeyor|Any CPU.ActiveCfg = AppVeyor|Any CPU
+		{90B53209-C60C-4655-B28D-A1B3E1044BA3}.AppVeyor|Any CPU.Build.0 = AppVeyor|Any CPU
+		{90B53209-C60C-4655-B28D-A1B3E1044BA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90B53209-C60C-4655-B28D-A1B3E1044BA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90B53209-C60C-4655-B28D-A1B3E1044BA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90B53209-C60C-4655-B28D-A1B3E1044BA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F079FB0A-A8ED-4216-B6A5-345756751A04}.AppVeyor|Any CPU.ActiveCfg = AppVeyor|Any CPU
+		{F079FB0A-A8ED-4216-B6A5-345756751A04}.AppVeyor|Any CPU.Build.0 = AppVeyor|Any CPU
+		{F079FB0A-A8ED-4216-B6A5-345756751A04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F079FB0A-A8ED-4216-B6A5-345756751A04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F079FB0A-A8ED-4216-B6A5-345756751A04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F079FB0A-A8ED-4216-B6A5-345756751A04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BABBB60D-8DF1-4CCD-B15E-1A0FC913D332}.AppVeyor|Any CPU.ActiveCfg = Release|Any CPU
+		{BABBB60D-8DF1-4CCD-B15E-1A0FC913D332}.AppVeyor|Any CPU.Build.0 = Release|Any CPU
+		{BABBB60D-8DF1-4CCD-B15E-1A0FC913D332}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BABBB60D-8DF1-4CCD-B15E-1A0FC913D332}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BABBB60D-8DF1-4CCD-B15E-1A0FC913D332}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BABBB60D-8DF1-4CCD-B15E-1A0FC913D332}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {52B1C06A-FBDB-4B1C-A1BF-FB889074A6B1}
+		SolutionGuid = {451DED70-0D71-4092-9597-EB07F11CE16F}
 	EndGlobalSection
 EndGlobal

@@ -1,216 +1,215 @@
-﻿using System.Threading;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
+using MaterialDesignThemes.Wpf;
+using Microsoft.Win32;
 using SFC.Gate.Configurations;
 using SFC.Gate.Models;
-using SFC.Gate.Views;
-using MsgBox = System.Windows.MessageBox;
 
-namespace SFC.Gate.ViewModels
+namespace SFC.Gate.Material.ViewModels
 {
-
-
-    class MainViewModel : ViewModelBase
+    class MainViewModel : INotifyPropertyChanged
     {
-        internal const int StudentsTab = 0,
-            VisitorsTab = 1,
-            ViolationsTab = 2,
-            SmsTab = 3,
-            UsersTab = 4,
-            LogsTab = 5,
-            SettingsTab = 6,
-            LoginTab = 7;
-
-        public enum Screens : int
-        {
-            Students = StudentsTab,
-            Visitors = ViolationsTab,
-            Sms = SmsTab,
-            Users = UsersTab,
-            Logs = LogsTab,
-            Settings = SettingsTab,
-            Login = LoginTab,
-        }
-
         private MainViewModel()
         {
-            Context = SynchronizationContext.Current;
-            RfidScanner.WatchKey(Key.F7, () =>
+            Messenger.Default.AddListener<string>(Messages.SMS, msg =>
             {
-                //if (!Instance.IsGuardMode) return;
-
-                IsGuardMode = !IsGuardMode;
-                if (CurrentUser == null)
-                    SelectedTab = LoginTab;
-
+                if (string.IsNullOrEmpty(msg)) return;
+                MessageQueue.Enqueue($"SMS Notification: {msg}");
             });
         }
 
-        private static MainViewModel _instance;
-        public static MainViewModel Instance
+        private bool _ShowSideBar;
+        public const int LOGIN = 5;
+        public bool ShowSideBar
         {
             get
             {
-                if (_instance != null) return _instance;
-                _instance = new MainViewModel();
-                //{
-                //   IsGuardMode = Config.General.GuarModeOnStartup
-                //  };
-                return _instance;
+                if (Screen == LOGIN) return false;
+                return (_ShowSideBar && HasLoggedIn) || (Screen != GUARD_MODE);
+            }
+            set
+            {
+                if(value == _ShowSideBar)
+                    return;
+                _ShowSideBar = value;
+                OnPropertyChanged(nameof(ShowSideBar));
             }
         }
 
-        private User _currentUser;
+        private ICommand _runExternalCOmmand;
+
+        public ICommand RunExternalCommand => _runExternalCOmmand ?? (_runExternalCOmmand = new DelegateCommand<string>(
+        cmd =>
+        {
+            if (string.IsNullOrWhiteSpace(cmd)) return;
+            try
+            {
+                Process.Start(cmd);
+            }
+            catch (Exception e)
+            {
+                //
+            }
+            
+        }));
+
+        private static MainViewModel _instance;
+        public static MainViewModel Instance => _instance ?? (_instance = new MainViewModel());
+        
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private User _CurrentUser;
 
         public User CurrentUser
         {
-            get { return _currentUser; }
+            get => _CurrentUser;
             set
             {
-                _currentUser = value;
+                if(value == _CurrentUser)
+                    return;
+                _CurrentUser = value;
                 OnPropertyChanged(nameof(CurrentUser));
-                SelectedTab = _currentUser != null ? StudentsTab : LoginTab;
+                OnPropertyChanged(nameof(HasLoggedIn));
+                OnPropertyChanged(nameof(ShowSideBar));
+                OnPropertyChanged(nameof(IsContactVisible));
+                if (value == null)
+                    Screen = 5;
             }
         }
 
-        private ICommand _addViolationCommand;
-
-        public ICommand AddViolationCommand => _addViolationCommand ?? (_addViolationCommand = new DelegateCommand(stud =>
-        {
-            Violations.Instance.SelectedStudent = Students.Instance.SelectedStudent;
-            SelectedTab = ViolationsTab;
-        }));
-
-        private int _selectedTab;
-
-        public int SelectedTab
-        {
-            get => _selectedTab;
-            set
-            {
-                _selectedTab = value;
-                OnPropertyChanged(nameof(SelectedTab));
-            }
-        }
+        public bool IsContactVisible => CurrentUser?.IsAdmin ?? false || !Config.General.HideContactNumber;
 
         private ICommand _logoutCommand;
 
         public ICommand LogoutCommand => _logoutCommand ?? (_logoutCommand = new DelegateCommand(d =>
         {
-            Log.Add("User Logout", $"{CurrentUser.Username} has logged out.", "Users", CurrentUser.Id);
             CurrentUser = null;
         }));
+        
+        private SnackbarMessageQueue _messageQueue;
+        public SnackbarMessageQueue MessageQueue => _messageQueue ?? (_messageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(7777)));
 
-        private ICommand _changePasswordCommand;
-
-        public ICommand ChangePasswordCommand =>
-            _changePasswordCommand ?? (_changePasswordCommand = new DelegateCommand(
-                d => ChangePassword()));
-
-        private bool _isDialogOpen;
-
-        public bool IsDialogOpen
+        private int _Screen = 5;
+        public const int GUARD_MODE = 3;
+        public int Screen
         {
-            get { return _isDialogOpen; }
+            get => _Screen;
             set
             {
-                _isDialogOpen = value;
-                OnPropertyChanged(nameof(IsDialogOpen));
+                if (value != LOGIN && !HasLoggedIn)
+                    _Screen = LOGIN;
+                _Screen = value;
+                OnPropertyChanged(nameof(Screen));
+                Messenger.Default.Broadcast(Messages.ScreenChanged,value);
             }
         }
 
-        private ICommand _enableGuardModeCommand;
+        public bool HasLoggedIn => CurrentUser != null;
 
-        public ICommand EnableGuardModeCommand =>
-            _enableGuardModeCommand ?? (_enableGuardModeCommand = new DelegateCommand(
+        public static void ShowMessage(string message,string actionContent, Action action, bool promote = false)
+        {
+            Instance.MessageQueue.Enqueue(message,actionContent, action, promote);
+        }
+
+        public static void ShowMessage<T>(string message, string actionContent, Action<T> action, T param, bool promote = false)
+        {
+            Instance.MessageQueue.Enqueue(message,actionContent,action,param,promote);
+        }
+
+        private ICommand _GeneratePictureCommand;
+
+        public ICommand GeneratePictureCommand =>
+            _GeneratePictureCommand ?? (_GeneratePictureCommand = new DelegateCommand(
                 d =>
                 {
-                    IsGuardMode = true;
-                }));
+                    if (CurrentUser == null) return;
+                    var pic = CurrentUser.Picture;
+                    CurrentUser.Update(nameof(User.Picture),Extensions.Generate());
+                    ShowMessage("Picture changed","UNDO",()=>CurrentUser.Update("Picture",pic));
+                },d=>CurrentUser!=null));
 
-        private bool _isGuardMode = false;
+        private ICommand _changePictureCommand;
 
-        public bool IsGuardMode
+        public ICommand ChangePictureCommand => _changePictureCommand ?? (_changePictureCommand = new DelegateCommand(
+                d =>
+                {
+                    if (CurrentUser == null)
+                        return;
+                    var filename = Extensions.GetPicture();
+                    var image = CurrentUser.Picture;
+                    CurrentUser.Update(nameof(User.Picture) ,Extensions.ResizeImage(filename));
+                    ShowMessage("Picture changed", "UNDO", () => CurrentUser.Update("Picture", image));
+                    
+                },d=>CurrentUser!=null));
+
+        private bool _ShowUserMenu;
+
+        public bool ShowUserMenu
         {
-            get { return _isGuardMode; }
+            get => _ShowUserMenu;
             set
             {
-                _isGuardMode = value;
-                //Messenger.Default.Broadcast(Messages.GuardModeChanged,value);
-                OnPropertyChanged(nameof(IsGuardMode));
-                SetGuardMode(value);
+                if(value == _ShowUserMenu)
+                    return;
+                _ShowUserMenu = value;
+                OnPropertyChanged(nameof(ShowUserMenu));
             }
         }
 
-        private void SetGuardMode(bool value)
+        private int _SettingIndex;
+
+        public int SettingIndex
         {
-            Context.Post(d =>
+            get => _SettingIndex;
+            set
             {
-                if (value && Config.General.LogoutOnGuardMode)
-                    CurrentUser = null;
-
-                if (Config.General.GuardModeFullScreen)
-                {
-
-                    if (value)
-                    {
-                        Config.General.WindowMaximized =
-                            Application.Current.MainWindow.WindowState == WindowState.Maximized;
-                        Application.Current.MainWindow.WindowStyle = WindowStyle.None;
-                        Application.Current.MainWindow.WindowState = WindowState.Maximized;
-
-                    }
-                    else
-                    {
-                        Application.Current.MainWindow.WindowStyle = WindowStyle.SingleBorderWindow;
-                        Application.Current.MainWindow.WindowState = Config.General.WindowMaximized
-                            ? WindowState.Maximized
-                            : WindowState.Normal;
-                    }
-
-                }
-            }, null);
-        }
-
-
-        private void ChangePassword()
-        {
-            while (true)
-            {
-                IsDialogOpen = true;
-                var cPwd = new ChangePassword();
-                cPwd.Owner = Application.Current.MainWindow;
-                if (cPwd.ShowDialog() ?? false)
-                {
-                    var msg = "";
-                    if (CurrentUser.Password != cPwd.CurrentPassword.Password)
-                        msg = "Invalid password.";
-                    else if (cPwd.NewPassword.Password.Length == 0)
-                        msg = "Password is required.";
-                    else if (cPwd.NewPassword.Password != cPwd.NewPassword2.Password)
-                        msg = "Password did not match.";
-                    else if (cPwd.NewPassword.Password.Length < 7)
-                        msg = "Password must be at least seven (7) characters long.";
-
-                    if (msg != "")
-                    {
-                        Log.Add("Password Change Failed", msg, "Users", CurrentUser.Id);
-                        MsgBox.Show(msg, "Change Password", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                        continue;
-                    }
-                }
-                else
-                {
-                    IsDialogOpen = false;
-                    break;
-                }
-
-                CurrentUser.Update("Password", cPwd.NewPassword.Password);
-                Log.Add("Password Changed", $"{CurrentUser.Username} changed his/her password.", "Users", CurrentUser.Id);
-                MsgBox.Show("Your password is successfully updated!", "Change Password", MessageBoxButton.OK, MessageBoxImage.Information);
-                IsDialogOpen = false;
-                break;
+                _SettingIndex = value;
+                OnPropertyChanged(nameof(SettingIndex));
             }
         }
+
+        private ICommand _showUserProfileCommand;
+
+        public ICommand ShowUserProfileCommand =>
+            _showUserProfileCommand ?? (_showUserProfileCommand = new DelegateCommand(
+                d =>
+                {
+                    Screen = 4;
+                    SettingIndex = 1;
+                    
+                }));
+
+        private ICommand _showUserMenuCommand;
+
+        public ICommand ShowUserMenuCommand => _showUserMenuCommand ?? (_showUserMenuCommand = new DelegateCommand(d =>
+        {
+            ShowUserMenu = !ShowUserMenu;
+        }));
+
+        private ICommand _showDevCommand;
+        public const int STUDENTS = 0;
+        public const int VISITORS = 1;
+
+        public ICommand ShowDevCommand => _showDevCommand ?? (_showDevCommand = new DelegateCommand(d =>
+        {
+            Screen = 4;
+            SettingIndex = 4;
+        }));
+
     }
 }

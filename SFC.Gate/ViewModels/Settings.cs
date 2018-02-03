@@ -2,30 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Windows.Input;
 using Microsoft.Win32;
 using SFC.Gate.Configurations;
+using SFC.Gate.Material.Properties;
 
-namespace SFC.Gate.ViewModels
+namespace SFC.Gate.Material.ViewModels
 {
-    class Settings:ViewModelBase
+    partial class SettingsViewModel
     {
-        private Settings()
-        {
-            Messenger.Default.AddListener<string>(Messages.Scan, id =>
-            {
-                ScanTest = id;
-            });
-            
-            Messenger.Default.AddListener(Messages.ScannerRegistered, () =>
-            {
-                Context.Post(d => OnPropertyChanged(""), null);
-            });
-        }
-
-        private static Settings _instance;
-        public static Settings Instance => _instance ?? (_instance = new Settings());
         
         private string _scanTest;
 
@@ -63,7 +50,7 @@ namespace SFC.Gate.ViewModels
                     return "Waiting for Scanner...";
                 if (string.IsNullOrEmpty(Config.Rfid.ScannerId))
                     return "No Scanner Registered";
-                return Config.Rfid.ScannerId;
+                return $"{Config.Rfid.Description} {{{Config.Rfid.Handle}}}";
             }
         }
         
@@ -139,8 +126,9 @@ namespace SFC.Gate.ViewModels
                 d =>
                 {
                     var filename = Extensions.GetPicture();
-                    File.Copy("bg.jpg","bgx.jpg",true);
-                    File.Copy(filename,"bg.jpg",true);
+                    //File.Copy("bg.jpg","bgx.jpg",true);
+                    //File.Copy(filename,"bg.jpg",true);
+                    Config.General.GuardBackgroundImage = filename;
                     OnPropertyChanged(nameof(BackgroundPath));
                 }));
         

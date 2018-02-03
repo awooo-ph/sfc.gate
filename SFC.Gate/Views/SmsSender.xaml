@@ -1,56 +1,179 @@
-﻿<UserControl x:Class="SFC.Gate.Views.SmsSender"
+﻿<UserControl x:Class="SFC.Gate.Material.Views.SmsSender"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="clr-namespace:SFC.Gate.ViewModels"
-             xmlns:converters="clr-namespace:SFC.Gate.Converters">
-    <Grid  IsEnabled="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.SmsAccess}">
-    <Grid>
-        <Grid.Effect>
-            <BlurEffect Radius="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.SmsAccess,Converter={converters:BooleanToObject 0, 7},FallbackValue=10}" 
-                        KernelType="Gaussian" RenderingBias="Performance"/>
-            </Grid.Effect>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SFC.Gate.Material.Views"
+             xmlns:converters="clr-namespace:SFC.Gate.Converters"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:viewModels="clr-namespace:SFC.Gate.Material.ViewModels"
+             mc:Ignorable="d" 
+             DataContext="{Binding Source={x:Static viewModels:StudentsViewModel.Instance}}"
+             d:DesignHeight="300" d:DesignWidth="300">
+  <Grid Background="#77777777" >
+    <materialDesign:Card HorizontalAlignment="Center" VerticalAlignment="Center"
+                         Visibility="{Binding IsBulkSending,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
+                         Margin="20">
+      <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Label Target="{Binding ElementName=Recipient}" Content="_Name" VerticalAlignment="Center"/>
-        <TextBox x:Name="Recipient" x:FieldModifier="private" Grid.Column="1" Grid.Row="0" Margin="4"/>
-
-        <Label Target="{Binding ElementName=ContactNumber}" Content="N_umber" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
-        <TextBox x:Name="ContactNumber" x:FieldModifier="private" Grid.Column="1" Grid.Row="1" Margin="4"/>
-
-        <Label Target="{Binding ElementName=Message}" Content="_Message" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top"/>
-        <TextBox x:Name="Message" x:FieldModifier="private" Grid.Column="1" Grid.Row="2"
-                 AcceptsReturn="True" MaxLines="47" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
-                 Margin="4"/>
-
-        <UniformGrid Columns="2" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Right">
-            <Button Content="Send" Margin="4"/>
-            <Button Content="Cancel" Margin="4"/>
-        </UniformGrid>
-    </Grid>
-        
-        <Border CornerRadius="4" HorizontalAlignment="Center"
-                Visibility="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.SmsAccess,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
-                Background="#FF0000"
-                VerticalAlignment="Center">
-            <StackPanel Orientation="Horizontal"
-                        Margin="20">
-                <Path Margin="4"
-                      Data="M15.396557,23.044006C14.220558,23.044006 13.268559,23.886993 13.268559,24.927994 13.268559,25.975006 14.220558,26.817001 15.396557,26.817001 16.572557,26.817001 17.523547,25.975006 17.523547,24.927994 17.523547,23.886993 16.572557,23.044006 15.396557,23.044006z M15.467541,5.1819992C15.447552,5.1819992 15.436566,5.1829987 15.436566,5.1829987 13.118533,5.5049973 13.055545,7.3330002 13.055545,7.3330002L13.055545,9.2929993 13.626531,16.539001C13.983558,18.357002 14.243538,19.020004 14.243538,19.020004 15.275555,19.975006 16.203567,19.25 16.203567,19.25 16.976548,18.565994 17.028552,16.962997 17.028552,16.962997 17.956563,9.2929993 17.696553,7.1029968 17.696553,7.1029968 17.608571,5.2839966 15.823561,5.1849976 15.490551,5.1819992 15.481549,5.1819992 15.473553,5.1819992 15.467541,5.1819992z M15.56355,0C15.56355,0 21.710574,4.1259995 31.581613,2.8030014 31.581613,2.8030014 33.634629,26.556992 15.56355,32 15.56355,32 -0.10249132,27.548004 0.00050565118,2.9670029 0.0005058694,2.9670029 10.72555,3.6309967 15.56355,0z" Stretch="Uniform" Fill="#FFFFFFFF"
-                      RenderTransformOrigin="0.5,0.5"/>
-                <TextBlock Text="ACCESS DENIED" Foreground="White"
-                           Margin="4"
-                           FontWeight="Bold" FontSize="14pt"/>
+        <StackPanel Orientation="Horizontal">
+          <materialDesign:PackIcon Kind="MessageText" Height="48" Width="48"
+                         Margin="10"
+                         Foreground="{StaticResource PrimaryHueMidBrush}"
+                         VerticalAlignment="Center"/>
+          <TextBlock Text="SEND SMS" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                       Foreground="{StaticResource PrimaryHueMidBrush}"
+                       VerticalAlignment="Center"
+                       Margin="10"/>
+        </StackPanel>
+        <Rectangle Fill="{StaticResource MaterialDesignDivider}" Height="1" VerticalAlignment="Bottom"/>
+        <TextBox materialDesign:HintAssist.Hint="MESSAGE" Grid.Row="1"
+                 FontSize="14pt"
+                   materialDesign:HintAssist.IsFloating="True"
+                   VerticalScrollBarVisibility="Auto"
+                   Text="{Binding BulkMessage,UpdateSourceTrigger=PropertyChanged}"
+                   TextWrapping="Wrap"
+                   MaxHeight="333"
+                 MinHeight="111"
+                 Margin="20"
+                   MinWidth="444"
+                   AcceptsReturn="True"/>
+        <ListBox Grid.Row="2" SelectedIndex="{Binding BulkSendTo}"
+                  HorizontalContentAlignment="Center">
+          <ListBox.ItemContainerStyle>
+            <Style BasedOn="{StaticResource MaterialDesignListBoxItem}"
+                   TargetType="ListBoxItem">
+              <Setter Property="BorderThickness" Value="0 0 0 2"/>
+              <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                  <Setter Property="Foreground" Value="{StaticResource PrimaryHueMidBrush}"/>
+                  <Setter Property="BorderBrush" Value="{StaticResource PrimaryHueMidBrush}"/>
+                </Trigger>
+              </Style.Triggers>
+            </Style>
+          </ListBox.ItemContainerStyle>
+          <ListBox.ItemsPanel>
+            <ItemsPanelTemplate>
+              <UniformGrid Rows="1"/>
+            </ItemsPanelTemplate>
+          </ListBox.ItemsPanel>
+          <ListBoxItem>
+            <StackPanel Orientation="Vertical">
+              <materialDesign:PackIcon Kind="HumanMaleFemale" VerticalAlignment="Center"
+                                       Height="32" Width="32"
+                                       HorizontalAlignment="Center"
+                             VerticalContentAlignment="Center"
+                             Margin="4"/>
+              <TextBlock Text="ALL"
+                         TextAlignment="Center"
+                           VerticalAlignment="Center"
+                           Margin="4"/>
             </StackPanel>
+          </ListBoxItem>
+          <ListBoxItem>
+            <StackPanel Orientation="Vertical">
+              <materialDesign:PackIcon Kind="Baby" VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Height="32" Width="32"
+                             VerticalContentAlignment="Center"
+                             Margin="4" />
+              <TextBlock Text="ELEMENTARY"
+                         TextAlignment="Center"
+                           VerticalAlignment="Center"
+                           Margin="4" />
+            </StackPanel>
+          </ListBoxItem>
+          <ListBoxItem>
+            <StackPanel Orientation="Vertical">
+              <materialDesign:PackIcon Kind="Bike" VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Height="32" Width="32"
+                             VerticalContentAlignment="Center"
+                             Margin="4" />
+              <TextBlock Text="HIGH SCHOOL"
+                         TextAlignment="Center"
+                           VerticalAlignment="Center"
+                           Margin="4" />
+            </StackPanel>
+          </ListBoxItem>
+          <ListBoxItem>
+            <StackPanel Orientation="Vertical">
+              <materialDesign:PackIcon Kind="Motorbike" VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Height="32" Width="32"
+                             VerticalContentAlignment="Center"
+                             Margin="4" />
+              <TextBlock Text="COLLEGE"
+                         TextAlignment="Center"
+                           VerticalAlignment="Center"
+                           Margin="4" />
+            </StackPanel>
+          </ListBoxItem>
+          <ListBoxItem IsEnabled="{Binding HasSelected}">
+            <StackPanel Orientation="Vertical">
+              <materialDesign:PackIcon Kind="CheckboxMultipleMarkedOutline" VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Height="32" Width="32"
+                             VerticalContentAlignment="Center"
+                             Margin="4" />
+              <TextBlock Text="SELECTED"
+                         TextAlignment="Center"
+                           VerticalAlignment="Center"
+                           Margin="4" />
+            </StackPanel>
+          </ListBoxItem>
+        </ListBox>
+        <UniformGrid Grid.Row="3" Rows="1" Margin="0 10 0 0">
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  Command="{Binding CancelBulkSendCommand}"
+                  Content="CANCEL"/>
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  Command="{Binding AcceptBulkSendCommand}"
+                  Content="SEND" />
+        </UniformGrid>
+      </Grid>
+    </materialDesign:Card>
 
-        </Border>
-        
-    </Grid>
+    <materialDesign:Card VerticalAlignment="Center"
+                         UniformCornerRadius="777"
+                         Visibility="{Binding IsBulkSending,Converter={converters:BooleanToVisibility}}"
+                         HorizontalAlignment="Center">
+      <Grid Margin="0">
+        <Viewbox Height="222" Width="222" VerticalAlignment="Center" HorizontalAlignment="Center">
+          <ProgressBar Height="77" Width="77" VerticalAlignment="Center" HorizontalAlignment="Center"
+                       Style="{StaticResource MaterialDesignCircularProgressBar}"
+                       IsIndeterminate="{Binding SendingProgressIndeterminate}"
+                       Maximum="{Binding SendingProgressMaximum}"
+                       Value="{Binding SendingProgress}"/>
+        </Viewbox>
+        <StackPanel
+          VerticalAlignment="Center"
+          HorizontalAlignment="Center">
+        <TextBlock Text="{Binding SendingProgressText}"
+                   TextAlignment="Center"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
+          <Button Command="{Binding AbortSendingCommand}"
+                  ToolTip="Cancel sending SMS messages"
+                  Margin="0 10 0 0"
+                  HorizontalAlignment="Center"
+                  Style="{StaticResource MaterialDesignFlatButton}">
+            <StackPanel Orientation="Horizontal">
+              <materialDesign:PackIcon Kind="CloseCircle"
+                                       VerticalAlignment="Center"/>
+              <TextBlock Text=" ABORT" VerticalAlignment="Center"/>
+            </StackPanel>
+          </Button>
+                  
+        </StackPanel>
+      </Grid>
+    </materialDesign:Card>
+  </Grid>
 </UserControl>
+

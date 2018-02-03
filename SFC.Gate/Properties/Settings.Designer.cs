@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SFC.Gate.Properties
+namespace SFC.Gate.Material.Properties
 {
 
 

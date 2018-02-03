@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace SFC.Gate.Views
+namespace SFC.Gate.Material.Views
 {
     /// <summary>
     /// Interaction logic for Violations.xaml

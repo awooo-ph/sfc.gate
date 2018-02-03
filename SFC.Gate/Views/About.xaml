@@ -1,0 +1,192 @@
+﻿<UserControl x:Class="SFC.Gate.Material.Views.About"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SFC.Gate.Material.Views"
+             mc:Ignorable="d" 
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             d:DesignHeight="300" d:DesignWidth="300">
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel>
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                  Margin="20">
+        <Image Source="/sfc.png"
+               Height="111" Width="111"
+               RenderOptions.BitmapScalingMode="HighQuality"
+               Margin="20"
+               VerticalAlignment="Center"/>
+        <StackPanel Orientation="Vertical"
+                    VerticalAlignment="Center">
+          <TextBlock Text="Saint Francis College Guihulngan"  Style="{StaticResource MaterialDesignTitleTextBlock}"/>
+          <TextBlock Text="Gate Monitoring System Version 0.9" Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
+
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                    Height="Auto"
+                    Command="{Binding RunExternalCommand}"
+                    CommandParameter="https://github.com/awooo-ph/sfc.gate">
+              <StackPanel Orientation="Horizontal">
+                <md:PackIcon Kind="CloudSync" Height="32" Width="32"/>
+                <TextBlock Text=" Check for Update"
+                           VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
+            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                    Height="Auto"
+                    Command="{Binding RunExternalCommand}"
+                    CommandParameter="https://github.com/awooo-ph/sfc.gate">
+              <StackPanel Orientation="Horizontal">
+                <md:PackIcon Kind="GithubCircle" Height="32" Width="32" />
+                <TextBlock Text=" View Source" 
+                           VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+           
+          </StackPanel>
+        </StackPanel>
+      </StackPanel>
+
+      <TextBlock Text="THE TEAM" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                 Margin="47 20" />
+      <Grid Margin="47 0 47 47">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+          <Image Source="/Dev/chan.jpg" Grid.ColumnSpan="2"/>
+
+        <Image Source="/Dev/tan.jpg" Grid.ColumnSpan="2" Grid.Column="2"/>
+
+        <Image Source="/Dev/ellah.jpg" Grid.ColumnSpan="2" Grid.Row="1"/>
+
+        <Image Source="/Dev/bohol.jpg" Grid.ColumnSpan="2" Grid.Column="2" Grid.Row="1"/>
+
+        <Grid Grid.Column="0" Grid.Row="0" Margin="10">
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Top"
+                      HorizontalAlignment="Left">
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    Command="{Binding RunExternalCommand}" Foreground="White"
+                    CommandParameter="https://www.facebook.com/jessa.chan.104"
+                    Content="{md:PackIcon Facebook}"/>
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    Command="{Binding RunExternalCommand}" Foreground="White"
+                    CommandParameter=""
+                    Content="{md:PackIcon Twitter}" />
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    Command="{Binding RunExternalCommand}" Foreground="White"
+                    CommandParameter=""
+                    Content="{md:PackIcon Instagram}" />
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    Command="{Binding RunExternalCommand}" Foreground="White"
+                    CommandParameter=""
+                    Content="{md:PackIcon Gmail}" />
+          </StackPanel>
+          <StackPanel HorizontalAlignment="Right"
+                      VerticalAlignment="Bottom">
+            <TextBlock Text="Jessa Chan" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                       TextAlignment="Right"/>
+            <TextBlock Text="Project Manager" Foreground="White" Style="{StaticResource MaterialDesignSubheadingTextBlock}"
+                       TextAlignment="Right" />
+          </StackPanel>
+        </Grid>
+
+        <Grid Grid.Column="2" Grid.Row="0" Margin="10">
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Top"
+                      HorizontalAlignment="Left">
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    Command="{Binding RunExternalCommand}" Foreground="White"
+                    CommandParameter="https://www.facebook.com/tan.nenmia"
+                    Content="{md:PackIcon Facebook}" />
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    Command="{Binding RunExternalCommand}" Foreground="White"
+                    CommandParameter=""
+                    Content="{md:PackIcon Twitter}" />
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    Command="{Binding RunExternalCommand}" Foreground="White"
+                    CommandParameter=""
+                    Content="{md:PackIcon Instagram}" />
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    Command="{Binding RunExternalCommand}" Foreground="White"
+                    CommandParameter=""
+                    Content="{md:PackIcon Gmail}" />
+          </StackPanel>
+          <StackPanel HorizontalAlignment="Right"
+                      VerticalAlignment="Bottom">
+            <TextBlock Text="Tan Nea" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                       TextAlignment="Right" />
+            <TextBlock Text="Programmer" Foreground="White" TextAlignment="Right" 
+                       Style="{StaticResource MaterialDesignSubheadingTextBlock}" />
+          </StackPanel>
+        </Grid>
+
+        <Grid Grid.Column="3" Grid.Row="1" Margin="10">
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Top"
+                      HorizontalAlignment="Left">
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    Command="{Binding RunExternalCommand}" Foreground="White"
+                    CommandParameter="https://www.facebook.com/jonah.joycelle"
+                    Content="{md:PackIcon Facebook}" />
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    Command="{Binding RunExternalCommand}" Foreground="White"
+                    CommandParameter=""
+                    Content="{md:PackIcon Twitter}" />
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    Command="{Binding RunExternalCommand}" Foreground="White"
+                    CommandParameter=""
+                    Content="{md:PackIcon Instagram}" />
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    Command="{Binding RunExternalCommand}" Foreground="White"
+                    CommandParameter=""
+                    Content="{md:PackIcon Gmail}" />
+          </StackPanel>
+          <StackPanel HorizontalAlignment="Right"
+                      VerticalAlignment="Bottom">
+            <TextBlock Text="Jhonnah Bohol" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                       TextAlignment="Right" />
+            <TextBlock Text="Graphic Designer" Foreground="White" TextAlignment="Right" 
+                       Style="{StaticResource MaterialDesignSubheadingTextBlock}" />
+          </StackPanel>
+        </Grid>
+
+        <Grid Grid.Column="1" Grid.Row="1" Margin="10">
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Top"
+                      HorizontalAlignment="Left">
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    Command="{Binding RunExternalCommand}" Foreground="White"
+                    CommandParameter="https://www.facebook.com/rhouelladenchmari.roble"
+                    Content="{md:PackIcon Facebook}" />
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    Command="{Binding RunExternalCommand}" Foreground="White"
+                    CommandParameter=""
+                    Content="{md:PackIcon Twitter}" />
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    Command="{Binding RunExternalCommand}" Foreground="White"
+                    CommandParameter=""
+                    Content="{md:PackIcon Instagram}" />
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    Foreground="White"
+                    Command="{Binding RunExternalCommand}"
+                    CommandParameter=""
+                    Content="{md:PackIcon Gmail}" />
+          </StackPanel>
+          <StackPanel HorizontalAlignment="Right"
+                      VerticalAlignment="Bottom">
+            <TextBlock Text="Ëllãh Dênch" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                       TextAlignment="Right" />
+            <TextBlock Text="Programmer" Foreground="White"
+                       TextAlignment="Right" 
+                       Style="{StaticResource MaterialDesignSubheadingTextBlock}" />
+          </StackPanel>
+        </Grid>
+      </Grid>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

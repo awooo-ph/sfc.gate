@@ -1,0 +1,165 @@
+﻿<UserControl x:Class="SFC.Gate.Material.Views.SmsSettings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SFC.Gate"
+             xmlns:converters="clr-namespace:SFC.Gate.Converters"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:cnf="clr-namespace:SFC.Gate.Configurations;assembly=SFC.Gate.Core"
+             xmlns:viewModels="clr-namespace:SFC.Gate.Material.ViewModels"
+             xmlns:viewModels1="clr-namespace:SFC.Gate.ViewModels;assembly=SFC.Gate.Core"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+    
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  Grid.Row="3">
+      <StackPanel Orientation="Vertical"
+                  IsEnabled="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin}"
+                  Margin="74 47">
+        <TextBlock Text="SMS Notifications Settings" Style="{StaticResource MaterialDesignHeadlineTextBlock}" />
+        <StackPanel Margin="0 0 0 40">
+          <CheckBox Content="ENABLE SMS"
+                    FontWeight="Bold"
+                    IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}" />
+          <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                     VerticalAlignment="Center"
+                     TextWrapping="Wrap"
+                     Text="If unchecked all SMS services will be disabled." />
+        </StackPanel>
+        
+        <Border BorderBrush="{StaticResource MaterialDesignDivider}"
+                Margin="0 0 0 40"
+                BorderThickness="1"
+                CornerRadius="7">
+          <StackPanel Margin="20">
+            <TextBlock Text="MODEM COM PORT" Margin="4" FontWeight="Bold" />
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+            <ComboBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=Port}" 
+                      ItemsSource="{Binding Source={x:Static viewModels1:SMS.Instance},Path=Ports}"/>
+              <TextBlock Grid.Column="1" Text="{Binding Source={x:Static viewModels1:SMS.Instance},Path=Status}"
+                         Margin="10 0 0 0" VerticalAlignment="Center"/>
+            </Grid>
+            <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                       VerticalAlignment="Center">
+              <Run Text="COM port the GSM Modem is attached into." />
+              <Hyperlink Command="{Binding Source={x:Static local:Extensions.OpenModemsCommand}}">See Installed Modems</Hyperlink>
+              <Run Text=". Click "/><Hyperlink Command="{Binding Source={x:Static viewModels1:SMS.Instance},Path=RefreshPortsCommand}">here</Hyperlink>
+            <Run> to refresh the list.</Run>
+          </TextBlock>
+        </StackPanel>
+        </Border>
+
+        <StackPanel Margin="0 0 0 40">
+          <CheckBox Content="NOTIFY ON GATE PASS"
+                    FontWeight="Bold"
+                    IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=NotifyOnGatePass}" />
+          <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                     VerticalAlignment="Center"
+                     TextWrapping="Wrap"
+                     Text="Check this to automatically send SMS notifications to parents or guardians when a student enters or leaves the campus." />
+        </StackPanel>
+
+        <StackPanel Margin="0 0 0 40">
+          <CheckBox Content="NOTIFY ON VIOLATION"
+                    FontWeight="Bold"
+                    IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=NotifyOnViolation}" />
+          <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                     VerticalAlignment="Center"
+                     TextWrapping="Wrap"
+                     Text="Allow non Admin users to send SMS. Gate pass and violation notifications are not affected." />
+        </StackPanel>
+        
+        <StackPanel Margin="0 0 0 40">
+          <CheckBox Content="ALLOW NON ADMINISTRATORS"
+                    FontWeight="Bold"
+                    IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=AllowNonAdmin}" />
+          <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                     VerticalAlignment="Center"
+                     TextWrapping="Wrap"
+                     Text="Allow non Admin users to send SMS. Gate pass and violation notifications are not affected." />
+        </StackPanel>
+
+        <StackPanel Margin="0 0 0 40">
+          <CheckBox Content="INCLUDE USERNAME"
+                    FontWeight="Bold"
+                    IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=AllowNonAdmin}" />
+          <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                     VerticalAlignment="Center"
+                     TextWrapping="Wrap"
+                     Text="Whether or not to include the current user's username when sending SMS messages." />
+        </StackPanel>
+
+        <Border BorderBrush="{StaticResource MaterialDesignDivider}"
+                Margin="0 0 0 40"
+                Padding="20"
+                BorderThickness="1"
+                CornerRadius="7">
+          <StackPanel>
+          <TextBlock Text="School Entry Message Template" Margin="4" FontWeight="Bold"/>
+          <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=EntryTemplate}"
+                                         TextWrapping="Wrap"
+                                         AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                                         HorizontalScrollBarVisibility="Disabled"/>
+          <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                                           VerticalAlignment="Center">
+                                    <Run Text="The message sent to parents or guardians when their students enter the school campus."/>
+          </TextBlock>
+        </StackPanel>
+          </Border>
+        <Border BorderBrush="{StaticResource MaterialDesignDivider}"
+                Margin="0 0 0 40"
+                Padding="20"
+                BorderThickness="1"
+                CornerRadius="7">
+          <StackPanel>
+            <TextBlock Text="School Exit Message Template" Margin="4" FontWeight="Bold"/>
+            <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=ExitTemplate}"
+                                         TextWrapping="Wrap"
+                                         AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                                         HorizontalScrollBarVisibility="Disabled"/>
+            <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                                           VerticalAlignment="Center">
+                                    <Run Text="The message sent to parents or guardians when their students leave the school campus."/>
+            </TextBlock>
+
+          </StackPanel>
+          </Border>
+
+        <Border BorderBrush="{StaticResource MaterialDesignDivider}"
+                Margin="0 0 0 40"
+                Padding="20"
+                BorderThickness="1"
+                CornerRadius="7">
+          <StackPanel >
+
+            
+          <TextBlock Text="Violation Message Template" Margin="4" FontWeight="Bold"/>
+          <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=ViolationTemplate}"
+                                         TextWrapping="Wrap"
+                                         AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                                         HorizontalScrollBarVisibility="Disabled"/>
+          <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                                           VerticalAlignment="Center">
+                                    <Run Text="The message sent to parents or guardians when their students committed a violation."/>
+          </TextBlock>
+        </StackPanel>
+</Border>
+        
+
+
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>
