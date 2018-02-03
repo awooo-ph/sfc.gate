@@ -52,6 +52,7 @@ namespace SFC.Gate.Material.ViewModels
 
         private void ScanAddVisitor(string code)
         {
+            if (Visit.Cache.Any(x => !x.HasLeft && x.Rfid.ToLower() == code?.ToLower())) return;
             NewRfid = code;
         }
 
