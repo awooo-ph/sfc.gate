@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
 using MaterialDesignThemes.Wpf;
+using SFC.Gate.Configurations;
 using SFC.Gate.Models;
 using SFC.Gate.ViewModels;
 using Xceed.Words.NET;
@@ -340,13 +341,23 @@ namespace SFC.Gate.Material.ViewModels
                 {
                     if (_violationsList.CurrentItem == null)
                         return;
-                    var stud = Students.CurrentItem as Student;
+                    if (!(Students.CurrentItem is Student stud)) return;
                     var v = (Violation) _violationsList.CurrentItem;
-                    stud?.AddViolation(v);
+                    stud.AddViolation(v);
                     ShowViolationSelector = false;
                     var msg = SFC.Gate.Configurations.Sms.Default.ViolationTemplate.Replace("[STUDENT]", stud.Fullname)
                         .Replace("[VIOLATION]", v.Name)
                         .Replace("[TIME]",DateTime.Now.ToString("g"));
+
+                    new SmsNotification()
+                    {
+                        UserId = MainViewModel.Instance.CurrentUser.Id,
+                        StudentId = stud.Id,
+                        Message = msg,
+                    }.Save();
+                    
+                    if (Config.Sms.IncludeUsername)
+                        msg += $" Sent By: {MainViewModel.Instance.CurrentUser.Username}";
                     SMS.Send(msg,stud.ContactNumber);
                 }));
 
@@ -625,6 +636,7 @@ namespace SFC.Gate.Material.ViewModels
         
         private bool CanSend()
         {
+            if (!MainViewModel.Instance.CurrentUser.IsAdmin && !Config.Sms.AllowNonAdmin) return false;
             if ((DateTime.Now - _lastSent).TotalSeconds < 7) return false;
             return Students.CurrentItem != null && !string.IsNullOrWhiteSpace(NotificationMessage);
         }
@@ -644,6 +656,12 @@ namespace SFC.Gate.Material.ViewModels
                         Message = NotificationMessage
                     };
                     msg.Save();
+
+                    if (Config.Sms.IncludeUsername)
+                        NotificationMessage += $" Sent By: {MainViewModel.Instance.CurrentUser.Username}";
+                    
+                    SMS.Send(NotificationMessage,s.ContactNumber);
+                    
                     NotificationMessage = "";
                 },d=>CanSend()));
 
@@ -694,7 +712,7 @@ namespace SFC.Gate.Material.ViewModels
                 BulkSendTo = 4;
             else
                 BulkSendTo = 0;
-        }));
+        },d=>MainViewModel.Instance.CurrentUser.IsAdmin || Config.Sms.AllowNonAdmin));
 
         private int _BulkSendTo;
 
@@ -796,15 +814,20 @@ namespace SFC.Gate.Material.ViewModels
                         {
                             var student = students[i];
                             SendingProgressText = $"Sending {i + 1}/{SendingProgressMaximum} ...";
-                            await SMS.SendAsync(BulkMessage, student.ContactNumber);
-
+                            
                             new SmsNotification()
                             {
                                 UserId = MainViewModel.Instance.CurrentUser.Id,
                                 StudentId = student.Id,
                                 Message = BulkMessage
                             }.Save();
+
+                            var msg = BulkMessage;
+                            if (Config.Sms.IncludeUsername)
+                                msg = $"{BulkMessage}\nSent By: {MainViewModel.Instance.CurrentUser.Username}";
                             
+                            await SMS.SendAsync(msg, student.ContactNumber);
+
                             if (_bulkToken.IsCancellationRequested)
                             {
                                 SendingProgressText = "Aborted";
