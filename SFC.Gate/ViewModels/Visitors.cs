@@ -18,8 +18,62 @@ namespace SFC.Gate.Material.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        private VisitorsViewModel()
+        {
+            Messenger.Default.AddListener<string>(Messages.Scan, code =>
+            {
+                if (MainViewModel.Instance.Screen == MainViewModel.VISITORS || Configurations.Config.Rfid.GlobalScan)
+                if (Visit.Cache.Any(x => !x.HasLeft && x.Rfid.ToLower() == code?.ToLower()))
+                {
+                    MainViewModel.Instance.Screen = MainViewModel.VISITORS;
+                    
+                    ReturnRfid = code;
+                    ShowReturnDialog = true;
+                    IsReturningCard = true;
+                    return;
+                }
+
+                if(MainViewModel.Instance.Screen != MainViewModel.VISITORS)
+                    return;
+
+                if (IsAddingVisitor)
+                    ScanAddVisitor(code);
+            });
+        }
+        private void ScanAddVisitor(string code)
+        {
+            NewRfid = code;
+        }
+
+        private bool _IsAddingVisitor;
+
+        public bool IsAddingVisitor
+        {
+            get => _IsAddingVisitor;
+            set
+            {
+                if(value == _IsAddingVisitor)
+                    return;
+                _IsAddingVisitor = value;
+                OnPropertyChanged(nameof(IsAddingVisitor));
+                Guard.Instance.IgnoreScans = !value;
+            }
+        }
+        private Visit _ReturnVisitor;
+
+        public Visit ReturnVisit
+        {
+            get => _ReturnVisitor;
+            set
+            {
+                if(value == _ReturnVisitor)
+                    return;
+                _ReturnVisitor = value;
+                OnPropertyChanged(nameof(ReturnVisit));
+            }
+        }
         
-        private VisitorsViewModel() { }
         private static VisitorsViewModel _instance;
         public static VisitorsViewModel Instance => _instance ?? (_instance = new VisitorsViewModel());
 
@@ -114,6 +168,8 @@ namespace SFC.Gate.Material.ViewModels
                     return;
                 _ShowNewDialog = value;
                 OnPropertyChanged(nameof(ShowNewDialog));
+               
+                    IsAddingVisitor = value;
             }
         }
 
@@ -127,6 +183,7 @@ namespace SFC.Gate.Material.ViewModels
             NewRfid = "";
             NewPurpose = "";
             ShowNewDialog = true;
+            IsAddingVisitor = true;
         }));
 
         private ICommand _newCancelCommand;
@@ -283,23 +340,33 @@ namespace SFC.Gate.Material.ViewModels
             NewNumber = visitor.Number;
         }
 
-        string IDataErrorInfo.this[string columnName]
+        string IDataErrorInfo.this[string columnName] => GetDataError(columnName);
+
+        private string GetDataError(string columnName)
         {
-            get
+            if (columnName == nameof(NewName) && string.IsNullOrWhiteSpace(NewName))
+                return "Name is required";
+            if (columnName == nameof(NewPurpose) && string.IsNullOrWhiteSpace(NewPurpose))
+                return "Provide purpose of visit";
+
+            var rfid = "";
+            var rfidColumn = false;
+            if (columnName == nameof(NewRfid))
             {
-                if (columnName == nameof(NewName) && string.IsNullOrWhiteSpace(NewName)) return "Name is required";
-                if (columnName == nameof(NewPurpose) && string.IsNullOrWhiteSpace(NewPurpose))
-                    return "Provide purpose of visit";
-                
-                if (columnName == nameof(NewRfid))
-                {
-                    if(string.IsNullOrWhiteSpace(NewRfid)) return "RFID is required";
-                    var visit = Visit.Cache.FirstOrDefault(x => !x.HasLeft && x.Rfid.ToLower() == NewRfid.ToLower());
-                    if (visit != null) return "Card is in use";
-                }
-                    
-                return null;
+                rfid = NewRfid;
+                rfidColumn = true;
+                if (string.IsNullOrWhiteSpace(rfid))
+                    return "RFID is required";
+                var stud = Student.Cache.FirstOrDefault(x => x.Rfid == rfid);
+                if (stud != null)
+                    return $"This is {stud.Fullname}'s ID";
+                if (Visit.Cache.Any(x => !x.HasLeft && x.Rfid.ToLower() == rfid?.ToLower()))
+                    return "Card is in use";
             }
+            {
+                
+            }
+            return null;
         }
 
         string IDataErrorInfo.Error => null;
