@@ -91,6 +91,16 @@
                      Text="Allow non Admin users to send SMS. Gate pass and violation notifications are not affected." />
         </StackPanel>
 
+        <StackPanel Margin="0 0 0 40">
+          <CheckBox Content="INCLUDE USERNAME"
+                    FontWeight="Bold"
+                    IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=AllowNonAdmin}" />
+          <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                     VerticalAlignment="Center"
+                     TextWrapping="Wrap"
+                     Text="Whether or not to include the current user's username when sending SMS messages." />
+        </StackPanel>
+
         <Border BorderBrush="{StaticResource MaterialDesignDivider}"
                 Margin="0 0 0 40"
                 Padding="20"
