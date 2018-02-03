@@ -28,25 +28,26 @@
       </StackPanel>
       <Rectangle Height="1" Fill="{StaticResource PrimaryHueMidBrush}"/>
       <TextBox md:HintAssist.IsFloating="True"
+               Style="{StaticResource MaterialDesignTextBox}"
                 Text="{Binding NewName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                behaviors:AutoCompleteBehavior.AutoCompleteItemsSource="{Binding VisitorNames}"
                behaviors:AutoCompleteBehavior.AutoCompleteStringComparison="InvariantCultureIgnoreCase"
                 Margin="20 10 20 5"
                 md:HintAssist.Hint="VISITOR'S NAME"/>
       <TextBox md:HintAssist.IsFloating="True"
-               Margin="20 5"
+               Margin="20 7"
                Text="{Binding NewAddress,UpdateSourceTrigger=PropertyChanged}"
                md:HintAssist.Hint="VISITOR'S ADDRESS" />
       <TextBox md:HintAssist.IsFloating="True"
-               Margin="20 5"
+               Margin="20 7"
                Text="{Binding NewNumber,UpdateSourceTrigger=PropertyChanged}"
                md:HintAssist.Hint="VISITOR'S CONTACT NUMBER" />
       <TextBox md:HintAssist.IsFloating="True"
-               Margin="20 5"
+               Margin="20 7"
                Text="{Binding NewPurpose,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                md:HintAssist.Hint="PURPOSE OF VISIT" />
       <TextBox md:HintAssist.IsFloating="True"
-               Margin="20 5"
+               Margin="20 7"
                Text="{Binding NewRfid,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                md:HintAssist.Hint="ISSUED RFID" />
       <UniformGrid Rows="1" Margin="0 20 0 0">

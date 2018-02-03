@@ -103,7 +103,7 @@
         <StackPanel Margin="0 0 40 40">
           <CheckBox Margin="4" Content="Require User" FontWeight="Bold"
                     VerticalAlignment="Center"
-                    IsChecked="{Binding Source={x:Static cnf:Config.Rfid},Path=GlobalScan}" />
+                    IsChecked="{Binding Source={x:Static cnf:Config.Rfid},Path=RequireUser}" />
           <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
                      VerticalAlignment="Center"
                      Text="An authenticated user is required to record RFID swipes. Uncheck to enable recording even when no user has logged in." />

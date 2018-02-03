@@ -191,7 +191,7 @@
         <Button Style="{StaticResource MaterialDesignFlatButton}"
                 Command="{Binding ReturnCardCommand}">
           <StackPanel Orientation="Horizontal">
-            <md:PackIcon Kind="CreditCardScan" />
+            <md:PackIcon Kind="UndoVariant" />
             <TextBlock Text=" RETURN CARD" />
           </StackPanel>
         </Button>
