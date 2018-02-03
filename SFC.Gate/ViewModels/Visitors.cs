@@ -39,8 +39,16 @@ namespace SFC.Gate.Material.ViewModels
 
                 if (IsAddingVisitor)
                     ScanAddVisitor(code);
+                else if (IsReturningCard)
+                    ScanReturnCard(code);
             });
         }
+
+        private void ScanReturnCard(string code)
+        {
+            ReturnRfid = code;
+        }
+
         private void ScanAddVisitor(string code)
         {
             NewRfid = code;
@@ -60,6 +68,22 @@ namespace SFC.Gate.Material.ViewModels
                 Guard.Instance.IgnoreScans = !value;
             }
         }
+
+        private bool _IsReturningCard;
+
+        public bool IsReturningCard
+        {
+            get => _IsReturningCard;
+            set
+            {
+                if(value == _IsReturningCard)
+                    return;
+                _IsReturningCard = value;
+                OnPropertyChanged(nameof(IsReturningCard));
+                Guard.Instance.IgnoreScans = !value;
+            }
+        }
+
         private Visit _ReturnVisitor;
 
         public Visit ReturnVisit
@@ -363,9 +387,25 @@ namespace SFC.Gate.Material.ViewModels
                 if (Visit.Cache.Any(x => !x.HasLeft && x.Rfid.ToLower() == rfid?.ToLower()))
                     return "Card is in use";
             }
+            else if (columnName == nameof(ReturnRfid))
+            {
+                rfid = ReturnRfid;
+                rfidColumn = true;
+                if (string.IsNullOrWhiteSpace(rfid))
+                    return "RFID is required";
+                var stud = Student.Cache.FirstOrDefault(x => x.Rfid == rfid);
+                if (stud != null)
+                    return $"This is {stud.Fullname}'s ID";
+                if (!Visit.Cache.Any(x => !x.HasLeft && x.Rfid.ToLower() == rfid?.ToLower()))
+                    return "Card is not in use";
+            }
+
+            if (rfidColumn)
             {
                 
             }
+
+
             return null;
         }
 
@@ -382,6 +422,7 @@ namespace SFC.Gate.Material.ViewModels
                     return;
                 _ShowReturnDialog = value;
                 OnPropertyChanged(nameof(ShowReturnDialog));
+                IsReturningCard = value;
             }
         }
 
@@ -396,6 +437,9 @@ namespace SFC.Gate.Material.ViewModels
                     return;
                 _ReturnRfid = value;
                 OnPropertyChanged(nameof(ReturnRfid));
+                OnPropertyChanged(nameof(HasReturnCardError));
+                OnPropertyChanged(nameof(ReturnErrorMessage));
+                ReturnVisit = Visit.Cache.FirstOrDefault(x => !x.HasLeft && x.Rfid.ToLower() == value?.ToLower());
             }
         }
         
@@ -407,6 +451,7 @@ namespace SFC.Gate.Material.ViewModels
                 {
                     ReturnRfid = "";
                     ShowReturnDialog = true;
+                    IsReturningCard = true;
                 }));
 
         private ICommand _ReturnCancelCommand;
@@ -425,6 +470,17 @@ namespace SFC.Gate.Material.ViewModels
             visit.Update(nameof(Visit.TimeOut),DateTime.Now);
             Log.Add("VISITOR LEFT", $"{visit.Visitor.Name} has left.");
             ShowReturnDialog = false;
-        }));
+        },d=>string.IsNullOrEmpty(GetDataError(nameof(ReturnRfid)))));
+
+        public bool HasReturnCardError
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ReturnRfid)) return false;
+                return !string.IsNullOrEmpty(GetDataError(nameof(ReturnRfid)));
+            }
+        }
+
+        public string ReturnErrorMessage => GetDataError(nameof(ReturnRfid));
     }
 }
