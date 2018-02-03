@@ -1,0 +1,435 @@
+﻿<UserControl x:Class="SFC.Gate.Material.Views.Students"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             xmlns:vm="clr-namespace:SFC.Gate.Material.ViewModels"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:SFC.Gate.Converters"
+             xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:views="clr-namespace:SFC.Gate.Material.Views"
+             SnapsToDevicePixels="True"
+             DataContext="{Binding Source={x:Static vm:StudentsViewModel.Instance}}"
+             d:DesignHeight="300" d:DesignWidth="300">
+
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="2*" MinWidth="333"/>
+      <ColumnDefinition Width="*" MaxWidth="555"/>
+    </Grid.ColumnDefinitions>
+
+      <Grid Grid.Column="1"
+            Visibility="{Binding Students/,Converter={converters:IsNullConverter ReturnVisibility=True,Invert=True},FallbackValue=Collapsed}">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        
+        <StackPanel Orientation="Horizontal" Background="{StaticResource MaterialDesignPaper}">
+          <Image Source="{Binding Students/Picture,Converter={converters:BytesToImage}}"
+                 Visibility="{Binding Students/HasPicture,Converter={converters:BooleanToVisibility}}"
+               Height="64"
+               Margin="10"/>
+          <md:PackIcon Kind="Face"
+                       Margin="10"
+                       Visibility="{Binding Students/HasPicture,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
+                       HorizontalAlignment="Center"
+                       Height="64" Width="64" />
+          <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+            <TextBlock VerticalAlignment="Center"
+                   Text="{Binding Students/Fullname,Mode=OneWay}"
+                   Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
+            <TextBlock>
+            <Run Text="{Binding Students/Level}"/>
+            <Run Text=" / "/>
+            <Run Text="{Binding Students/YearLevel}"/>
+            </TextBlock>
+          </StackPanel>
+        </StackPanel>
+        
+        <md:Transitioner Grid.Row="2" VerticalAlignment="Stretch" 
+                         SelectedIndex="{Binding ElementName=Tabs,Path=SelectedIndex}">
+          
+          <md:TransitionerSlide>
+            <md:TransitionerSlide.BackwardWipe>
+              <md:FadeWipe />
+            </md:TransitionerSlide.BackwardWipe>
+            <md:TransitionerSlide.ForwardWipe>
+              <md:FadeWipe />
+            </md:TransitionerSlide.ForwardWipe>
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+              </Grid.RowDefinitions>
+              
+              <DataGrid ItemsSource="{Binding Students/Violations}" AutoGenerateColumns="False"
+                        IsEnabled="{Binding ShowViolationSelector,Converter={converters:Inverter}}"
+                        IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="DATE" Binding="{Binding DateCommitted,StringFormat={}d}" />
+                  <DataGridTextColumn Header="VIOLATION" Binding="{Binding Violation.Name}" />
+                </DataGrid.Columns>
+              </DataGrid>
+
+              <UniformGrid Rows="1" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                           IsEnabled="{Binding ShowViolationSelector,Converter={converters:Inverter}}"
+                           Margin="10">
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        Command="{Binding AddViolationCommand}">
+                  <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="Plus" />
+                    <TextBlock Text=" ADD" />
+                  </StackPanel>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        Command="{Binding PrintViolationsCommand}">
+                  <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="Printer" />
+                    <TextBlock Text=" PRINT" />
+                  </StackPanel>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        Command="{Binding ClearViolationsCommand}">
+                  <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="Close" />
+                    <TextBlock Text=" CLEAR" />
+                  </StackPanel>
+                </Button>
+              </UniformGrid>
+              
+              <Grid Background="#77777777" Visibility="{Binding ShowViolationSelector,Converter={converters:BooleanToVisibility}}"
+                    Grid.RowSpan="2">
+                <md:Card VerticalAlignment="Center"
+                         UniformCornerRadius="4"
+                         HorizontalAlignment="Center">
+                  <StackPanel>
+                    <TextBlock Text="ADD VIOLATION"
+                               Margin="10"
+                               Foreground="{StaticResource PrimaryHueMidBrush}"
+                               Style="{StaticResource MaterialDesignTitleTextBlock}"
+                               VerticalAlignment="Center" />
+                    <Rectangle Fill="{StaticResource PrimaryHueMidBrush}" Height="1"/>
+                    <ListBox ItemsSource="{Binding ViolationsList}"
+                           MinWidth="222"
+                           MaxWidth="333"
+                           MaxHeight="333">
+                        <ListBox.ItemTemplate>
+                        <DataTemplate>
+                          <StackPanel Orientation="Horizontal">
+                            <RadioButton Margin="0 0 10 0"
+                                         IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem},Path=IsSelected}"/>
+                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                          </StackPanel>
+                        </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <UniformGrid Rows="1">
+                      <Button Style="{StaticResource MaterialDesignFlatButton}"
+                              Command="{Binding CancelAddViolationCommand}"
+                              IsCancel="True"
+                              Content="CANCEL" />
+                      <Button Style="{StaticResource MaterialDesignFlatButton}"
+                              Command="{Binding AcceptAddViolationCommand}"
+                              Content="ACCEPT" />
+                    </UniformGrid>
+                    
+                  </StackPanel>
+                </md:Card>
+              </Grid>
+            </Grid>
+          </md:TransitionerSlide>
+          <md:TransitionerSlide>
+            <md:TransitionerSlide.BackwardWipe>
+              <md:FadeWipe />
+            </md:TransitionerSlide.BackwardWipe>
+            <md:TransitionerSlide.ForwardWipe>
+              <md:FadeWipe />
+            </md:TransitionerSlide.ForwardWipe>
+            <views:StudentSMS/>
+          </md:TransitionerSlide>
+
+          <md:TransitionerSlide>
+            <md:TransitionerSlide.BackwardWipe>
+              <md:FadeWipe />
+            </md:TransitionerSlide.BackwardWipe>
+            <md:TransitionerSlide.ForwardWipe>
+              <md:FadeWipe />
+            </md:TransitionerSlide.ForwardWipe>
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+              </Grid.RowDefinitions>
+              <DataGrid ItemsSource="{Binding Students/Logs}" AutoGenerateColumns="False"
+                        Grid.Row="0"
+                        IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="TIME" Binding="{Binding DateTime}" />
+                  <DataGridTextColumn Header="EVENT" Binding="{Binding Description}" />
+                </DataGrid.Columns>
+              </DataGrid>
+
+              <UniformGrid Rows="1" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10">
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        Command="{Binding PrintLogCommand}">
+                  <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="Printer" />
+                    <TextBlock Text=" PRINT" />
+                  </StackPanel>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        Command="{Binding ClearLogCommand}">
+                  <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="CalendarRemove" />
+                    <TextBlock Text=" CLEAR" />
+                  </StackPanel>
+                </Button>
+              </UniformGrid>
+            </Grid>
+          </md:TransitionerSlide>
+        </md:Transitioner>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Grid.Row="1">
+          <TextBlock Text="VIOLATIONS" Visibility="{Binding ElementName=ListBoxItem,Path=IsSelected,Converter={converters:BooleanToVisibility}}"
+                     FontWeight="Bold"
+                     Margin="0 0 10 0"
+                     VerticalAlignment="Center"/>
+          <TextBlock Text="ACTIVITY LOG"
+                     Margin="0 0 10 0"
+                     FontWeight="Bold"
+                     VerticalAlignment="Center"
+                     Visibility="{Binding ElementName=LogTab,Path=IsSelected,Converter={converters:BooleanToVisibility}}" />
+          <TextBlock Text="SMS NOTIFICATIONS"
+                     Margin="0 0 10 0"
+                     FontWeight="Bold"
+                     VerticalAlignment="Center"
+                     Visibility="{Binding ElementName=SmsTab,Path=IsSelected,Converter={converters:BooleanToVisibility}}" />
+          <ListBox Style="{StaticResource MaterialDesignToolToggleFlatListBox}" x:Name="Tabs">
+         
+          <ListBoxItem Content="{md:PackIcon AlertOutline}"
+                       IsSelected="{Binding ViolationsTab}"
+                       Cursor="Hand"
+                       ToolTip="Violations"
+                       x:Name="ListBoxItem"/>
+          <ListBoxItem Content="{md:PackIcon CellphoneBasic}"
+                       Cursor="Hand"
+                       ToolTip="SMS Messages"
+                       IsSelected="{Binding SmsTab}"
+                       x:Name="SmsTab" />
+            <ListBoxItem Content="{md:PackIcon CalendarClock}"
+                         Cursor="Hand"
+                         IsSelected="{Binding LogTab}"
+                         ToolTip="Activity Log"
+                         x:Name="LogTab" />
+          </ListBox>
+        </StackPanel>
+
+        <Rectangle Fill="{StaticResource MaterialDesignDivider}"
+                   Height="1" HorizontalAlignment="Stretch"
+                   VerticalAlignment="Bottom"
+                   Grid.Row="1"/>
+      </Grid>
+    
+      <Border x:Name="StudentsCard"
+              Grid.ColumnSpan="{Binding Students/,Converter={converters:IsNullConverter TrueValue=2,FalseValue=1},FallbackValue=2}"
+              BorderBrush="#e8edec" BorderThickness="0 0 2 0">
+        <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <md:ColorZone Mode="Light" Background="#f5f5f3"
+                      BorderBrush="#e8edec" BorderThickness="0 0 0 2">
+          <Grid>
+        
+          <StackPanel Orientation="Horizontal" Margin="20">
+            <md:PackIcon Kind="School" Foreground="{StaticResource PrimaryHueMidBrush}" VerticalAlignment="Center"
+                         Height="48" Width="48"
+                         Margin="7 0"/>
+            <TextBlock Text="{Binding Title}" FontWeight="Bold" VerticalAlignment="Center"
+                       Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
+          </StackPanel>
+              <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="0 0 7 0"
+                          HorizontalAlignment="Right">
+                <Grid VerticalAlignment="Bottom" Margin="0 0 -1 7">
+                  <Grid>
+                    <TextBox Width="174" md:HintAssist.Hint="SEARCH" md:HintAssist.IsFloating="False"
+                             Text="{Binding StudentsKeyword,UpdateSourceTrigger=PropertyChanged}" />
+                    <md:PackIcon Kind="Magnify" VerticalAlignment="Center"
+                                 IsHitTestVisible="False"
+                                 HorizontalAlignment="Right" />
+                  </Grid>
+                </Grid>
+
+                <ListBox Style="{StaticResource MaterialDesignToolToggleFlatListBox}"
+                         BorderBrush="{StaticResource MaterialDesignTextAreaBorder}"
+                         Focusable="False"
+                         Padding="0"
+                         BorderThickness="0 0 0 0"
+                         VerticalAlignment="Bottom" Margin="0 0 0 7">
+                  <ListBoxItem Padding="4 2" ToolTip="Filter Elementary"
+                               Focusable="False"
+                               BorderThickness="{Binding RelativeSource={RelativeSource Self},Path=IsSelected,Converter={converters:BooleanToObject {}0 0 0 2,{}0 0 0 1}}"
+                               BorderBrush="{StaticResource PrimaryHueMidBrush}"
+                               IsSelected="{Binding FilterElementary}">
+                    
+                      <md:PackIcon Kind="Baby" />
+                      
+                  </ListBoxItem>
+                </ListBox>
+                <ListBox Style="{StaticResource MaterialDesignToolToggleFlatListBox}"
+                         BorderBrush="{StaticResource MaterialDesignTextAreaBorder}"
+                         Focusable="False"
+                         Padding="0"
+                         BorderThickness="0 0 0 0"
+                         VerticalAlignment="Bottom" Margin="-1 0 0 7">
+                  <ListBoxItem Padding="4 2" ToolTip="Filter High School"
+                               Focusable="False"
+                               BorderThickness="{Binding RelativeSource={RelativeSource Self},Path=IsSelected,Converter={converters:BooleanToObject {}0 0 0 2,{}0 0 0 1}}"
+                               BorderBrush="{StaticResource PrimaryHueMidBrush}"
+                               IsSelected="{Binding FilterHighSchool}">
+                    
+                      <md:PackIcon Kind="Bike" />
+                     
+                  </ListBoxItem>
+                  </ListBox>
+                <ListBox Style="{StaticResource MaterialDesignToolToggleFlatListBox}"
+                         BorderBrush="{StaticResource MaterialDesignTextAreaBorder}"
+                         Focusable="False"
+                         Padding="0"
+                         BorderThickness="0 0 0 0"
+                         VerticalAlignment="Bottom" Margin="-1 0 10 7">
+                  <ListBoxItem Padding="4 2" ToolTip="Filter College"
+                               Focusable="False"
+                               BorderThickness="{Binding RelativeSource={RelativeSource Self},Path=IsSelected,Converter={converters:BooleanToObject {}0 0 0 2,{}0 0 0 1}}"
+                               BorderBrush="{StaticResource PrimaryHueMidBrush}"
+                               IsSelected="{Binding FilterCollege}">
+                    
+                      <md:PackIcon Kind="Motorbike" />
+                    
+                  </ListBoxItem>
+               </ListBox>
+              </StackPanel>
+            
+            
+            </Grid>
+        </md:ColorZone>
+
+          <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Students}"
+                    CanUserAddRows="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,FallbackValue=False}"
+                  InitializingNewItem="DataGrid_OnInitializingNewItem"
+                  IsSynchronizedWithCurrentItem="True"
+                  ClipboardCopyMode="None"
+                  AllowDrop="True"
+                    SelectionMode="Single"
+                    IsReadOnly="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}"
+                  PreviewDrop="StudentsDrop"
+                  PreviewDragOver="StudentsDragEnter"
+                    FrozenColumnCount="1"
+                  Grid.Row="1">
+            <DataGrid.Resources>
+              <ObjectDataProvider x:Key="Departments" MethodName="GetValues"
+                                  ObjectType="{x:Type system:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                  <x:Type Type="models:Departments"/>
+                </ObjectDataProvider.MethodParameters>
+              </ObjectDataProvider>
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+              
+              <DataGridCheckBoxColumn EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"
+                                      Binding="{Binding IsSelected,UpdateSourceTrigger=PropertyChanged}"
+                                      ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}">
+                <DataGridCheckBoxColumn.Header>
+                  
+                    <CheckBox VerticalAlignment="Center"
+                              HorizontalAlignment="Center"
+                              Focusable="False"
+                              Margin="2 0 0 0"
+                              IsChecked="{Binding Source={x:Static vm:StudentsViewModel.Instance},Path=SelectionState}"
+                              Padding="0" />
+                </DataGridCheckBoxColumn.Header>
+              </DataGridCheckBoxColumn>
+              
+              <DataGridTemplateColumn Header="PHOTO">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <Button Style="{StaticResource MaterialDesignToolButton}" Padding="0"
+                          Command="{Binding Source={x:Static vm:StudentsViewModel.Instance},Path=ChangePictureCommand}"
+                          CommandParameter="{Binding}"
+                          HorizontalContentAlignment="Stretch"
+                          Height="Auto"
+                          Width="Auto">
+                      <Button.ToolTip>
+                        <Image Source="{Binding Picture,Converter={converters:BytesToImage}}"/>
+                      </Button.ToolTip>
+                      <Grid Margin="0 0 4 0">
+                        <md:PackIcon Kind="Face" Visibility="{Binding HasPicture,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
+                                     HorizontalAlignment="Center"
+                                     ToolTip="Click to change photo"
+                                     Height="16"/>
+                        <Image Source="{Binding Picture,Converter={converters:BytesToImage}}"
+                             HorizontalAlignment="Center"
+                             Height="16"/>
+                      </Grid>
+                    </Button>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+              <DataGridTextColumn Header="RFID" Binding="{Binding Rfid,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              <DataGridTextColumn Header="STUDENT ID" Binding="{Binding StudentId,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
+              <DataGridTextColumn Header="FIRST NAME" Binding="{Binding Firstname,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              <DataGridTextColumn Header="LAST NAME" Binding="{Binding Lastname,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              <DataGridTextColumn Header="YEAR LEVEL" Binding="{Binding YearLevel,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              <md:MaterialDataGridComboBoxColumn Header="DEPARTMENT" SelectedItemBinding="{Binding Level}"
+                                                 ItemsSourceBinding="{Binding Source={StaticResource Departments}}"/>
+              <DataGridTextColumn Header="CONTACT NUMBER" Binding="{Binding ContactNumber,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                  Visibility="{Binding Source={x:Static vm:MainViewModel.Instance},Path=IsContactVisible,Converter={converters:BooleanToVisibility}}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+            </DataGrid.Columns>
+          </DataGrid>
+
+        <UniformGrid Grid.Row="1" Rows="1"
+                     Margin="20"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Bottom">
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  Command="{Binding PrintCommand}">
+            <StackPanel Orientation="Horizontal">
+              <md:PackIcon Kind="Printer" />
+              <TextBlock Text=" PRINT LIST" />
+            </StackPanel>
+          </Button>
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  Command="{Binding SendBulkCommand}">
+            <StackPanel Orientation="Horizontal">
+              <md:PackIcon Kind="MessageText" />
+              <TextBlock Text=" SEND MESSAGE" />
+            </StackPanel>
+          </Button>
+        </UniformGrid>
+      </Grid>
+      </Border>
+
+    <GridSplitter Grid.Column="0"
+                  Visibility="{Binding Students/,Converter={converters:IsNullConverter ReturnVisibility=True,Invert=True},FallbackValue=Collapsed}"
+                  HorizontalAlignment="Right"
+                  Width="2"/>
+
+    <views:SmsSender Grid.ColumnSpan="2"
+      Visibility="{Binding ShowSmsDialog,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}" />
+  </Grid>
+</UserControl>

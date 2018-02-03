@@ -1,182 +1,142 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
-using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using SFC.Gate.Models;
-using Xceed.Words.NET;
 
-namespace SFC.Gate.ViewModels
+namespace SFC.Gate.Material.ViewModels
 {
-    class Violations:ViewModelBase
+    class Violations : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         private Violations()
         {
-            Context = SynchronizationContext.Current;
+            Messenger.Default.AddListener<Violation>(Messages.ModelDeleted, v =>
+            {
+               MainViewModel.ShowMessage("Violation deleted","UNDO",v.Undelete); 
+            });
         }
-        
         private static Violations _instance;
         public static Violations Instance => _instance ?? (_instance = new Violations());
 
-        private Student _selectedStudent;
+        private ListCollectionView _items;
 
-        public Student SelectedStudent
+        public ListCollectionView ElementaryItems
         {
-            get => _selectedStudent;
-            set
+            get
             {
-                _selectedStudent = value; 
-                OnPropertyChanged(nameof(SelectedStudent));
+                if (_items != null) return _items;
+                _items = new ListCollectionView(Violation.Cache);
+                _items.Filter = o =>
+                {
+                    if (!(o is Violation v)) return false;
+                    return v.Level == Departments.Elementary;
+                };
+                return _items;
             }
         }
 
-        private string _violation;
+        private ListCollectionView _highSchool;
 
-        public string Violation
+        public ListCollectionView HighSchoolItems
         {
-            get => _violation;
-            set
+            get
             {
-                _violation = value; 
-                OnPropertyChanged(nameof(Violation));
+                if (_highSchool != null)
+                    return _highSchool;
+                _highSchool = new ListCollectionView(Violation.Cache);
+                _highSchool.Filter = o =>
+                {
+                    if (!(o is Violation v))
+                        return false;
+                    return v.Level == Departments.HighSchool;
+                };
+                return _highSchool;
             }
         }
 
-        private Violation _selectedViolation;
+        private ListCollectionView _college;
 
-        public Violation SelectedViolation
+        public ListCollectionView CollegeItems
         {
-            get => _selectedViolation;
-            set
+            get
             {
-                _selectedViolation = value; 
-                OnPropertyChanged(nameof(SelectedViolation));
-                if (_selectedViolation != null)
-                    Description = _selectedViolation.Description;
-                else
-                    Description = "";
+                if (_college != null)
+                    return _college;
+                _college = new ListCollectionView(Violation.Cache);
+                _college.Filter = o =>
+                {
+                    if (!(o is Violation v))
+                        return false;
+                    return v.Level == Departments.College;
+                };
+                return _college;
             }
         }
-        
 
-        private string _description;
-
-        public string Description
-        {
-            get => _description;
-            set
-            {
-                _description = value; 
-                OnPropertyChanged(nameof(Description));
-            }
-        }
-        
         private ICommand _addViolationCommand;
 
         public ICommand AddViolationCommand => _addViolationCommand ?? (_addViolationCommand = new DelegateCommand(d =>
         {
-            var violation = Models.Violation.Cache.FirstOrDefault(v => v.Name.ToLower() == Violation.ToLower());
-            if(violation==null) violation = new Violation()
-            {
-                Name = Violation, Description = Description
-            };
-            violation.Save();
-            
-            SelectedStudent.AddViolation(violation);
-        }, CanAddViolation));
+            NewItem = new Violation();
+            ShowNewItem = true;
+        }));
 
-        private ICommand _printCommand;
+        private ICommand _cancelViolationCommand;
 
-        public ICommand PrintCommand => _printCommand ?? (_printCommand = new DelegateCommand(d =>
-        {
-            PrintList(StudentsViolations.Cache);
-            Log.Add("Violations Printed", "");
-        }, CanPrint));
-
-        private bool CanPrint(object obj)
-        {
-            return StudentsViolations.Cache.Count > 0;
-        }
-
-        private static void PrintList(IEnumerable<StudentsViolations> violations)
-        {
-            if(!Directory.Exists("Temp"))
-                Directory.CreateDirectory("Temp");
-            var temp = Path.Combine("Temp", $"List of Violations [{DateTime.Now:d-MMM-yyyy}].docx");
-            using(var doc = DocX.Load(@"Templates\Violations.docx"))
-            {
-                var tbl = doc.Tables.First();// doc.InsertTable(1, 6);
-                var wholeWidth = doc.PageWidth - doc.MarginLeft - doc.MarginRight;
-
-                var pt = (1F / 72F);
-                //var widths = new float[] { 150f, 200f, 400f, 100f, 100f, 100f, 300f };
-                //tbl.SetWidths(widths);
-                //  tbl.AutoFit = AutoFit.Contents;
-                //var r = tbl.Rows[0];
-                //r.Cells[0].Paragraphs.First().Append("DATE").Bold().Alignment = Alignment.center;
-                //r.Cells[1].Paragraphs.First().Append("STUDENT").Bold().Alignment = Alignment.center;
-                //r.Cells[2].Paragraphs.First().Append("DUE").Bold().Alignment = Alignment.center;
-                //r.Cells[3].Paragraphs.First().Append("RECEIVED").Bold().Alignment = Alignment.center;
-                //  r.Cells[4].Paragraphs.First().Append("BALANCE").Bold().Alignment = Alignment.center;
-                //    r.Cells[5].Paragraphs.First().Append("CASHIER").Bold().Alignment = Alignment.center;
-                //tbl.AutoFit = AutoFit.Contents;
-                foreach(var item in violations)
+        public ICommand CancelViolationCommand =>
+            _cancelViolationCommand ?? (_cancelViolationCommand = new DelegateCommand(
+                d =>
                 {
-                    var r = tbl.InsertRow();
-                    var p = r.Cells[0].Paragraphs.First().Append(item.DateCommitted.ToString("g"));
-                    p.LineSpacingAfter = 0;
-                    p.Alignment = Alignment.center;
+                    ShowNewItem = false;
+                }));
 
-                    p = r.Cells[1].Paragraphs.First().Append(item.Student.Fullname);
-                    p.LineSpacingAfter = 0;
-                    p.Alignment = Alignment.left;
+        private ICommand _acceptNewCommand;
 
-                    r.Cells[2].Paragraphs.First().Append(item.Violation.Name).LineSpacingAfter = 0;
-                    
-                }
-                var border = new Xceed.Words.NET.Border(BorderStyle.Tcbs_single, BorderSize.one, 0, System.Drawing.Color.Black);
-                tbl.SetBorder(TableBorderType.Bottom, border);
-                tbl.SetBorder(TableBorderType.Left, border);
-                tbl.SetBorder(TableBorderType.Right, border);
-                tbl.SetBorder(TableBorderType.Top, border);
-                tbl.SetBorder(TableBorderType.InsideV, border);
-                tbl.SetBorder(TableBorderType.InsideH, border);
-                File.Delete(temp);
-                doc.SaveAs(temp);
+        public ICommand AcceptNewCommand => _acceptNewCommand ?? (_acceptNewCommand = new DelegateCommand(d =>
+        {
+            NewItem?.Save();
+            ShowNewItem = false;
+        }));
+
+        private bool _ShowNewItem;
+
+        public bool ShowNewItem
+        {
+            get => _ShowNewItem;
+            set
+            {
+                if(value == _ShowNewItem)
+                    return;
+                _ShowNewItem = value;
+                OnPropertyChanged(nameof(ShowNewItem));
             }
-            Print(temp);
         }
 
-        private static void Print(string path)
+        private Violation _NewItem;
+
+        public Violation NewItem
         {
-            var info = new ProcessStartInfo(path);
-            //info.Arguments = "\"" + Config.PrinterName + "\"";
-            info.CreateNoWindow = true;
-            info.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-            info.UseShellExecute = true;
-            info.Verb = "PrintTo";
-            Process.Start(info);
-            
+            get => _NewItem;
+            set
+            {
+                if(value == _NewItem)
+                    return;
+                _NewItem = value;
+                OnPropertyChanged(nameof(NewItem));
+            }
         }
 
-        private ICommand _clearCommand;
-
-        public ICommand ClearCommand => _clearCommand ?? (_clearCommand = new DelegateCommand(d =>
-        {
-            if (System.Windows.MessageBox.Show("Are you sure you want to delete all violations?", "Confirm Action",
-                    MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No) return;
-            
-            StudentsViolations.DeleteAll();
-            Log.Add("Violations Cleared", "Violations record has been cleared.");
-        }, CanPrint));
-
-        private bool CanAddViolation(object obj)
-        {
-            return SelectedStudent != null && !string.IsNullOrEmpty(Violation);
-        }
+        
     }
 }

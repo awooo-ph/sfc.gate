@@ -1,13 +1,17 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using SFC.Gate.Configurations;
 using SFC.Gate.Models;
 
-namespace SFC.Gate.ViewModels
+namespace SFC.Gate.Material.ViewModels
 {
-    class Login : ViewModelBase
+    class Login : INotifyPropertyChanged
     {
         private static Login _instance;
 
@@ -15,13 +19,14 @@ namespace SFC.Gate.ViewModels
         {
             get
             {
-                if(_instance==null) _instance = new Login();
+                if(_instance == null)
+                    _instance = new Login();
                 return _instance;
             }
         }
 
         private Login()
-        {}
+        { }
 
         private string _username = "";
 
@@ -33,8 +38,8 @@ namespace SFC.Gate.ViewModels
             }
             set
             {
-                _username = value; 
-               OnPropertyChanged(nameof(Username));
+                _username = value;
+                OnPropertyChanged(nameof(Username));
             }
         }
 
@@ -42,7 +47,7 @@ namespace SFC.Gate.ViewModels
 
         public ICommand LoginCommand => _loginCommand ?? (_loginCommand = new DelegateCommand<PasswordBox>(pwd =>
         {
-            if (string.IsNullOrEmpty(pwd.Password.Trim()))
+            if(string.IsNullOrEmpty(pwd.Password.Trim()))
             {
                 System.Windows.MessageBox.Show("Invalid Password!", "Login", MessageBoxButton.OK,
                     MessageBoxImage.Asterisk);
@@ -50,7 +55,7 @@ namespace SFC.Gate.ViewModels
             }
 
             User user;
-            if (User.Cache.Count == 0)
+            if(User.Cache.Count == 0)
             {
                 user = new User()
                 {
@@ -65,17 +70,18 @@ namespace SFC.Gate.ViewModels
             }
 
             user = User.Cache.FirstOrDefault(x => x.Username.ToLower() == Username.ToLower() && x.Password == pwd.Password);
-            if (user != null)
+            if(user != null)
             {
                 MainViewModel.Instance.CurrentUser = user;
-                Log.Add("Login Successful", $"{Username} has logged in.","Users",user.Id);
+                MainViewModel.Instance.Screen = 0;
+                Log.Add("Login Successful", $"{Username} has logged in.", "Users", user.Id);
                 Username = "";
                 pwd.Password = "";
                 return;
             }
 
             Log.Add("Login Failed", $"Login attempt failed using Username: {Username} and Password: {pwd.Password}.");
-            
+
             System.Windows.MessageBox.Show("Invalid username and password!", "Login", MessageBoxButton.OK,
                 MessageBoxImage.Asterisk);
 
@@ -87,5 +93,12 @@ namespace SFC.Gate.ViewModels
         {
             Application.Current.MainWindow.Close();
         }));
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

@@ -1,22 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using SFC.Gate.Configurations;
 using SFC.Gate.Models;
+using Sms = SFC.Gate.Material.Views.Sms;
 
-namespace SFC.Gate.ViewModels
+namespace SFC.Gate.Material.ViewModels
 {
-    class Guard : ViewModelBase
+    class Guard : INotifyPropertyChanged
     {
         private const long ClockIndex = 0, StudentIndex = 1, InvalidIndex = 2;
         private Timer _infoTimer;
+
+        private bool _Defer;
+
+        public bool IgnoreScans
+        {
+            get => _Defer;
+            set
+            {
+                if(value == _Defer)
+                    return;
+                _Defer = value;
+                OnPropertyChanged(nameof(IgnoreScans));
+            }
+        }
         
         private Guard()
         {
+            Index = InvalidIndex;
+            
           //  Messenger.Default.AddListener(Messages.ConfigChanged,);
             Config.General.PropertyChanged += (sender, args) =>
             {
@@ -24,6 +44,12 @@ namespace SFC.Gate.ViewModels
             };
             Messenger.Default.AddListener<string>(Messages.Scan, id =>
             {
+                if (MainViewModel.Instance.Screen==MainViewModel.VISITORS && 
+                    (VisitorsViewModel.Instance.IsAddingVisitor || VisitorsViewModel.Instance.IsReturningCard)) return;
+                
+                if(!Config.Rfid.GlobalScan && MainViewModel.Instance.Screen!=MainViewModel.GUARD_MODE) return;
+                if (Config.Rfid.RequireUser && !MainViewModel.Instance.HasLoggedIn) return;
+                
                 Student = Student.Cache.FirstOrDefault(x => x.Rfid.ToUpper() == id);
                 if (Student == null)
                     Instance.Index = InvalidIndex;
@@ -32,6 +58,7 @@ namespace SFC.Gate.ViewModels
 
 
                     var pass = Student.Pass();
+                    var msg = "";
                     switch (pass)
                     {
                         case Student.PassReturnValues.Ignored:
@@ -39,27 +66,46 @@ namespace SFC.Gate.ViewModels
                             return;
                         case Student.PassReturnValues.Entry:
                             Welcome = "WELCOME";
+                            msg = SFC.Gate.Configurations.Sms.Default.EntryTemplate;
+                            msg = msg.Replace("[STUDENT]", Student.Fullname);
+                            msg = msg.Replace("[TIME]", DateTime.Now.ToString("g"));
                             break;
                         case Student.PassReturnValues.Exit:
                             Welcome = "GOODBYE";
+                            msg = SFC.Gate.Configurations.Sms.Default.ExitTemplate;
+                            msg = msg.Replace("[STUDENT]", Student.Fullname);
+                            msg = msg.Replace("[TIME]", DateTime.Now.ToString("g"));
                             break;
                     }
-
-                    if (!MainViewModel.Instance.IsGuardMode && Config.General.GuardModeOnScan)
+                    if (msg != "")
                     {
-                        MainViewModel.Instance.IsGuardMode = true;
+                        if(Config.Sms.Enabled)
+                            SFC.Gate.ViewModels.SMS.Send(msg,Student.ContactNumber);
                     }
                     
                     Instance.Index = StudentIndex;
                     _infoTimer?.Dispose();
                     if (Config.Rfid.StudentInfoDelay > 0)
-                        _infoTimer = new Timer(HideStudentInfo, null, Config.Rfid.StudentInfoDelay*1000, int.MaxValue);
+                        _infoTimer = new Timer(HideStudentInfo, null, Config.Rfid.StudentInfoDelay * 1000,
+                            int.MaxValue);
+                    
+                    if(MainViewModel.Instance.Screen != MainViewModel.GUARD_MODE)
+                    {
+                        var m = Welcome == "WELCOME" ? "entered" : "left";
+                        MainViewModel.ShowMessage($"{Student.Fullname} {Student.Department} - {Student.YearLevel} has {m} the campus.",
+                            "VIEW STUDENT", s =>
+                            {
+                                StudentsViewModel.Instance.ShowStudent(s);
+                            },Student);
+                    }
+                    
+                    
 
                 }
             });
         }
 
-        private string _welcome;
+        private string _welcome = "WELCOME";
 
         public string Welcome
         {
@@ -80,11 +126,11 @@ namespace SFC.Gate.ViewModels
 
 
         public SolidColorBrush Background => Config.General.GuardModeBackground;
-
+        
         private static Guard _instance;
         public static Guard Instance => _instance ?? (_instance = new Guard());
 
-        private long _index;
+        private long _index = StudentIndex;
 
         public long Index
         {
@@ -147,6 +193,13 @@ namespace SFC.Gate.ViewModels
                 _studentInfoVisibility = value; 
                 OnPropertyChanged(nameof(StudentInfoVisibility));
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
