@@ -12,6 +12,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
+using SFC.Gate.Configurations;
 using SFC.Gate.Models;
 
 namespace SFC.Gate.Material.ViewModels
@@ -133,9 +134,24 @@ namespace SFC.Gate.Material.ViewModels
             _GeneratePictureCommand ?? (_GeneratePictureCommand = new DelegateCommand(
                 d =>
                 {
+                    if (CurrentUser == null) return;
                     var pic = CurrentUser.Picture;
-                    CurrentUser?.Update(nameof(User.Picture),Extensions.Generate());
+                    CurrentUser.Update(nameof(User.Picture),Extensions.Generate());
                     ShowMessage("Picture changed","UNDO",()=>CurrentUser.Update("Picture",pic));
+                },d=>CurrentUser!=null));
+
+        private ICommand _changePictureCommand;
+
+        public ICommand ChangePictureCommand => _changePictureCommand ?? (_changePictureCommand = new DelegateCommand(
+                d =>
+                {
+                    if (CurrentUser == null)
+                        return;
+                    var filename = Extensions.GetPicture();
+                    var image = CurrentUser.Picture;
+                    CurrentUser.Update(nameof(User.Picture) ,Extensions.ResizeImage(filename));
+                    ShowMessage("Picture changed", "UNDO", () => CurrentUser.Update("Picture", image));
+                    
                 },d=>CurrentUser!=null));
 
         private bool _ShowUserMenu;
