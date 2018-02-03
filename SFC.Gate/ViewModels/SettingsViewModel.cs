@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Data;
 using System.Windows.Input;
+using SFC.Gate.Configurations;
 using SFC.Gate.Models;
 
 namespace SFC.Gate.Material.ViewModels
@@ -36,6 +37,11 @@ namespace SFC.Gate.Material.ViewModels
             
             Messenger.Default.AddListener<User>(Messages.UserSaved,
                 user => MainViewModel.ShowMessage("Changes to current user's profile was successfully saved.","UNDO", user.Restore));
+
+            Config.Rfid.PropertyChanged += (sender, args) =>
+            {
+                OnPropertyChanged(nameof(ScannerId));
+            };
         }
 
         private static SettingsViewModel _instance;

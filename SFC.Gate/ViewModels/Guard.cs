@@ -47,7 +47,7 @@ namespace SFC.Gate.Material.ViewModels
                 if (MainViewModel.Instance.Screen==MainViewModel.VISITORS && 
                     (VisitorsViewModel.Instance.IsAddingVisitor || VisitorsViewModel.Instance.IsReturningCard)) return;
                 
-                if(!Config.Rfid.GlobalScan && MainViewModel.Instance.Screen!=3) return;
+                if(!Config.Rfid.GlobalScan && MainViewModel.Instance.Screen!=MainViewModel.GUARD_MODE) return;
                 if (Config.Rfid.RequireUser && !MainViewModel.Instance.HasLoggedIn) return;
                 
                 Student = Student.Cache.FirstOrDefault(x => x.Rfid.ToUpper() == id);

@@ -87,7 +87,7 @@
 
     <materialDesign:Transitioner Grid.Row="1" SelectedIndex="{Binding ElementName=ListBox,Path=SelectedIndex}">
       <materialDesign:TransitionerSlide>
-        <local:GlobalSettings IsEnabled="{Binding CurrentUser.IsAdmin}"/>
+        <local:GlobalSettings/>
       </materialDesign:TransitionerSlide>
       <materialDesign:TransitionerSlide>
         <local:UserProfile/>

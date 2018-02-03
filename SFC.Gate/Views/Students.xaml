@@ -397,6 +397,7 @@
               <md:MaterialDataGridComboBoxColumn Header="DEPARTMENT" SelectedItemBinding="{Binding Level}"
                                                  ItemsSourceBinding="{Binding Source={StaticResource Departments}}"/>
               <DataGridTextColumn Header="CONTACT NUMBER" Binding="{Binding ContactNumber,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                  Visibility="{Binding Source={x:Static vm:MainViewModel.Instance},Path=IsContactVisible,Converter={converters:BooleanToVisibility}}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
             </DataGrid.Columns>
           </DataGrid>

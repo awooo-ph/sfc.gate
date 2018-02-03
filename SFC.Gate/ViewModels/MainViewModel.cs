@@ -86,10 +86,13 @@ namespace SFC.Gate.Material.ViewModels
                 OnPropertyChanged(nameof(CurrentUser));
                 OnPropertyChanged(nameof(HasLoggedIn));
                 OnPropertyChanged(nameof(ShowSideBar));
+                OnPropertyChanged(nameof(IsContactVisible));
                 if (value == null)
                     Screen = 5;
             }
         }
+
+        public bool IsContactVisible => CurrentUser?.IsAdmin ?? false || !Config.General.HideContactNumber;
 
         private ICommand _logoutCommand;
 

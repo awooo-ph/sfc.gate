@@ -8,13 +8,14 @@
              xmlns:cnf="clr-namespace:SFC.Gate.Configurations;assembly=SFC.Gate.Core"
              xmlns:converters="clr-namespace:SFC.Gate.Converters"
              xmlns:viewModels="clr-namespace:SFC.Gate.Material.ViewModels"
-             mc:Ignorable="d"
+             mc:Ignorable="d"           
              DataContext="{Binding Source={x:Static viewModels:SettingsViewModel.Instance}}"
              d:DesignHeight="300" d:DesignWidth="300">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="0"
                 HorizontalScrollBarVisibility="Disabled">
-    <Grid Margin="74 47">
+    <Grid Margin="74 47"
+          IsEnabled="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin,FallbackValue=False}">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto" />
@@ -78,6 +79,7 @@
 
           <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
                      VerticalAlignment="Center"
+                     TextWrapping="Wrap"
                      Text="Minimum time, in seconds, between valid scans." />
         </StackPanel>
 
@@ -97,6 +99,7 @@
                     IsChecked="{Binding Source={x:Static cnf:Config.Rfid},Path=GlobalScan}" />
           <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
                      VerticalAlignment="Center"
+                     TextWrapping="Wrap"
                      Text="Check to detect RFID scans anywhere in the program. Uncheck to record scans in Guard Mode only." />
         </StackPanel>
 
@@ -106,10 +109,22 @@
                     IsChecked="{Binding Source={x:Static cnf:Config.Rfid},Path=RequireUser}" />
           <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
                      VerticalAlignment="Center"
+                     TextWrapping="Wrap"
                      Text="An authenticated user is required to record RFID swipes. Uncheck to enable recording even when no user has logged in." />
         </StackPanel>
 
-      <StackPanel Margin="0 0 40 40" Visibility="Collapsed">
+        <StackPanel Margin="0 0 40 40">
+          <CheckBox Margin="4" Content="Hide Contact Numbers" FontWeight="Bold"
+                    VerticalAlignment="Center"
+                    IsChecked="{Binding Source={x:Static cnf:Config.General},Path=HideContactNumber}" />
+          <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
+                     VerticalAlignment="Center"
+                     TextWrapping="Wrap"
+                     Text="When checked, only Administrators can see the contact numbers of students and visitors." />
+        </StackPanel>
+
+
+        <StackPanel Margin="0 0 40 40" Visibility="Collapsed">
         <TextBlock FontWeight="Bold">
                             <Run Text="Activate Guard Mode When Idle For "/>
                             <Run Text="{Binding Source={x:Static cnf:Config.General},Path=GuardModeOnIdle}"/>
@@ -122,6 +137,7 @@
 
         <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
                                    VerticalAlignment="Center"
+                   TextWrapping="Wrap"
                                    Text="Set to zero (0) seconds to disable this option."/>
       </StackPanel>
 
@@ -150,6 +166,7 @@
                               IsChecked="{Binding Source={x:Static cnf:Config.General},Path=ConfirmExit}"/>
         <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
                                VerticalAlignment="Center"
+                   TextWrapping="Wrap"
                                Text="If checked, asks for confirmation when the application is closed."/>
       </StackPanel>
 

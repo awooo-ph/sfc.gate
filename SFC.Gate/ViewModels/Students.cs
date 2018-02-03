@@ -636,7 +636,7 @@ namespace SFC.Gate.Material.ViewModels
         
         private bool CanSend()
         {
-            if (!MainViewModel.Instance.CurrentUser.IsAdmin && !Config.Sms.AllowNonAdmin) return false;
+            if (!(MainViewModel.Instance.CurrentUser?.IsAdmin??false) && !Config.Sms.AllowNonAdmin) return false;
             if ((DateTime.Now - _lastSent).TotalSeconds < 7) return false;
             return Students.CurrentItem != null && !string.IsNullOrWhiteSpace(NotificationMessage);
         }
@@ -712,7 +712,7 @@ namespace SFC.Gate.Material.ViewModels
                 BulkSendTo = 4;
             else
                 BulkSendTo = 0;
-        },d=>MainViewModel.Instance.CurrentUser.IsAdmin || Config.Sms.AllowNonAdmin));
+        },d=>MainViewModel.Instance.CurrentUser?.IsAdmin??false || Config.Sms.AllowNonAdmin));
 
         private int _BulkSendTo;
 

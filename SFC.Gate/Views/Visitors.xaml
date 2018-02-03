@@ -105,6 +105,7 @@
           <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Visitors}"
                     CanUserDeleteRows="True"
                     CanUserAddRows="False"
+                    IsReadOnly="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}"
                   IsSynchronizedWithCurrentItem="True"
                   ClipboardCopyMode="None"
                   Grid.Row="1">
@@ -116,6 +117,7 @@
                                   Binding="{Binding Address,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
                                   EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
               <DataGridTextColumn Header="CONTACT" Binding="{Binding Number,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                  Visibility="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=IsContactVisible,Converter={converters:BooleanToVisibility}}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
               <DataGridTextColumn Header="VISITS"
                                   Binding="{Binding VisitCount}"
