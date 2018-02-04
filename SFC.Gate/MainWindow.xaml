@@ -27,6 +27,12 @@
         DataContext="{Binding Source={x:Static viewModels:MainViewModel.Instance}}"
         Title="Saint Francis College" Height="555" Width="777">
 
+  <md:DialogHost Identifier="Main" SnackbarMessageQueue="{Binding MessageQueue}">
+    <md:DialogHost.Resources>
+      <DataTemplate DataType="{x:Type viewModels:MessageDialog}">
+        <views:MessageDialog/>
+      </DataTemplate>
+    </md:DialogHost.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto"/>
@@ -241,5 +247,5 @@
       </Button>
     </StackPanel>
   </Grid>
-
+  </md:DialogHost>
 </Window>

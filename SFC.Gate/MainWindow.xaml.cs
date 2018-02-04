@@ -1,21 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using MaterialDesignThemes.Wpf;
 using SFC.Gate.Configurations;
 using SFC.Gate.Material.ViewModels;
@@ -130,19 +118,27 @@ namespace SFC.Gate.Material
             base.OnClosed(e);
         }
 
-        protected override void OnClosing(CancelEventArgs e)
+        protected override async void OnClosing(CancelEventArgs e)
         {
-            if(Config.General.ConfirmExit && System.Windows.MessageBox.Show(
-                    "Are you sure you want to exit?", "Confirm Exit",
-                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            if (Config.General.ConfirmExit)
             {
                 e.Cancel = true;
-                return;
+                var dlg = new MessageDialog("CONFIRM EXIT",
+                    "Are you sure you want to exit?", PackIconKind.ExitToApp, "YES", true, "NO");
+                await this.ShowDialog(dlg, (sender, args) => {}, (sender, args) =>
+                {
+                    if (!(args.Parameter as bool? ?? false)) return;
+                        
+                    RfidScanner.UnHook();
+                    Application.Current.Shutdown(0);
+                });
+                
             }
+            
             RfidScanner.UnHook();
             base.OnClosing(e);
         }
-
+        
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);

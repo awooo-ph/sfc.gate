@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using MaterialDesignThemes.Wpf;
 using SFC.Gate.Material.Views;
 using SFC.Gate.Models;
 
@@ -70,10 +71,22 @@ namespace SFC.Gate.Material.ViewModels
 
         private ICommand _clearDtrCommand;
 
-        public ICommand ClearDtrCommand => _clearDtrCommand ?? (_clearDtrCommand = new DelegateCommand(d =>
+        public ICommand ClearDtrCommand => _clearDtrCommand ?? (_clearDtrCommand = new DelegateCommand(async d =>
         {
-            if (!(Items.CurrentItem is Student s)) return;
-            DailyTimeRecord.DeleteRecords(s.Id);
+            if (!(Items.CurrentItem is Student s))
+                return;
+            
+            var dlg = new MessageDialog("DELETE ALL TIME RECORDS?",
+                $"You are about to delete all time records of {s.Fullname}. This action can not be undone. Are you sure you want to continue?",
+                PackIconKind.Close, "YES, CLEAR RECORDS", true, "NO, CANCEL ACTION");
+
+            await Application.Current.MainWindow.ShowDialog(dlg,
+                (sender, args) => { }, (sender, args) =>
+                {
+                    if(args.Parameter as bool? ?? false)
+                        DailyTimeRecord.DeleteRecords(s.Id);
+                });
+            
         }, d=> Items.CurrentItem!=null && (MainViewModel.Instance.CurrentUser?.IsAdmin??false)));
 
         private ListCollectionView _timeRecord;
