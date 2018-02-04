@@ -12,6 +12,9 @@
              d:DesignHeight="300" d:DesignWidth="300">
   <md:Card MaxWidth="666"
            MaxHeight="666"
+           md:ShadowAssist.ShadowDepth="Depth4"
+           md:ShadowAssist.ShadowEdges="All"
+           md:ShadowAssist.Darken="True"
            UniformCornerRadius="7"
            VerticalAlignment="Center"
            HorizontalAlignment="Center">

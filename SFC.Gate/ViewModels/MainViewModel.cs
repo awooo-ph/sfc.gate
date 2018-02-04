@@ -88,7 +88,6 @@ namespace SFC.Gate.Material.ViewModels
         }
 
         private static User _CurrentUser;
-        public static User User => _CurrentUser;
         
         public User CurrentUser
         {
@@ -130,6 +129,7 @@ namespace SFC.Gate.Material.ViewModels
                     _Screen = LOGIN;
                 _Screen = value;
                 OnPropertyChanged(nameof(Screen));
+                RfidScanner.ExclusiveCallback = null;
                 Messenger.Default.Broadcast(Messages.ScreenChanged,value);
             }
         }

@@ -1,18 +1,109 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
+using SFC.Gate.Material.Views;
 using SFC.Gate.Models;
 
 namespace SFC.Gate.Material.ViewModels
 {
     class Faculty : INotifyPropertyChanged
     {
-        private Faculty() { }
+        private Faculty()
+        {
+            Messenger.Default.AddListener<int>(Messages.ScreenChanged, screen =>
+            {
+                if (screen == MainViewModel.FACULTY)
+                {
+                    RfidScanner.ExclusiveCallback = ScanCallback;
+                }
+            });
+        }
 
         private static Faculty _instance;
         public static Faculty Instance => _instance ?? (_instance = new Faculty());
+
+        private bool _IsDialogOpen;
+
+        public bool IsDialogOpen
+        {
+            get => DialogContent!=null && _IsDialogOpen;
+            set
+            {
+                if(value == _IsDialogOpen)
+                    return;
+                _IsDialogOpen = value;
+                OnPropertyChanged(nameof(IsDialogOpen));
+            }
+        }
+
+        private object _DialogContent;
+
+        public object DialogContent
+        {
+            get => _DialogContent;
+            set
+            {
+                if(value == _DialogContent)
+                    return;
+                _DialogContent = value;
+                OnPropertyChanged(nameof(DialogContent));
+                OnPropertyChanged(nameof(IsDialogOpen));
+            }
+        }
+
+        private ICommand _addCommand;
+        private NewFacultyViewModel NewFaculty;
+        public ICommand AddCommand => _addCommand ?? (_addCommand = new DelegateCommand(d =>
+        {
+            NewFaculty = new NewFacultyViewModel()
+            {
+                CancelCommand = new DelegateCommand(a =>
+                {
+                    NewFaculty = null;
+                    DialogContent = null;
+                    IsDialogOpen = false;
+                    ScanCallback = null;
+                    RfidScanner.ExclusiveCallback = null;
+                }),
+                AcceptCommand = new DelegateCommand(a =>
+                {
+                    NewFaculty.Item.Save();
+                    
+                    NewFaculty = null;
+                    DialogContent = null;
+                    IsDialogOpen = false;
+                    ScanCallback = null;
+                    RfidScanner.ExclusiveCallback = null;
+                },a=>NewFaculty.Item.CanSave() && !NewFaculty.HasError)
+            };
+            DialogContent = NewFaculty;
+            IsDialogOpen = true;
+
+            ScanCallback = async id =>
+            {
+                if (Student.Cache.Any(x => x.Rfid.ToUpper() == id) || Visit.GetByRfid(id).Count > 0)
+                {
+                    NewFaculty.HasError = true;
+                    NewFaculty.Item.Rfid = id;
+                    await TaskEx.Delay(777);
+                    NewFaculty.HasError = false;
+                    NewFaculty.Item.Rfid = "";
+                }
+                else
+                {
+                    NewFaculty.Item.Rfid = id;
+                    NewFaculty.HasError = false;
+                }
+            };
+            RfidScanner.ExclusiveCallback = ScanCallback;
+        }));
+
+        private Action<string> ScanCallback;
         
         private ListCollectionView _items;
 

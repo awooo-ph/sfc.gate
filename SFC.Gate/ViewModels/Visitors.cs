@@ -33,6 +33,12 @@ namespace SFC.Gate.Material.ViewModels
                 ShowReturnDialog = true;
                 IsReturningCard = true;
             });
+            
+            Messenger.Default.AddListener<int>(Messages.ScreenChanged, screen =>
+            {
+                if (screen == MainViewModel.VISITORS)
+                    RfidScanner.ExclusiveCallback = ScanCallback;
+            });
         }
 
         private void ScanReturnCard(string code)
@@ -46,6 +52,8 @@ namespace SFC.Gate.Material.ViewModels
             NewRfid = code;
         }
 
+        private Action<string> ScanCallback;
+
         private bool _IsAddingVisitor;
 
         public bool IsAddingVisitor
@@ -58,9 +66,15 @@ namespace SFC.Gate.Material.ViewModels
                 _IsAddingVisitor = value;
                 OnPropertyChanged(nameof(IsAddingVisitor));
                 if (value && MainViewModel.Instance.Screen == MainViewModel.VISITORS)
+                {
                     RfidScanner.ExclusiveCallback = ScanAddVisitor;
+                    ScanCallback = ScanAddVisitor;
+                }
                 else
+                {
                     RfidScanner.ExclusiveCallback = null;
+                    ScanCallback = null;
+                }
             }
         }
 
@@ -76,9 +90,15 @@ namespace SFC.Gate.Material.ViewModels
                 _IsReturningCard = value;
                 OnPropertyChanged(nameof(IsReturningCard));
                 if (value && MainViewModel.Instance.Screen == MainViewModel.VISITORS)
+                {
                     RfidScanner.ExclusiveCallback = ScanReturnCard;
+                    ScanCallback = ScanReturnCard;
+                }
                 else
+                {
                     RfidScanner.ExclusiveCallback = null;
+                    ScanCallback = null;
+                }
             }
         }
 

@@ -1,0 +1,97 @@
+﻿<UserControl x:Class="SFC.Gate.Material.Views.NewFacultyDialog"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SFC.Gate.Material.Views"
+             mc:Ignorable="d" 
+             xmlns:behaviors="clr-namespace:WPFTextBoxAutoComplete;assembly=WPFTextBoxAutoComplete"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
+             xmlns:converters="clr-namespace:SFC.Gate.Converters">
+  <UserControl.Triggers>
+    <EventTrigger RoutedEvent="UserControl.Loaded">
+      <EventTrigger.Actions>
+        <BeginStoryboard>
+          <Storyboard>
+            <!--<DoubleAnimation Duration="0:0:0.7" To="0" From="1" AutoReverse="True" RepeatBehavior="Forever"
+                             Storyboard.TargetName="Block" Storyboard.TargetProperty="Opacity"/>-->
+            <DoubleAnimation Duration="0:0:0.4" To="0" From="1" AutoReverse="True" RepeatBehavior="Forever"
+                             Storyboard.TargetName="Error" Storyboard.TargetProperty="Opacity" />
+          </Storyboard>
+        </BeginStoryboard>
+      </EventTrigger.Actions>
+    </EventTrigger>
+  </UserControl.Triggers>
+  <md:Card HorizontalAlignment="Center"
+           MinWidth="444"
+           md:ShadowAssist.ShadowDepth="Depth4"
+           md:ShadowAssist.Darken="True"
+           md:ShadowAssist.ShadowEdges="All"
+           UniformCornerRadius="7"
+             VerticalAlignment="Center">
+    <StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="10">
+        <md:PackIcon Kind="HumanChild"
+                     Margin="5"
+                     VerticalAlignment="Center"
+                     Height="32"
+                     Width="32" />
+        <TextBlock Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                   VerticalAlignment="Center"
+                   Text="NEW ITEM"/>
+      </StackPanel>
+      <Rectangle Height="1" Fill="{StaticResource PrimaryHueMidBrush}"/>
+      <TextBox md:HintAssist.IsFloating="True"
+               Style="{StaticResource MaterialDesignTextBox}"
+                Text="{Binding Item.Firstname,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                Margin="20 10 20 5"
+                md:HintAssist.Hint="FIRST NAME"/>
+      <TextBox md:HintAssist.IsFloating="True"
+               Margin="20 7"
+               Text="{Binding Item.Lastname,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+               md:HintAssist.Hint="LAST NAME" />
+      <TextBox md:HintAssist.IsFloating="True"
+               Margin="20 7"
+               Text="{Binding Item.YearLevel,UpdateSourceTrigger=PropertyChanged}"
+               behaviors:AutoCompleteBehavior.AutoCompleteItemsSource="{Binding Jobs}"
+               behaviors:AutoCompleteBehavior.AutoCompleteStringComparison="InvariantCultureIgnoreCase"
+               md:HintAssist.Hint="JOB DESCRIPTION" />
+      <TextBox md:HintAssist.IsFloating="True"
+               Margin="20 7"
+               Text="{Binding Item.ContactNumber,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+               md:HintAssist.Hint="CONTACT NUMBER" />
+
+      <md:Card Margin="20">
+        <Grid>
+          <Rectangle Fill="Red" x:Name="Error" Visibility="{Binding HasError,Converter={converters:BooleanToVisibility}}"/>
+        <Grid Margin="10">
+          <TextBlock HorizontalAlignment="Center"
+                     FontSize="20pt"
+                     FontWeight="Bold"
+                     FontFamily="Consolas"
+                     Visibility="{Binding HasRfid,Converter={converters:BooleanToVisibility}}"
+                   Text="{Binding Item.Rfid,UpdateSourceTrigger=PropertyChanged}"/>
+          <TextBlock Text="PLEASE SCAN CARD"
+                     FontSize="20pt"
+                     x:Name="Block"
+                     Visibility="{Binding HasRfid,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"/>
+        </Grid>
+        </Grid>
+      </md:Card>
+      
+      
+      <UniformGrid Rows="1" Margin="0 20 0 0">
+        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                IsCancel="True"
+                Command="{Binding CancelCommand}"
+                Content="CANCEL" />
+        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                Command="{Binding AcceptCommand}"
+                Content="ACCEPT"/>
+      </UniformGrid>
+    </StackPanel>
+  </md:Card>
+</UserControl>

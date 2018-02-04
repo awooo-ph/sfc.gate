@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using SFC.Gate.Models;
 
 namespace SFC.Gate.Material.Views
 {
@@ -22,6 +23,21 @@ namespace SFC.Gate.Material.Views
         public Faculty()
         {
             InitializeComponent();
+        }
+
+        private void DataGrid_OnBeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        {
+            if (e.Column.Header.ToString() == "RFID")
+                RfidScanner.ExclusiveCallback = id =>
+                {
+                    ((Student) e.Row.Item).Rfid = id;
+                };
+        }
+
+        private void DataGrid_OnCellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            if (e.Column.Header.ToString() == "RFID")
+                RfidScanner.ExclusiveCallback = null;
         }
     }
 }

@@ -97,13 +97,13 @@ namespace SFC.Gate.Material.ViewModels
                 timeCard = new DailyTimeRecord()
                 {
                     EmployeeId = stud.Id,
-                    UserIdIn = MainViewModel.User?.Id ?? 0,
+                    UserIdIn = MainViewModel.Instance.CurrentUser?.Id ?? 0,
                     TimeIn = DateTime.Now
                 };
             }
             else if ( !timeCard.HasLeft)
             {
-                timeCard.UserIdOut = MainViewModel.User?.Id ?? 0;
+                timeCard.UserIdOut = MainViewModel.Instance.CurrentUser?.Id ?? 0;
                 timeCard.TimeOut = DateTime.Now;
             }
             
