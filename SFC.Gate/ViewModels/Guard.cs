@@ -36,17 +36,11 @@ namespace SFC.Gate.Material.ViewModels
         {
             Messenger.Default.AddListener<string>(Messages.Scan, ProcessScan);
         }
-
-        public static Action<string> RedirectScan { get; set; }
+        
 
         private void ProcessScan(string id)
         {
-            if (RedirectScan != null)
-            {
-                RedirectScan(id);
-                return;
-            }
-            
+          
             //Ignore if not on Guard Mode and GlobalScan is disabled.
             if(!Config.Rfid.GlobalScan && MainViewModel.Instance.Screen != MainViewModel.GUARD_MODE)
                 return;
