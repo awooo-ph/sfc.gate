@@ -119,7 +119,7 @@ namespace SFC.Gate.Material.ViewModels
                             $"{stud.Fullname}'s picture changed was undone.",
                             "Students", stud.Id);
                     });
-                }, s => s != null));
+                }, s => s != null && (MainViewModel.Instance.CurrentUser?.IsAdmin??false)));
 
         
         private DateTime _lastSearch = DateTime.Now;
