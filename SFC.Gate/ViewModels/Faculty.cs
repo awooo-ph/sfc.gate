@@ -41,6 +41,69 @@ namespace SFC.Gate.Material.ViewModels
             }
         }
 
+        public TimeSpan TotalHours
+        {
+            get
+            {
+                if(!(Items.CurrentItem is Student s)) return TimeSpan.Zero;
+                return TimeSpan.FromMilliseconds(
+                    DailyTimeRecord.Cache
+                        .Where(x=>x.EmployeeId == s.Id)
+                        .Sum(x => x.TimeSpan.TotalMilliseconds));
+            }
+        }
+
+        public TimeSpan ThisMonth
+        {
+            get
+            {
+                if (!(Items.CurrentItem is Student s))
+                    return TimeSpan.Zero;
+                return TimeSpan.FromMilliseconds(
+                    DailyTimeRecord.Cache
+                        .Where(x => x.EmployeeId == s.Id 
+                                    && x.TimeIn.Date.Month == DateTime.Now.Month
+                                    && x.TimeIn.Date.Year == DateTime.Now.Year)
+                        .Sum(x => x.TimeSpan.TotalMilliseconds));
+            }
+        }
+
+        private ICommand _clearDtrCommand;
+
+        public ICommand ClearDtrCommand => _clearDtrCommand ?? (_clearDtrCommand = new DelegateCommand(d =>
+        {
+            if (!(Items.CurrentItem is Student s)) return;
+            DailyTimeRecord.DeleteRecords(s.Id);
+        }, d=> Items.CurrentItem!=null && (MainViewModel.Instance.CurrentUser?.IsAdmin??false)));
+
+        private ListCollectionView _timeRecord;
+
+        public ListCollectionView TimeRecord
+        {
+            get
+            {
+                if (_timeRecord != null) return _timeRecord;
+                _timeRecord = new ListCollectionView(DailyTimeRecord.Cache);
+                _timeRecord.GroupDescriptions.Add(new PropertyGroupDescription("Date"));
+                _timeRecord.CustomSort = new DtrSorter();
+                _timeRecord.Filter = FilterTimeRecord;
+                Items.CurrentChanged += (sender, args) =>
+                {
+                    _timeRecord.Filter = FilterTimeRecord;
+                    OnPropertyChanged(nameof(ThisMonth));
+                    OnPropertyChanged(nameof(TotalHours));
+                };
+                return _timeRecord;
+            }
+        }
+
+        private bool FilterTimeRecord(object o)
+        {
+            if (!(Items.CurrentItem is Student s)) return false;
+            if (!(o is DailyTimeRecord t)) return false;
+            return s.Id == t.EmployeeId;
+        }
+
         private object _DialogContent;
 
         public object DialogContent

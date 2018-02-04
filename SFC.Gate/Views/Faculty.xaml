@@ -75,11 +75,10 @@
 
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="*" MaxWidth="444" />
+        <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
 
-      <Border x:Name="VisitorsCard"
-              Grid.Column="0"
+      <Border Grid.Column="0"
               BorderBrush="#e8edec" BorderThickness="0 0 2 0">
         <Grid>
           <Grid.RowDefinitions>
@@ -97,19 +96,6 @@
                   ClipboardCopyMode="None"
                   Grid.Row="1">
             <DataGrid.Columns>
-              <DataGridCheckBoxColumn EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"
-                                      Binding="{Binding IsSelected,UpdateSourceTrigger=PropertyChanged}"
-                                      ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}">
-                <DataGridCheckBoxColumn.Header>
-
-                  <CheckBox VerticalAlignment="Center"
-                              HorizontalAlignment="Center"
-                              Focusable="False"
-                              Margin="2 0 0 0"
-                              IsChecked="{Binding Source={x:Static viewModels:Faculty.Instance},Path=SelectionState}"
-                              Padding="0" />
-                </DataGridCheckBoxColumn.Header>
-              </DataGridCheckBoxColumn>
               <DataGridTextColumn Header="RFID"
                                   Binding="{Binding Rfid,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
                                   Visibility="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}"
@@ -129,42 +115,113 @@
         </Grid>
       </Border>
 
-      <GridSplitter Grid.Column="0"
-                      HorizontalAlignment="Right"
-                      Width="2"
-                      VerticalAlignment="Stretch"/>
-
       <Grid Grid.Column="1">
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto"/>
           <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Visitors/Visits}"
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <Image Source="{Binding Items/Picture,Converter={converters:BytesToImage}}"
+                 Margin="10 0 0 0"
+                 VerticalAlignment="Center"
+                 Width="111"/>
+          <StackPanel Grid.Column="1" VerticalAlignment="Center"
+                      Margin="10 4">
+            <TextBlock Text="TOTAL HOURS" TextAlignment="Center"/>
+            <TextBlock FontSize="15pt"
+                       TextAlignment="Center"
+                       FontWeight="Bold"
+                       FontFamily="Consolas">
+              <Run Text="{Binding TotalHours.Hours,StringFormat=00,Mode=OneWay}" />:<Run 
+                   Text="{Binding TotalHours.Minutes,StringFormat=00,Mode=OneWay}" />:<Run 
+                   Text="{Binding TotalHours.Seconds,StringFormat=00,Mode=OneWay}" />
+            </TextBlock>
+            <TextBlock Text="THIS MONTH" 
+                       TextAlignment="Center"
+                       Margin="0 7 0 0"/>
+            <TextBlock TextAlignment="Center"
+                       FontSize="15pt"
+                       FontWeight="Bold"
+                       FontFamily="Consolas" >
+              <Run Text="{Binding ThisMonth.Hours,StringFormat=00,Mode=OneWay}" />:<Run 
+                   Text="{Binding ThisMonth.Minutes,StringFormat=00,Mode=OneWay}" />:<Run 
+                   Text="{Binding ThisMonth.Seconds,StringFormat=00,Mode=OneWay}" />
+            </TextBlock>
+            <Button Margin="0 7 0 0"
+                    Content="CLEAR"
+                    Command="{Binding ClearDtrCommand}"
+                    HorizontalAlignment="Center"/>
+          </StackPanel>
+        </Grid>
+        <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding TimeRecord}"
                   Grid.Row="1"
                   IsReadOnly="True"
                   CanUserDeleteRows="False"
                   IsSynchronizedWithCurrentItem="False"
                   SelectionUnit="Cell"
                   ClipboardCopyMode="None">
+          <DataGrid.GroupStyle>
+            <GroupStyle>
+              <GroupStyle.ContainerStyle>
+                <Style TargetType="{x:Type GroupItem}">
+                  <Setter Property="Template">
+                    <Setter.Value>
+                      <ControlTemplate TargetType="{x:Type GroupItem}">
+                        <StackPanel Margin="0 4 0 0">
+                          <Grid>
+                            <Grid.ColumnDefinitions>
+                              <ColumnDefinition Width="Auto"/>
+                              <ColumnDefinition Width="*"/>
+                              <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <md:PackIcon Kind="CalendarToday"
+                                         Margin="4 0 0 0"
+                                         VerticalAlignment="Center"/>
+                          <TextBlock Text="{Binding Name}"
+                                     Grid.Column="1"
+                                     VerticalAlignment="Center"
+                                     FontWeight="Bold"
+                                     Margin="4 7 10 7"/>
+                            <TextBlock Text="{Binding Converter={converters:DtrGroupConverter}}"
+                                       FontWeight="Bold"
+                                       Margin="10 7 8 7"
+                                       VerticalAlignment="Center"
+                                       Grid.Column="2"/>
+                          </Grid>
+                          <ItemsPresenter/>
+                        </StackPanel>
+                      </ControlTemplate>
+                    </Setter.Value>
+                  </Setter>
+                </Style>
+              </GroupStyle.ContainerStyle>
+             
+            </GroupStyle>
+          </DataGrid.GroupStyle>
           <DataGrid.Columns>
-            <DataGridTextColumn Header="TIME IN" Binding="{Binding TimeIn,StringFormat=g}"
+            <DataGridTextColumn Header="TIME IN" Binding="{Binding TimeIn,StringFormat=t}"
+                                CanUserResize="False"
+                                CanUserSort="False"
                                 IsReadOnly="True" />
-            <DataGridTemplateColumn Header="TIME OUT" SortMemberPath="TimeOut"
-                                IsReadOnly="True" >
+            <DataGridTextColumn Header="TIME OUT" Binding="{Binding TimeOut,StringFormat=t}"
+                                CanUserSort="False"
+                                CanUserResize="False"
+                                IsReadOnly="True" />
+            <DataGridTemplateColumn Header="SPAN" CanUserSort="False"
+                                    CanUserResize="False">
               <DataGridTemplateColumn.CellTemplate>
                 <DataTemplate>
-                  <Grid>
-                    <TextBlock Text="{Binding TimeOut,StringFormat=g,FallbackValue={}}" 
-                               Visibility="{Binding HasLeft,Converter={converters:BooleanToVisibility}}"/>
-                    <Button Style="{StaticResource MaterialDesignToolButton}"
-                            Height="Auto" Width="Auto"
-                            Padding="0"
-                            Command="{Binding Source={x:Static viewModels:VisitorsViewModel.Instance},Path=TimeOutCommand}"
-                            CommandParameter="{Binding}"
-                            Visibility="{Binding HasLeft,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
-                            HorizontalAlignment="Stretch"
-                            Content="{md:PackIcon Logout}"/>
-                  </Grid>
+                  <TextBlock>
+                    <Run Text="{Binding TimeSpan.Hours,StringFormat=00,Mode=OneWay}"/>
+                    <Run>:</Run>
+                    <Run Text="{Binding TimeSpan.Minutes,StringFormat=00,Mode=OneWay}" />
+                    <Run>:</Run>
+                    <Run Text="{Binding TimeSpan.Seconds,StringFormat=00,Mode=OneWay}" />
+                  </TextBlock>
                 </DataTemplate>
               </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
@@ -180,6 +237,7 @@
                   Margin="20">
 
         <Button Style="{StaticResource MaterialDesignFlatButton}"
+                Visibility="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:BooleanToVisibility}}"
                 Command="{Binding AddCommand}">
           <StackPanel Orientation="Horizontal">
             <md:PackIcon Kind="AccountPlus" />
@@ -187,13 +245,6 @@
           </StackPanel>
         </Button>
 
-        <Button Style="{StaticResource MaterialDesignFlatButton}"
-                Command="{Binding PrintCommand}">
-          <StackPanel Orientation="Horizontal">
-            <md:PackIcon Kind="Printer" />
-            <TextBlock Text=" PRINT" />
-          </StackPanel>
-        </Button>
       </StackPanel>
     </Grid>
 
