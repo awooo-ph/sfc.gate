@@ -125,10 +125,32 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
           </Grid.ColumnDefinitions>
+          
           <Image Source="{Binding Items/Picture,Converter={converters:BytesToImage}}"
                  Margin="10 0 0 0"
+                 Stretch="UniformToFill"
                  VerticalAlignment="Center"
-                 Width="111"/>
+                 Width="111"
+                 Height="111"/>
+          <Grid Margin="10 0 0 0"
+                Visibility="{Binding Items/HasPicture,Converter={converters:BooleanToVisibility Collapsed,Visible},FallbackValue=Collapsed}"
+                VerticalAlignment="Center"
+                Background="{StaticResource MaterialDesignDarkBackground}"
+                Height="111"
+                Width="111">
+          <md:PackIcon Kind="Account"
+                       Foreground="{StaticResource MaterialDesignDarkForeground}"
+                       Height="111"
+                       Width="111" />
+            <Button Height="Auto"
+                    VerticalAlignment="Stretch"
+                    HorizontalAlignment="Stretch"
+                    ToolTip="Click to change photo"
+                    Command="{Binding Source={x:Static viewModels:StudentsViewModel.Instance},Path=ChangePictureCommand}"
+                    CommandParameter="{Binding Items.CurrentItem}"
+                    Style="{StaticResource MaterialDesignToolButton}"/>
+          </Grid>
+
           <StackPanel Grid.Column="1" VerticalAlignment="Center"
                       Margin="10 4">
             <TextBlock Text="TOTAL HOURS" TextAlignment="Center"/>
