@@ -87,7 +87,6 @@
             <RowDefinition Height="*"/>
           </Grid.RowDefinitions>
 
-
           <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Items}"
                     CanUserDeleteRows="True"
                     CanUserAddRows="False"
@@ -95,16 +94,7 @@
                   IsSynchronizedWithCurrentItem="True"
                   ClipboardCopyMode="None"
                   Grid.Row="1">
-            <DataGrid.Resources>
-              <ObjectDataProvider x:Key="Departments" MethodName="GetValues"
-                                  ObjectType="{x:Type system:Enum}">
-                <ObjectDataProvider.MethodParameters>
-                  <x:Type Type="models:Departments"/>
-                </ObjectDataProvider.MethodParameters>
-              </ObjectDataProvider>
-            </DataGrid.Resources>
             <DataGrid.Columns>
-
               <DataGridCheckBoxColumn EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"
                                       Binding="{Binding IsSelected,UpdateSourceTrigger=PropertyChanged}"
                                       ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}">
@@ -118,32 +108,6 @@
                               Padding="0" />
                 </DataGridCheckBoxColumn.Header>
               </DataGridCheckBoxColumn>
-
-              <DataGridTemplateColumn Header="PHOTO">
-                <DataGridTemplateColumn.CellTemplate>
-                  <DataTemplate>
-                    <Button Style="{StaticResource MaterialDesignToolButton}" Padding="0"
-                          Command="{Binding Source={x:Static viewModels:StudentsViewModel.Instance},Path=ChangePictureCommand}"
-                          CommandParameter="{Binding}"
-                          HorizontalContentAlignment="Stretch"
-                          Height="Auto"
-                          Width="Auto">
-                      <Button.ToolTip>
-                        <Image Source="{Binding Picture,Converter={converters:BytesToImage}}"/>
-                      </Button.ToolTip>
-                      <Grid Margin="0 0 4 0">
-                        <md:PackIcon Kind="Face" Visibility="{Binding HasPicture,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
-                                     HorizontalAlignment="Center"
-                                     ToolTip="Click to change photo"
-                                     Height="16"/>
-                        <Image Source="{Binding Picture,Converter={converters:BytesToImage}}"
-                             HorizontalAlignment="Center"
-                             Height="16"/>
-                      </Grid>
-                    </Button>
-                  </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-              </DataGridTemplateColumn>
               <DataGridTextColumn Header="RFID" Binding="{Binding Rfid,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
                <DataGridTextColumn Header="FIRST NAME" Binding="{Binding Firstname,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"

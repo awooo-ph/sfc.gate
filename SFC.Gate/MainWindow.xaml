@@ -9,6 +9,7 @@
         xmlns:views="clr-namespace:SFC.Gate.Material.Views"
         xmlns:viewModels="clr-namespace:SFC.Gate.Material.ViewModels"
         xmlns:converters="clr-namespace:SFC.Gate.Converters"
+        xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
@@ -25,13 +26,15 @@
         Topmost="{Binding Screen,Converter={converters:EqualityConverter ReturnType=Boolean, Operand={x:Static viewModels:MainViewModel.GUARD_MODE}, Operation=Equals}}"
         DataContext="{Binding Source={x:Static viewModels:MainViewModel.Instance}}"
         Title="Saint Francis College" Height="555" Width="777">
-  <Grid>
+
+    <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto"/>
           <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-    <Grid Grid.Column="1" Background="#f5f6f6">
+    <Grid Grid.Column="1" Background="#f5f6f6"
+          IsEnabled="{Binding IsDialogOpen,Converter={converters:Inverter}}">
 
       <Grid.RowDefinitions>
         <RowDefinition Height="*"/>
@@ -64,24 +67,11 @@
       <md:Snackbar Grid.Row="1" HorizontalAlignment="Stretch"
                    Width="Auto" MessageQueue="{Binding MessageQueue}"/>
       
-      <StackPanel Orientation="Horizontal"
-                  Grid.Row="0"
-                  VerticalAlignment="Top"
-                  HorizontalAlignment="Right">
-        <Button Style="{StaticResource WindowCommandButton}" Content="{md:PackIcon WindowMinimize}"
-                Click="MinimizeClicked" />
-        <Button Style="{StaticResource WindowCommandButton}"
-                Click="MaximizeClicked"
-                Content="{Binding RelativeSource={RelativeSource AncestorType=local:MainWindow},
-                          Path=WindowState,Converter={converters:WindowStateToPackIcon }}" />
-        <Button Style="{StaticResource WindowCloseButton}" Content="{md:PackIcon WindowClose}"
-                Click="CloseClicked">
-
-        </Button>
-      </StackPanel>
+     
     </Grid>
 
     <Grid Grid.Column="0" HorizontalAlignment="Left"
+          IsEnabled="{Binding IsDialogOpen,Converter={converters:Inverter}}"
           x:Name="SideBar">
     <md:ColorZone Grid.Column="0"
                   Visibility="{Binding HasLoggedIn,Converter={converters:BooleanToVisibility}}"
@@ -228,5 +218,28 @@
       </Grid>
     </md:ColorZone>
     </Grid>
+
+    <Grid Grid.Column="0" Grid.ColumnSpan="2" Background="#77777777"
+          Visibility="{Binding IsDialogOpen,Converter={converters:BooleanToVisibility}}">
+      <md:TransitioningContent Content="{Binding TimeCard}"/>
+    </Grid>
+
+    <StackPanel Orientation="Horizontal"
+                Grid.Column="0" Grid.ColumnSpan="2"
+                Grid.Row="0"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Right">
+      <Button Style="{StaticResource WindowCommandButton}" Content="{md:PackIcon WindowMinimize}"
+              Click="MinimizeClicked" />
+      <Button Style="{StaticResource WindowCommandButton}"
+              Click="MaximizeClicked"
+              Content="{Binding RelativeSource={RelativeSource AncestorType=local:MainWindow},
+                          Path=WindowState,Converter={converters:WindowStateToPackIcon }}" />
+      <Button Style="{StaticResource WindowCloseButton}" Content="{md:PackIcon WindowClose}"
+              Click="CloseClicked">
+
+      </Button>
+    </StackPanel>
   </Grid>
+
 </Window>

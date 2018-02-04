@@ -338,13 +338,18 @@
                   CellEditEnding="DataGrid_OnCellEditEnding"
                   Grid.Row="1">
           <DataGrid.Resources>
-              <ObjectDataProvider x:Key="Departments" MethodName="GetValues"
+              <!--<ObjectDataProvider x:Key="Departments" MethodName="GetValues"
                                   ObjectType="{x:Type system:Enum}">
                 <ObjectDataProvider.MethodParameters>
                   <x:Type Type="models:Departments"/>
                 </ObjectDataProvider.MethodParameters>
-              </ObjectDataProvider>
-            </DataGrid.Resources>
+              </ObjectDataProvider>-->
+            <x:Array x:Key="Departments" Type="{x:Type models:Departments}">
+              <models:Departments>Elementary</models:Departments>
+              <models:Departments>HighSchool</models:Departments>
+              <models:Departments>College</models:Departments>
+            </x:Array>
+          </DataGrid.Resources>
             <DataGrid.Columns>
               
               <DataGridCheckBoxColumn EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"

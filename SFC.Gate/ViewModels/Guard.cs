@@ -6,7 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using MaterialDesignThemes.Wpf;
 using SFC.Gate.Configurations;
+using SFC.Gate.Material.Views;
 using SFC.Gate.Models;
 
 namespace SFC.Gate.Material.ViewModels
@@ -44,11 +46,7 @@ namespace SFC.Gate.Material.ViewModels
                 RedirectScan(id);
                 return;
             }
-            //Ignore when adding new visitor or returning visitor card.
-            if(MainViewModel.Instance.Screen == MainViewModel.VISITORS &&
-                (VisitorsViewModel.Instance.IsAddingVisitor || VisitorsViewModel.Instance.IsReturningCard))
-                return;
-
+            
             //Ignore if not on Guard Mode and GlobalScan is disabled.
             if(!Config.Rfid.GlobalScan && MainViewModel.Instance.Screen != MainViewModel.GUARD_MODE)
                 return;
@@ -58,20 +56,24 @@ namespace SFC.Gate.Material.ViewModels
                 return;
 
 
-            Student = Student.Cache.FirstOrDefault(x => x.Rfid.ToUpper() == id);
-            if(Student == null)
+            var stud = Student.Cache.FirstOrDefault(x => x.Rfid.ToUpper() == id);
+            if(stud == null)
                 ShowInvalid(id);
             else
             {
-                //We got a valid scan now check if it is an incoming, outgoing or too soon.   
-                var pass = Student.Pass(MainViewModel.Instance.CurrentUser?.Id);
+                if (stud.Level > Departments.College)
+                {
+                    PunchTime(stud);
+                    return;
+                }
+                
+                var pass = stud.Pass(MainViewModel.Instance.CurrentUser?.Id);
 
                 if(pass == Student.PassReturnValues.Ignored)
                     return;
 
                 Welcome = pass == Student.PassReturnValues.Entry ? "WELCOME" : "GOODBYE";
-
-                Instance.Index = StudentIndex;
+                
                 _infoTimer?.Dispose();
                 if(Config.Rfid.StudentInfoDelay > 0)
                     _infoTimer = new Timer(HideStudentInfo, null, Config.Rfid.StudentInfoDelay * 1000,
@@ -81,10 +83,39 @@ namespace SFC.Gate.Material.ViewModels
                 if(MainViewModel.Instance.Screen != MainViewModel.GUARD_MODE)
                 {
                     var m = Welcome == "WELCOME" ? "entered" : "left";
-                    MainViewModel.ShowMessage($"{Student.Fullname} {Student.Department} - {Student.YearLevel} has {m} the campus.",
-                        "VIEW STUDENT", s => StudentsViewModel.Instance.ShowStudent(s), Student);
+                    MainViewModel.ShowMessage($"{stud.Fullname} {stud.Department} - {stud.YearLevel} has {m} the campus.",
+                        "VIEW STUDENT", s => StudentsViewModel.Instance.ShowStudent(s), stud);
                 }
             }
+        }
+        
+        private void PunchTime(Student stud)
+        {
+            
+            var timeCard = DailyTimeRecord.GetLatest(stud.Id);
+
+               if(timeCard != null &&
+                  (DateTime.Now - timeCard.Time).TotalMilliseconds < Config.General.ScanInterval * 1000)
+                        return;
+
+            if (timeCard == null || timeCard.HasLeft)
+            {
+                timeCard = new DailyTimeRecord()
+                {
+                    EmployeeId = stud.Id,
+                    UserIdIn = MainViewModel.User?.Id ?? 0,
+                    TimeIn = DateTime.Now
+                };
+            }
+            else if ( !timeCard.HasLeft)
+            {
+                timeCard.UserIdOut = MainViewModel.User?.Id ?? 0;
+                timeCard.TimeOut = DateTime.Now;
+            }
+            
+            timeCard.Save();
+            
+            MainViewModel.Instance.ShowTimeCard(timeCard);
         }
 
         private DateTime _lastShownInvalid = DateTime.Now;
@@ -205,7 +236,6 @@ namespace SFC.Gate.Material.ViewModels
 
         private void HideStudentInfo(object state)
         {
-            Index = 0;
             Student = null;
             _infoTimer.Dispose();
         }
@@ -214,20 +244,7 @@ namespace SFC.Gate.Material.ViewModels
         
         private static Guard _instance;
         public static Guard Instance => _instance ?? (_instance = new Guard());
-
-        private long _index = StudentIndex;
-
-        public long Index
-        {
-            get => _index;
-            private set
-            {
-                _index = value; 
-                OnPropertyChanged(nameof(Index));
-            }
-        }
         
-
         private Student _student;
 
         public Student Student

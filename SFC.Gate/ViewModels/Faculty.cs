@@ -13,7 +13,7 @@ namespace SFC.Gate.Material.ViewModels
 
         private static Faculty _instance;
         public static Faculty Instance => _instance ?? (_instance = new Faculty());
-
+        
         private ListCollectionView _items;
 
         public ListCollectionView Items

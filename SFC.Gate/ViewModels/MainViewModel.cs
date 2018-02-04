@@ -7,12 +7,14 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using SFC.Gate.Configurations;
+using SFC.Gate.Material.Views;
 using SFC.Gate.Models;
 
 namespace SFC.Gate.Material.ViewModels
@@ -78,11 +80,16 @@ namespace SFC.Gate.Material.ViewModels
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            awooo.Context.Post(d =>
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            },null);
+            
         }
 
-        private User _CurrentUser;
-
+        private static User _CurrentUser;
+        public static User User => _CurrentUser;
+        
         public User CurrentUser
         {
             get => _CurrentUser;
@@ -217,5 +224,64 @@ namespace SFC.Gate.Material.ViewModels
             SettingIndex = 4;
         }));
 
+        private DateTime _dialogUpdate;
+        public async void ShowTimeCard(DailyTimeRecord timeCard)
+        {
+          
+            TimeCard = new FacultyInfoDialog() {DataContext = timeCard};
+            
+            _dialogUpdate = DateTime.Now;
+
+            if (Instance.IsDialogOpen) return;
+
+            Instance.IsDialogOpen = true;
+                var delay = Config.Rfid.StudentInfoDelay * 1000;
+                while ((DateTime.Now - _dialogUpdate).TotalMilliseconds < delay)
+                   await TaskEx.Delay(100);
+
+                Instance.IsDialogOpen = false;
+        }
+
+        public class TimeCardContext
+        {
+            private DailyTimeRecord _TimeCard;
+
+            public DailyTimeRecord Value { get; set; }
+
+            public TimeCardContext(DailyTimeRecord card)
+            {
+                Value = card;
+            }
+        }
+
+        private object _TimeCard;
+
+        public object TimeCard
+        {
+            get => _TimeCard;
+            set
+            {
+                _TimeCard = value;
+                OnPropertyChanged(nameof(TimeCard));
+            }
+        }
+
+        
+
+
+
+        private bool _IsDialogOpen;
+
+        public bool IsDialogOpen
+        {
+            get => _IsDialogOpen;
+            set
+            {
+                _IsDialogOpen = value;
+                OnPropertyChanged(nameof(IsDialogOpen));
+            }
+        }
+
+        
     }
 }
