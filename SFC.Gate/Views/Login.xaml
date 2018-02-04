@@ -5,25 +5,68 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SFC.Gate.Material.Views"
              xmlns:vm="clr-namespace:SFC.Gate.Material.ViewModels"
+             xmlns:converters="clr-namespace:SFC.Gate.Converters"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              DataContext="{Binding Source={x:Static vm:Login.Instance}}"
              d:DesignHeight="300" d:DesignWidth="300">
+  <Grid>
+    <Rectangle Stretch="UniformToFill" Grid.ColumnSpan="2" Grid.RowSpan="3">
+      <Rectangle.Fill>
+        <RadialGradientBrush Center="0 0.4" MappingMode="RelativeToBoundingBox"
+                             RadiusX="1.4" RadiusY="0.8">
+          <RadialGradientBrush.GradientStops>
+            <GradientStop Color="{StaticResource Primary100}" Offset="0" />
+            <GradientStop Color="{StaticResource Primary900}" Offset="1" />
+          </RadialGradientBrush.GradientStops>
+        </RadialGradientBrush>
+      </Rectangle.Fill>
+    </Rectangle>
+
+    <materialDesign:Card
+      materialDesign:ShadowAssist.ShadowDepth="Depth4"
+      materialDesign:ShadowAssist.Darken="True"
+      UniformCornerRadius="7"
+      Background="{StaticResource PrimaryHueLightBrush}"
+      materialDesign:ShadowAssist.ShadowEdges="All"
+      HorizontalAlignment="Center" VerticalAlignment="Center">
   <Grid Margin="10"
           MinWidth="471"
-          HorizontalAlignment="Center" VerticalAlignment="Center">
+          >
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="Auto"/>
       <ColumnDefinition Width="*"/>
     </Grid.ColumnDefinitions>
+   
     <Rectangle Grid.ColumnSpan="2" Grid.RowSpan="3"
                 RadiusX="7" RadiusY="7"
                    Fill="WhiteSmoke" Opacity="0.4"/>
+    
     <Image Source="pack://application:,,,/sfc.png"
                Grid.Column="0"
                Stretch="Uniform"
                Height="147"
+           Visibility="{Binding HasPicture,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
                Margin="10"/>
-    <Grid  Margin="0 20 20 10" Grid.Column="1">
+      <Border Margin="10"
+                           Visibility="{Binding HasPicture,Converter={converters:BooleanToVisibility}}"
+                           materialDesign:ShadowAssist.ShadowDepth="Depth0"
+              Height="147"
+                           Width="147">
+        <Border.OpacityMask>
+          <ImageBrush ImageSource="pack://application:,,,/sfc.png"
+                      Stretch="Uniform"/>
+        </Border.OpacityMask>
+
+        <Image Source="{Binding Picture,Converter={converters:BytesToImage}}"
+           
+           Grid.Column="0"
+           Stretch="Uniform"
+           Height="147"
+            />
+      </Border>
+
+      <Grid  Margin="0 20 20 10" Grid.Column="1">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
@@ -53,5 +96,7 @@
                     Margin="4" MinWidth="100" CommandParameter="{Binding ElementName=Password}"/>
       </UniformGrid>
     </Grid>
+  </Grid>
+    </materialDesign:Card>
   </Grid>
 </UserControl>
