@@ -392,6 +392,7 @@
                 </DataGridTemplateColumn.CellTemplate>
               </DataGridTemplateColumn>
             <DataGridTextColumn Header="RFID" Binding="{Binding Rfid,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                Visibility="{Binding Source={x:Static vm:MainViewModel.User},Path=IsAdmin,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
               <DataGridTextColumn Header="STUDENT ID" Binding="{Binding StudentId,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>

@@ -109,6 +109,7 @@
                 </DataGridCheckBoxColumn.Header>
               </DataGridCheckBoxColumn>
               <DataGridTextColumn Header="RFID" Binding="{Binding Rfid,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                  Visibility="{Binding Source={x:Static viewModels:MainViewModel.User},Path=IsAdmin,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
                <DataGridTextColumn Header="FIRST NAME" Binding="{Binding Firstname,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
