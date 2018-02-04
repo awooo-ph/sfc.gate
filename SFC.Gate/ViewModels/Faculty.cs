@@ -33,7 +33,7 @@ namespace SFC.Gate.Material.ViewModels
 
         private string _SearchKeyword;
         private DateTime _lastSearch = DateTime.Now;
-        private Task _searchTask;
+        private bool _searchStarted;
         public string SearchKeyword
         {
             get => _SearchKeyword;
@@ -45,15 +45,16 @@ namespace SFC.Gate.Material.ViewModels
                 OnPropertyChanged(nameof(SearchKeyword));
                 _lastSearch = DateTime.Now;
 
-                if (_searchTask != null) return;
-                _searchTask = Task.Factory.StartNew(async () =>
+                if (_searchStarted)
+                    return;
+                _searchStarted = true;
+
+                Task.Factory.StartNew(async () =>
                 {
                     while ((DateTime.Now - _lastSearch).TotalMilliseconds < 777)
                         await TaskEx.Delay(10);
-                });
-                _searchTask.ContinueWith(d =>
-                {
-                    Items.Filter = Filter;
+                    awooo.Context.Post(d => Items.Filter = Filter, null);
+                    _searchStarted = false;
                 });
             }
         }
@@ -61,8 +62,9 @@ namespace SFC.Gate.Material.ViewModels
         private bool Filter(object o)
         {
             if (!(o is Student s)) return false;
-            if (s.Level != Departments.Faculty) return false;
+            if (s.Level < Departments.Faculty) return false;
 
+            if (string.IsNullOrEmpty(SearchKeyword)) return true;
             if (s.Fullname?.ToLower().Contains(SearchKeyword.ToLower()) ?? false) return true;
             if (s.Rfid?.ToLower().Contains(SearchKeyword.ToLower()) ?? false) return true;
             if (s.YearLevel?.ToLower().Contains(SearchKeyword.ToLower()) ?? false) return true;

@@ -323,7 +323,7 @@
             </Grid>
         </md:ColorZone>
 
-          <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Students}"
+        <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Students}"
                     CanUserAddRows="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,FallbackValue=False}"
                   InitializingNewItem="DataGrid_OnInitializingNewItem"
                   IsSynchronizedWithCurrentItem="True"
@@ -334,8 +334,10 @@
                   PreviewDrop="StudentsDrop"
                   PreviewDragOver="StudentsDragEnter"
                     FrozenColumnCount="1"
+                  BeginningEdit="DataGrid_OnBeginningEdit"
+                  CellEditEnding="DataGrid_OnCellEditEnding"
                   Grid.Row="1">
-            <DataGrid.Resources>
+          <DataGrid.Resources>
               <ObjectDataProvider x:Key="Departments" MethodName="GetValues"
                                   ObjectType="{x:Type system:Enum}">
                 <ObjectDataProvider.MethodParameters>
@@ -384,8 +386,8 @@
                   </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
               </DataGridTemplateColumn>
-              <DataGridTextColumn Header="RFID" Binding="{Binding Rfid,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
-                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+            <DataGridTextColumn Header="RFID" Binding="{Binding Rfid,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
               <DataGridTextColumn Header="STUDENT ID" Binding="{Binding StudentId,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
               <DataGridTextColumn Header="FIRST NAME" Binding="{Binding Firstname,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"

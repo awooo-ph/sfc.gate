@@ -8,6 +8,8 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:SFC.Gate.Converters"
              xmlns:viewModels="clr-namespace:SFC.Gate.Material.ViewModels"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
              DataContext="{Binding Source={x:Static viewModels:Faculty.Instance}}"
              d:DesignHeight="300" d:DesignWidth="300">
   <Grid>
@@ -86,29 +88,73 @@
           </Grid.RowDefinitions>
 
 
-          <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Visitors}"
+          <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Items}"
                     CanUserDeleteRows="True"
                     CanUserAddRows="False"
                     IsReadOnly="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}"
                   IsSynchronizedWithCurrentItem="True"
                   ClipboardCopyMode="None"
                   Grid.Row="1">
+            <DataGrid.Resources>
+              <ObjectDataProvider x:Key="Departments" MethodName="GetValues"
+                                  ObjectType="{x:Type system:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                  <x:Type Type="models:Departments"/>
+                </ObjectDataProvider.MethodParameters>
+              </ObjectDataProvider>
+            </DataGrid.Resources>
             <DataGrid.Columns>
 
-              <DataGridTextColumn Header="NAME" Binding="{Binding Name}"
-                                  IsReadOnly="True"/>
-              <DataGridTextColumn Header="ADDRESS"
-                                  Binding="{Binding Address,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
-                                  EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
-              <DataGridTextColumn Header="CONTACT" Binding="{Binding Number,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+              <DataGridCheckBoxColumn EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"
+                                      Binding="{Binding IsSelected,UpdateSourceTrigger=PropertyChanged}"
+                                      ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}">
+                <DataGridCheckBoxColumn.Header>
+
+                  <CheckBox VerticalAlignment="Center"
+                              HorizontalAlignment="Center"
+                              Focusable="False"
+                              Margin="2 0 0 0"
+                              IsChecked="{Binding Source={x:Static viewModels:StudentsViewModel.Instance},Path=SelectionState}"
+                              Padding="0" />
+                </DataGridCheckBoxColumn.Header>
+              </DataGridCheckBoxColumn>
+
+              <DataGridTemplateColumn Header="PHOTO">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <Button Style="{StaticResource MaterialDesignToolButton}" Padding="0"
+                          Command="{Binding Source={x:Static viewModels:StudentsViewModel.Instance},Path=ChangePictureCommand}"
+                          CommandParameter="{Binding}"
+                          HorizontalContentAlignment="Stretch"
+                          Height="Auto"
+                          Width="Auto">
+                      <Button.ToolTip>
+                        <Image Source="{Binding Picture,Converter={converters:BytesToImage}}"/>
+                      </Button.ToolTip>
+                      <Grid Margin="0 0 4 0">
+                        <md:PackIcon Kind="Face" Visibility="{Binding HasPicture,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
+                                     HorizontalAlignment="Center"
+                                     ToolTip="Click to change photo"
+                                     Height="16"/>
+                        <Image Source="{Binding Picture,Converter={converters:BytesToImage}}"
+                             HorizontalAlignment="Center"
+                             Height="16"/>
+                      </Grid>
+                    </Button>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+              <DataGridTextColumn Header="RFID" Binding="{Binding Rfid,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+               <DataGridTextColumn Header="FIRST NAME" Binding="{Binding Firstname,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              <DataGridTextColumn Header="LAST NAME" Binding="{Binding Lastname,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              <DataGridTextColumn Header="JOB DESCRIPTION" Binding="{Binding YearLevel,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              <DataGridTextColumn Header="CONTACT NUMBER" Binding="{Binding ContactNumber,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
                                   Visibility="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=IsContactVisible,Converter={converters:BooleanToVisibility}}"
-                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
-              <DataGridTextColumn Header="VISITS"
-                                  Binding="{Binding VisitCount}"
-                                  IsReadOnly="True"/>
-              <DataGridTextColumn Header="LAST VISIT"
-                                  Binding="{Binding LastVisit,Converter={converters:LastVisitConverter}}"
-                                  IsReadOnly="True" />
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
             </DataGrid.Columns>
           </DataGrid>
         </Grid>

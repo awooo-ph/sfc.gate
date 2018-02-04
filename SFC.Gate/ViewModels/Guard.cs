@@ -35,8 +35,15 @@ namespace SFC.Gate.Material.ViewModels
             Messenger.Default.AddListener<string>(Messages.Scan, ProcessScan);
         }
 
+        public static Action<string> RedirectScan { get; set; }
+
         private void ProcessScan(string id)
         {
+            if (RedirectScan != null)
+            {
+                RedirectScan(id);
+                return;
+            }
             //Ignore when adding new visitor or returning visitor card.
             if(MainViewModel.Instance.Screen == MainViewModel.VISITORS &&
                 (VisitorsViewModel.Instance.IsAddingVisitor || VisitorsViewModel.Instance.IsReturningCard))

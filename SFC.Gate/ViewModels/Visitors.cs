@@ -23,6 +23,7 @@ namespace SFC.Gate.Material.ViewModels
         {
             Messenger.Default.AddListener<string>(Messages.Scan, code =>
             {
+                if (Guard.RedirectScan != null) return;
                 if (!MainViewModel.Instance.HasLoggedIn) return;
                 if (MainViewModel.Instance.Screen == MainViewModel.VISITORS || Configurations.Config.Rfid.GlobalScan)
                 if (!IsAddingVisitor && Visit.Cache.Any(x => !x.HasLeft && x.Rfid.ToLower() == code?.ToLower()))

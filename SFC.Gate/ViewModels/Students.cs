@@ -69,12 +69,14 @@ namespace SFC.Gate.Material.ViewModels
             {
                 if (_students != null)
                     return _students;
-                _students = (ListCollectionView) CollectionViewSource.GetDefaultView(Models.Student.Cache);
+                _students = new ListCollectionView(Models.Student.Cache);
+                _students.Filter = FilterStudents;
                 Models.Student.Cache.CollectionChanged += (sender, args) =>
                 {
                     if (args.Action == NotifyCollectionChangedAction.Remove)
                     {
-                        var items = args.OldItems.Cast<Student>();
+                        var items = args.OldItems.Cast<Student>().ToList();
+                        if (items.First().Id == 0) return;
                         foreach (var item in items)
                         {
                             Log.Add("REVERT", $"{item.Fullname} is deleted.", "Students", item.Id);
@@ -204,9 +206,7 @@ namespace SFC.Gate.Material.ViewModels
                 OnPropertyChanged(nameof(Title));
             }
         }
-
         
-
         private bool FilterStudents(object o)
         {
             if (!(o is Student s))
@@ -349,7 +349,7 @@ namespace SFC.Gate.Material.ViewModels
         {
             if (Students.CurrentItem == null) return false;
             if (!(o is Violation v)) return false;
-            return v.Level == ((Student) Students.CurrentItem).Level;
+            return v.Level == (Students.CurrentItem as Student)?.Level;
         }
 
         private ICommand _acceptAddViolationCommand;

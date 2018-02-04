@@ -22,6 +22,8 @@ namespace SFC.Gate
             }
         }
 
+        public static Action<string> ExclusiveCallback { get; set; }
+        
         private static StringBuilder _input = new StringBuilder(10);
 
         private static string GetScannerId(RawKeyboardDevice device)
@@ -73,12 +75,17 @@ namespace SFC.Gate
                 else
                 {
                     e.Handled = true;
-                    Messenger.Default.Broadcast(Messages.Scan, _input.ToString());
+                    
+                    if (ExclusiveCallback != null)
+                        ExclusiveCallback(_input.ToString());
+                    else
+                        Messenger.Default.Broadcast(Messages.Scan, _input.ToString());
+                    
                     _input.Clear();
-                   
+                    
                 }
 
-                if (Config.Rfid.UseExclusive)
+                if (Config.Rfid.UseExclusive || RfidScanner.ExclusiveCallback!=null)
                     e.Handled = true;
 
             }
