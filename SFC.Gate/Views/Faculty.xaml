@@ -96,10 +96,23 @@
                   ClipboardCopyMode="None"
                   Grid.Row="1">
             <DataGrid.Columns>
-              <DataGridTextColumn Header="RFID"
-                                  Binding="{Binding Rfid,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
-                                  Visibility="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}"
-                                  EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              
+              <DataGridTemplateColumn Header="RFID" SortMemberPath="Rfid" IsReadOnly="True"
+                                      Visibility="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <Grid>
+                      <TextBlock Text="{Binding Rfid}" />
+                      <Button Height="Auto" Padding="0" Width="Auto"
+                              ToolTip="Change RFID"
+                              VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                              Command="{Binding Source={x:Static viewModels:Faculty.Instance},Path=ChangeRfidCommand}"
+                              CommandParameter="{Binding}"
+                              Style="{StaticResource MaterialDesignToolButton}" />
+                    </Grid>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
 
               <DataGridTextColumn Header="FIRST NAME" Binding="{Binding Firstname,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
@@ -284,6 +297,8 @@
       </ContentControl>
     </Grid>
 
-   
+    <local:ChangeRfidDialog Grid.RowSpan="2"
+                            Background="#77777777"
+                            Visibility="{Binding ShowRfidDialog,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}" />
   </Grid>
 </UserControl>

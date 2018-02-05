@@ -24,6 +24,102 @@ namespace SFC.Gate.Material.ViewModels
                 }
             });
         }
+        
+        private bool _ShowRfidDialog;
+
+        public bool ShowRfidDialog
+        {
+            get => _ShowRfidDialog;
+            set
+            {
+                if(value == _ShowRfidDialog)
+                    return;
+                _ShowRfidDialog = value;
+                OnPropertyChanged(nameof(ShowRfidDialog));
+                OnPropertyChanged(nameof(IsDialogOpen));
+            }
+        }
+
+        private ICommand _cancelRfidCommand;
+
+        public ICommand CancelRfidCommand => _cancelRfidCommand ?? (_cancelRfidCommand = new DelegateCommand(d =>
+        {
+            ScanCallback = null;
+            ShowRfidDialog = false;
+        }));
+
+        private ICommand _changeRfidCommand;
+        private DateTime _lastScan = DateTime.Now;
+        private bool _invalidScanShown;
+        public ICommand ChangeRfidCommand => _changeRfidCommand ?? (_changeRfidCommand = new DelegateCommand<Student>(
+            stud =>
+            {
+                ScanCallback = s =>
+                {
+                    if(Student.Cache.Any(x => x.Rfid.ToLower() == s.ToLower()))
+                    {
+                        InvalidRfidMessage = "INVALID! CARD IS IN USE";
+                        IsNewRfidInvalid = true;
+                    }
+                    if(Visit.GetByRfid(s).Count > 0)
+                    {
+                        InvalidRfidMessage = "ALREADY REGISTERED AS VISITOR'S CARD";
+                        IsNewRfidInvalid = true;
+                    }
+
+                    if(IsNewRfidInvalid)
+                    {
+                        if(_invalidScanShown)
+                            return;
+                        _invalidScanShown = true;
+                        _lastScan = DateTime.Now;
+                        Task.Factory.StartNew(async () =>
+                        {
+                            while((DateTime.Now - _lastScan).TotalMilliseconds < 4444)
+                                await TaskEx.Delay(100);
+                            _invalidScanShown = false;
+                            IsNewRfidInvalid = false;
+                        });
+                    } else
+                    {
+                        stud.Update(nameof(Student.Rfid), s);
+                        ShowRfidDialog = false;
+                        ScanCallback = null;
+                    }
+                };
+
+                RfidScanner.ExclusiveCallback = ScanCallback;
+
+                ShowRfidDialog = true;
+            }));
+        
+        private bool _IsNewRfidInvalid;
+
+        public bool IsNewRfidInvalid
+        {
+            get => _IsNewRfidInvalid;
+            set
+            {
+                if(value == _IsNewRfidInvalid)
+                    return;
+                _IsNewRfidInvalid = value;
+                OnPropertyChanged(nameof(IsNewRfidInvalid));
+            }
+        }
+
+        private string _InvalidRfidMessage;
+
+        public string InvalidRfidMessage
+        {
+            get => _InvalidRfidMessage;
+            set
+            {
+                if(value == _InvalidRfidMessage)
+                    return;
+                _InvalidRfidMessage = value;
+                OnPropertyChanged(nameof(InvalidRfidMessage));
+            }
+        }
 
         private static Faculty _instance;
         public static Faculty Instance => _instance ?? (_instance = new Faculty());
@@ -32,7 +128,7 @@ namespace SFC.Gate.Material.ViewModels
 
         public bool IsDialogOpen
         {
-            get => DialogContent!=null && _IsDialogOpen;
+            get => (DialogContent!=null && _IsDialogOpen) || ShowRfidDialog;
             set
             {
                 if(value == _IsDialogOpen)
@@ -162,7 +258,7 @@ namespace SFC.Gate.Material.ViewModels
 
             ScanCallback = async id =>
             {
-                if (Student.Cache.Any(x => x.Rfid.ToUpper() == id) || Visit.GetByRfid(id).Count > 0)
+                if (Student.Cache.Any(x => x.Rfid.ToUpper() == id.ToUpper()) || Visit.GetByRfid(id).Count > 0)
                 {
                     NewFaculty.HasError = true;
                     NewFaculty.Item.Rfid = id;

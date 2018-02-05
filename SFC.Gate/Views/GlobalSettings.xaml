@@ -156,11 +156,9 @@
                     Style="{StaticResource MaterialDesignFlatButton}"
                     Content="{materialDesign:PackIcon Magnify}"/>
           </Grid>
-          
-
         </StackPanel>
 
-        <StackPanel Margin="0 0 40 40">
+        <!--<StackPanel Margin="0 0 40 40">
           <CheckBox Margin="4" Content="Enable RFID Scanner" FontWeight="Bold"
                     VerticalAlignment="Center"
                     IsChecked="{Binding Source={x:Static cnf:Config.Rfid},Path=Enable}" />
@@ -168,7 +166,7 @@
                      VerticalAlignment="Center"
                      TextWrapping="Wrap"
                      Text="When disabled, scanner will be treated as a regular keyboard. Scanned cards will not be processed." />
-        </StackPanel>
+        </StackPanel>-->
 
         <StackPanel Margin="0 0 40 40">
         <CheckBox Margin="4" Content="Confirm Exit" FontWeight="Bold"

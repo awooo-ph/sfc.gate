@@ -50,7 +50,7 @@ namespace SFC.Gate.Material.ViewModels
                 return;
 
 
-            var stud = Student.Cache.FirstOrDefault(x => x.Rfid.ToUpper() == id);
+            var stud = Student.Cache.FirstOrDefault(x => x.Rfid.ToUpper() == id.ToUpper());
             if(stud == null)
                 ShowInvalid(id);
             else

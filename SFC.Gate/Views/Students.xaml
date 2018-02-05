@@ -21,6 +21,7 @@
     </Grid.ColumnDefinitions>
 
       <Grid Grid.Column="1"
+            IsEnabled="{Binding IsDialogOpen,Converter={converters:Inverter}}"
             Visibility="{Binding Students/,Converter={converters:IsNullConverter ReturnVisibility=True,Invert=True},FallbackValue=Collapsed}">
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto"/>
@@ -239,6 +240,7 @@
       </Grid>
     
       <Border x:Name="StudentsCard"
+              IsEnabled="{Binding IsDialogOpen,Converter={converters:Inverter}}"
               Grid.ColumnSpan="{Binding Students/,Converter={converters:IsNullConverter TrueValue=2,FalseValue=1},FallbackValue=2}"
               BorderBrush="#e8edec" BorderThickness="0 0 2 0">
         <Grid>
@@ -334,8 +336,6 @@
                   PreviewDrop="StudentsDrop"
                   PreviewDragOver="StudentsDragEnter"
                     FrozenColumnCount="1"
-                  BeginningEdit="DataGrid_OnBeginningEdit"
-                  CellEditEnding="DataGrid_OnCellEditEnding"
                   Grid.Row="1">
           <DataGrid.Resources>
               <!--<ObjectDataProvider x:Key="Departments" MethodName="GetValues"
@@ -391,9 +391,22 @@
                   </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
               </DataGridTemplateColumn>
-            <DataGridTextColumn Header="RFID" Binding="{Binding Rfid,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
-                                Visibility="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}"
-                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
+            <DataGridTemplateColumn Header="RFID" SortMemberPath="Rfid" IsReadOnly="True"
+                                    Visibility="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}">
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate>
+                  <Grid>
+                    <TextBlock Text="{Binding Rfid}"/>
+                    <Button Height="Auto" Padding="0" Width="Auto"
+                            ToolTip="Change RFID"
+                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                            Command="{Binding Source={x:Static vm:StudentsViewModel.Instance},Path=ChangeRfidCommand}"
+                            CommandParameter="{Binding}"
+                            Style="{StaticResource MaterialDesignToolButton}"/>
+                  </Grid>
+                </DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
               <DataGridTextColumn Header="STUDENT ID" Binding="{Binding StudentId,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
               <DataGridTextColumn Header="FIRST NAME" Binding="{Binding Firstname,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
@@ -439,5 +452,9 @@
 
     <views:SmsSender Grid.ColumnSpan="2"
       Visibility="{Binding ShowSmsDialog,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}" />
+    
+    <views:ChangeRfidDialog Grid.ColumnSpan="2"
+          Background="#77777777"
+          Visibility="{Binding ShowRfidDialog,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}"/>
   </Grid>
 </UserControl>
