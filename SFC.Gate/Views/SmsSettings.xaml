@@ -36,6 +36,7 @@
         </StackPanel>
         
         <Border BorderBrush="{StaticResource MaterialDesignDivider}"
+                IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
                 Margin="0 0 0 40"
                 BorderThickness="1"
                 CornerRadius="7">
@@ -63,6 +64,7 @@
 
         <StackPanel Margin="0 0 0 40">
           <CheckBox Content="NOTIFY ON GATE PASS"
+                    IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
                     FontWeight="Bold"
                     IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=NotifyOnGatePass}" />
           <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
@@ -73,6 +75,7 @@
 
         <StackPanel Margin="0 0 0 40">
           <CheckBox Content="NOTIFY ON VIOLATION"
+                    IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
                     FontWeight="Bold"
                     IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=NotifyOnViolation}" />
           <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
@@ -83,6 +86,7 @@
         
         <StackPanel Margin="0 0 0 40">
           <CheckBox Content="ALLOW NON ADMINISTRATORS"
+                    IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
                     FontWeight="Bold"
                     IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=AllowNonAdmin}" />
           <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
@@ -93,6 +97,7 @@
 
         <StackPanel Margin="0 0 0 40">
           <CheckBox Content="INCLUDE USERNAME"
+                    IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
                     FontWeight="Bold"
                     IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=AllowNonAdmin}" />
           <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
@@ -102,6 +107,7 @@
         </StackPanel>
 
         <Border BorderBrush="{StaticResource MaterialDesignDivider}"
+                IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
                 Margin="0 0 0 40"
                 Padding="20"
                 BorderThickness="1"
@@ -119,6 +125,7 @@
         </StackPanel>
           </Border>
         <Border BorderBrush="{StaticResource MaterialDesignDivider}"
+                IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
                 Margin="0 0 0 40"
                 Padding="20"
                 BorderThickness="1"
@@ -138,6 +145,7 @@
           </Border>
 
         <Border BorderBrush="{StaticResource MaterialDesignDivider}"
+                IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
                 Margin="0 0 0 40"
                 Padding="20"
                 BorderThickness="1"

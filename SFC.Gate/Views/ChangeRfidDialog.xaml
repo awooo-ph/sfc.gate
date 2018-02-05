@@ -43,7 +43,7 @@
 
 
     <Grid Grid.Row="1">
-      <TextBlock Text="PLEASE SCAN CARD" FontSize="17pt"
+      <TextBlock Text="{Binding ChangeRfidMessage}" FontSize="17pt"
                  HorizontalAlignment="Center"
                  Margin="30"
                  FontWeight="Bold" />
@@ -55,6 +55,7 @@
           <materialDesign:PackIcon Kind="Alert" Foreground="{StaticResource ValidationErrorBrush}"
                        Height="32" Width="32" Margin="10" />
           <TextBlock Text="{Binding InvalidRfidMessage}" FontSize="17pt" FontWeight="Bold"
+                     Margin="0 10 10 10"
                      Foreground="{StaticResource ValidationErrorBrush}"
                      VerticalAlignment="Center" />
         </StackPanel>

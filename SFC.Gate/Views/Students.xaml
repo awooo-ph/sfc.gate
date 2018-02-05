@@ -10,6 +10,7 @@
              xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:views="clr-namespace:SFC.Gate.Material.Views"
+             xmlns:configurations="clr-namespace:SFC.Gate.Configurations;assembly=SFC.Gate.Core"
              SnapsToDevicePixels="True"
              DataContext="{Binding Source={x:Static vm:StudentsViewModel.Instance}}"
              d:DesignHeight="300" d:DesignWidth="300">
@@ -435,6 +436,7 @@
             </StackPanel>
           </Button>
           <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  Visibility="{Binding Source={x:Static configurations:Config.Sms},Path=Enabled,Converter={converters:BooleanToVisibility}}"
                   Command="{Binding SendBulkCommand}">
             <StackPanel Orientation="Horizontal">
               <md:PackIcon Kind="Bullhorn" />
