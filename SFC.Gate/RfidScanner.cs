@@ -66,6 +66,7 @@ namespace SFC.Gate
             if (Config.Rfid.Fullname == e.Device.Name)
             {
                 Config.Rfid.Handle = e.Device.Handle.ToInt64();
+                if (!Config.Rfid.Enable) return;
                 
                 if (e.KeyPressState != KeyPressState.Down) return;
                 if (e.Key != Key.Enter)
