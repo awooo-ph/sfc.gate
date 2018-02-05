@@ -25,8 +25,8 @@
       <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto"/>
-          <ColumnDefinition Width="Auto"/>
           <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="147"/>
         </Grid.ColumnDefinitions>
 
         <StackPanel Orientation="Horizontal" Margin="20">
@@ -47,37 +47,38 @@
                    SnapsToDevicePixels="True" />
         
         <ListBox Grid.Column="1" x:Name="ListBox"
-                 Padding="10 4"
+                 HorizontalAlignment="Stretch"
+                 Padding="4"
                  Style="{StaticResource TabHeaderListbox}"
                  SelectedIndex="{Binding SettingIndex}">
           <ListBoxItem>
             <StackPanel>
               <materialDesign:PackIcon Kind="Earth"/>
-              <TextBlock Text="GLOBAL"/>
+              <TextBlock Text="GLOBAL" TextAlignment="Center"/>
             </StackPanel>
           </ListBoxItem>
           <ListBoxItem>
             <StackPanel>
               <materialDesign:PackIcon Kind="AccountOutline" />
-              <TextBlock Text="PROFILE" />
+              <TextBlock Text="PROFILE" TextAlignment="Center" />
             </StackPanel>
           </ListBoxItem>
           <ListBoxItem>
             <StackPanel>
               <materialDesign:PackIcon Kind="CellphoneBasic"/>
-              <TextBlock Text="SMS" />
+              <TextBlock Text="SMS" TextAlignment="Center" />
             </StackPanel>
           </ListBoxItem>
           <ListBoxItem>
             <StackPanel>
               <materialDesign:PackIcon Kind="AlertOutline" />
-              <TextBlock Text="VIOLATIONS" />
+              <TextBlock Text="VIOLATIONS" TextAlignment="Center" />
             </StackPanel>
           </ListBoxItem>
           <ListBoxItem>
             <StackPanel>
               <materialDesign:PackIcon Kind="HelpCircle" />
-              <TextBlock Text="SYSTEM INFO" />
+              <TextBlock Text="ABOUT" TextAlignment="Center" />
             </StackPanel>
           </ListBoxItem>
         </ListBox>

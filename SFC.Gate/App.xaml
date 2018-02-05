@@ -131,7 +131,7 @@
                                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                         HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
                                         VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                        Padding="30 20">
+                                        Padding="10">
                   </materialDesign:Ripple>
                   <Border x:Name="SelectedBorder"
                                     Visibility="Visible"
@@ -164,8 +164,8 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"/>
-        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
         <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
         <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
         <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
@@ -174,7 +174,7 @@
         <Setter Property="ItemsPanel">
           <Setter.Value>
             <ItemsPanelTemplate>
-              <StackPanel Orientation="Horizontal" />
+              <UniformGrid Rows="1" IsItemsHost="True"/>
             </ItemsPanelTemplate>
           </Setter.Value>
         </Setter>

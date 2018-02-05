@@ -22,7 +22,7 @@ namespace SFC.Gate.Material
         {
             InitializeComponent();
             
-            WindowState = Config.General.WindowMaximized ? WindowState.Maximized : WindowState.Normal;
+            WindowState = Config.General.WindowState;//.WindowMaximized ? WindowState.Maximized : WindowState.Normal;
             if(WindowState != WindowState.Maximized)
             {
                 Top = Config.General.WindowTop;
@@ -47,7 +47,7 @@ namespace SFC.Gate.Material
             
             
         }
-
+        
         private DateTime _hideCompleted = DateTime.Now;
         private async void HideSideBar()
         {
@@ -97,6 +97,8 @@ namespace SFC.Gate.Material
         {
             base.OnStateChanged(e);
             // Config.General.WindowMaximized = WindowState == WindowState.Maximized;
+            if (WindowState != WindowState.Minimized)
+                Config.General.WindowState = WindowState;
         }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)

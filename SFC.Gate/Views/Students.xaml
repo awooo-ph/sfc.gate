@@ -208,7 +208,7 @@
                      FontWeight="Bold"
                      VerticalAlignment="Center"
                      Visibility="{Binding ElementName=LogTab,Path=IsSelected,Converter={converters:BooleanToVisibility}}" />
-          <TextBlock Text="SMS NOTIFICATIONS"
+          <TextBlock Text="NOTIFICATIONS"
                      Margin="0 0 10 0"
                      FontWeight="Bold"
                      VerticalAlignment="Center"
@@ -220,9 +220,9 @@
                        Cursor="Hand"
                        ToolTip="Violations"
                        x:Name="ListBoxItem"/>
-          <ListBoxItem Content="{md:PackIcon CellphoneBasic}"
+          <ListBoxItem Content="{md:PackIcon Bullhorn}"
                        Cursor="Hand"
-                       ToolTip="SMS Messages"
+                       ToolTip="Notifications sent to the student"
                        IsSelected="{Binding SmsTab}"
                        x:Name="SmsTab" />
             <ListBoxItem Content="{md:PackIcon CalendarClock}"
