@@ -11,6 +11,7 @@
              xmlns:vm="clr-namespace:SFC.Gate.Material.ViewModels"
              DataContext="{Binding Source={x:Static vm:Users.Instance}}"
              xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
+             xmlns:views="clr-namespace:SFC.Gate.Material.Views"
              d:DesignHeight="300" d:DesignWidth="300">
   <Grid>
     <Grid.RowDefinitions>
@@ -131,8 +132,12 @@
               <md:PopupBox Grid.Column="4">
                 <md:PopupBox.PopupContent>
                   <StackPanel>
+                    <Button Content="Set RFID" Visibility="Collapsed"
+                            Command="{Binding Source={x:Static vm:Users.Instance},Path=ChangeRfidCommand}"
+                            CommandParameter="{Binding}"/>
                     <Button Content="Change Account Type"
-                            Command="{Binding ToggleAdminCommand}"/>
+                            Command="{Binding ToggleAdminCommand}"
+                            CommandParameter="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser}"/>
                     <Button Content="Reset Password"
                             Command="{Binding ResetPasswordCommand}"/>
                     <Separator/>
@@ -146,5 +151,9 @@
         </ItemsControl.ItemTemplate>
     </ItemsControl>
     </ScrollViewer>
+
+    <views:ChangeRfidDialog Grid.RowSpan="3"
+                            Background="#77777777"
+                            Visibility="{Binding ShowRfidDialog,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}" />
   </Grid>
 </UserControl>

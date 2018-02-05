@@ -85,6 +85,7 @@ namespace SFC.Gate
 
         public static byte[] ResizeImage(string file)
         {
+            if (!File.Exists(file)) return null;
             using (var img = System.Drawing.Image.FromFile(file))
             {
                 using (var bmp = Resize(img, 777, Color.White))

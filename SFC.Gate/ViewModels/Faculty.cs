@@ -40,6 +40,22 @@ namespace SFC.Gate.Material.ViewModels
             }
         }
 
+        private string _ChangeRfidMessage = "PLEASE SCAN CARD";
+
+        public string ChangeRfidMessage
+        {
+            get => _ChangeRfidMessage;
+            set
+            {
+                if(value == _ChangeRfidMessage)
+                    return;
+                _ChangeRfidMessage = value;
+                OnPropertyChanged(nameof(ChangeRfidMessage));
+            }
+        }
+
+        
+
         private ICommand _cancelRfidCommand;
 
         public ICommand CancelRfidCommand => _cancelRfidCommand ?? (_cancelRfidCommand = new DelegateCommand(d =>

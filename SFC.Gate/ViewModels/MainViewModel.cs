@@ -166,6 +166,7 @@ namespace SFC.Gate.Material.ViewModels
                     if (CurrentUser == null)
                         return;
                     var filename = Extensions.GetPicture();
+                    if (string.IsNullOrEmpty(filename)) return;
                     var image = CurrentUser.Picture;
                     CurrentUser.Update(nameof(User.Picture) ,Extensions.ResizeImage(filename));
                     ShowMessage("Picture changed", "UNDO", () => CurrentUser.Update("Picture", image));

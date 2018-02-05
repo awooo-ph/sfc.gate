@@ -162,7 +162,23 @@ namespace SFC.Gate.Material.ViewModels
                 OnPropertyChanged(nameof(InvalidRfidMessage));
             }
         }
+
+        private string _ChangeRfidMessage = "PLEASE SCAN CARD";
+
+        public string ChangeRfidMessage
+        {
+            get => _ChangeRfidMessage;
+            set
+            {
+                if(value == _ChangeRfidMessage)
+                    return;
+                _ChangeRfidMessage = value;
+                OnPropertyChanged(nameof(ChangeRfidMessage));
+            }
+        }
+
         
+
         private static StudentsViewModel _instance;
         public static StudentsViewModel Instance => _instance ?? (_instance = new StudentsViewModel());
 
