@@ -77,17 +77,20 @@ namespace SFC.Gate.Material.ViewModels
             {
                 user = new User()
                 {
+                    Picture = Extensions.Generate(),
                     Username = Username,
                     Password = pwd.Password,
                     IsAdmin = true
                 };
                 user.Save();
                 MainViewModel.Instance.CurrentUser = user;
+                MainViewModel.Instance.Screen = MainViewModel.STUDENTS;
                 Log.Add("Login Successful", $"{Username} has logged in.", "Users", user.Id);
                 return;
             }
 
-            user = User.Cache.FirstOrDefault(x => x.Username.ToLower() == Username.ToLower() && x.Password == pwd.Password);
+            user = User.Cache.FirstOrDefault(x => x.Username.ToLower() == Username.ToLower()
+                                                  && (x.Password == pwd.Password || string.IsNullOrEmpty(x.Password)));
             if(user != null)
             {
                 MainViewModel.Instance.CurrentUser = user;
