@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -22,8 +24,45 @@ namespace SFC.Gate.Material.ViewModels
                 {
                     RfidScanner.ExclusiveCallback = ScanCallback;
                 }
+                else
+                {
+                    IsDialogOpen = false;
+                    InvalidList.ForEach(x => x.Reset());
+                    InvalidList.Clear();
+                }
+            });
+            
+            Messenger.Default.AddListener<Student>(Messages.BeginAddStudent, student =>
+            {
+                if (MainViewModel.Instance.Screen == MainViewModel.FACULTY)
+                {
+                    student.Level = Departments.Faculty;
+                }
+            });
+
+            Messenger.Default.AddListener<Student>(Messages.CommitError, student =>
+            {
+                if (MainViewModel.Instance.Screen != MainViewModel.FACULTY)
+                    return;
+
+                if (student.Id == 0 &&
+                    string.IsNullOrEmpty(student.Firstname) &&
+                    string.IsNullOrEmpty(student.Lastname) &&
+                    string.IsNullOrEmpty(student.ContactNumber))
+                {
+                    Student.Cache.Remove(student);
+                }
+                else
+                {
+                    InvalidList.Add(student);
+                    //MessageDialog.Show("INVALID DATA", student.GetLastError(), PackIconKind.Alert, "OKAY");
+                    MainViewModel.ShowMessage($"INVALID DATA: {student.GetLastError()}",null,null);
+                }
+
             });
         }
+        
+        private List<Student> InvalidList = new List<Student>();
         
         private bool _ShowRfidDialog;
 
@@ -107,7 +146,7 @@ namespace SFC.Gate.Material.ViewModels
                 RfidScanner.ExclusiveCallback = ScanCallback;
 
                 ShowRfidDialog = true;
-            }));
+            },d=>d!=null && d.Id>0 && (MainViewModel.Instance.CurrentUser?.IsAdmin??false)));
         
         private bool _IsNewRfidInvalid;
 
@@ -302,9 +341,11 @@ namespace SFC.Gate.Material.ViewModels
                 if (_items != null) return _items;
                 _items = new ListCollectionView(Student.Cache);
                 _items.Filter = Filter;
+                    
                 Student.Cache.CollectionChanged += (sender, args) =>
                 {
-                    _items.Filter = Filter;
+                    if(!_items.IsAddingNew)
+                        _items.Filter = Filter;
                 };
                 return _items;
             }

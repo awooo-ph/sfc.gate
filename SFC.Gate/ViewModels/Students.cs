@@ -60,9 +60,38 @@ namespace SFC.Gate.Material.ViewModels
             Messenger.Default.AddListener<int>(Messages.ScreenChanged, screen =>
             {
                 if (screen == MainViewModel.STUDENTS)
+                {
                     RfidScanner.ExclusiveCallback = ScanCallback;
+                }
+                else
+                {
+                    InvalidList.ForEach(x=>x.Reset());
+                    InvalidList.Clear();
+                }
+            });
+            
+            Messenger.Default.AddListener<Student>(Messages.CommitError, student =>
+            {
+                if (MainViewModel.Instance.Screen != MainViewModel.STUDENTS) return;
+                
+                if (student.Id == 0 &&
+                    string.IsNullOrEmpty(student.Firstname) &&
+                    string.IsNullOrEmpty(student.Lastname) &&
+                    string.IsNullOrEmpty(student.ContactNumber) &&
+                    string.IsNullOrEmpty(student.StudentId))
+                {
+                    Student.Cache.Remove(student);
+                }
+                else
+                {
+                    InvalidList.Add(student);
+                    MainViewModel.ShowMessage($"INVALID DATA: {student.GetLastError()}", null, null);
+                }
+                
             });
         }
+        
+        private List<Student> InvalidList = new List<Student>();
 
         private Action<string> ScanCallback = null;
 
@@ -192,6 +221,7 @@ namespace SFC.Gate.Material.ViewModels
                     return _students;
                 _students = new ListCollectionView(Models.Student.Cache);
                 _students.Filter = FilterStudents;
+               
                 Models.Student.Cache.CollectionChanged += (sender, args) =>
                 {
                     if (args.Action == NotifyCollectionChangedAction.Remove)
@@ -240,7 +270,7 @@ namespace SFC.Gate.Material.ViewModels
                             $"{stud.Fullname}'s picture changed was undone.",
                             "Students", stud.Id);
                     });
-                }, s => s != null && (MainViewModel.Instance.CurrentUser?.IsAdmin??false)));
+                }, s => s != null && s.Id>0 && (MainViewModel.Instance.CurrentUser?.IsAdmin??false)));
 
         
         private DateTime _lastSearch = DateTime.Now;
