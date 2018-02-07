@@ -26,26 +26,6 @@ namespace SFC.Gate.Material.Views
         public Students()
         {
             InitializeComponent();
-            
-            Messenger.Default.AddListener<int>(Messages.ScreenChanged, s =>
-            {
-                if (s != MainViewModel.STUDENTS)
-                {
-                    var key = Key.Escape; // Key to send
-                    var target = DataGrid;
-                    var routedEvent = Keyboard.KeyDownEvent; // Event to send
-
-                    target.RaiseEvent(
-                        new KeyEventArgs(
-                                Keyboard.PrimaryDevice,
-                                PresentationSource.FromVisual(DataGrid),
-                                0,
-                                key)
-                            {RoutedEvent = routedEvent}
-                    );
-                    
-                }
-            });
         }
 
 
