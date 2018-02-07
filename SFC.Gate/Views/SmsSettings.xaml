@@ -47,7 +47,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
               </Grid.ColumnDefinitions>
-            <ComboBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=Port}" 
+            <ComboBox Margin="4" SelectedItem="{Binding Source={x:Static cnf:Config.Sms},Path=Port}" 
                       ItemsSource="{Binding Source={x:Static viewModels1:SMS.Instance},Path=Ports}"/>
               <TextBlock Grid.Column="1" Text="{Binding Source={x:Static viewModels1:SMS.Instance},Path=Status}"
                          Margin="10 0 0 0" VerticalAlignment="Center"/>
