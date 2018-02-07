@@ -25,6 +25,8 @@ namespace SFC.Gate.Material.ViewModels
             {
                 if (s == MainViewModel.USERS)
                     RfidScanner.ExclusiveCallback = ScanCallback;
+                else
+                    ShowAddItem = false;
             });
         }
         private static Users _instance;
