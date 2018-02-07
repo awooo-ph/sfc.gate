@@ -32,9 +32,23 @@
           <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Horizontal" Margin="20">
-          <md:PackIcon Kind="HumanGreeting" Foreground="{StaticResource PrimaryHueMidBrush}" VerticalAlignment="Center"
-                         Height="48" Width="48"
-                         Margin="7 0"/>
+          <Path VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Height="48"
+                    Width="48"
+                Margin="7 0"
+                    Data="M25,22.032996C27.761001,22.032996,30,23.558997,30,25.440999L30,26.294999C30,27.236001,29.236,28.000001,28.294001,28.000001L21.705,28.000001C20.763,28.000001,20,27.236001,20,26.294L20,25.440999C20,23.558997,22.239,22.032996,25,22.032996z M11,22.032003C13.761,22.032003,16,23.558002,16,25.442002L16,26.295001C16,27.236001,15.236,28.000001,14.294,28.000001L7.7049999,28.000001C6.763,28.000001,6,27.236001,6,26.295001L6,25.442002C6,23.558002,8.2390001,22.032003,11,22.032003z M11,15.712994C12.432,15.712994 13.593,16.873994 13.592999,18.306995 13.593,19.737996 12.432,20.899997 11,20.899997 9.5680003,20.899997 8.4070003,19.737996 8.4070001,18.306995 8.4070003,16.873994 9.5680003,15.712994 11,15.712994z M25,15.541991C26.432001,15.541991 27.593001,16.702993 27.593001,18.135993 27.593001,19.566995 26.432001,20.728995 25,20.728995 23.567999,20.728995 22.406999,19.566995 22.406999,18.135993 22.406999,16.702993 23.567999,15.541991 25,15.541991z M5,7.0329996C7.7610002,7.0329996,10,8.559001,10,10.443002L10,11.295003C10,12.237003,9.2360001,13.000004,8.2940001,13.000004L1.7060003,13.000004C0.76399994,13.000004,0,12.237003,0,11.295003L0,10.443002C0,8.559001,2.2390003,7.0329996,5,7.0329996z M14.79,5.9999991L19.217999,5.9999991C19.416999,6.1119991 19.579,6.2739993 19.579,6.4739991 19.579,6.6739989 19.416999,6.8359991 19.217999,6.9999991L14.79,6.9999991C14.59,6.8359991 14.428,6.6739989 14.428001,6.4739991 14.428,6.2739993 14.59,6.1119991 14.79,5.9999991z M14.79,2.9999989L22.84,2.9999989C23.04,3.1739991 23.202001,3.3359991 23.202001,3.5359991 23.202001,3.7359992 23.04,3.8979991 22.84,3.9999991L14.79,3.9999991C14.59,3.8979991 14.428,3.7359992 14.428001,3.5359991 14.428,3.3359991 14.59,3.1739991 14.79,2.9999989z M13,0.99999906L13,10.999999 28,10.999999 28,0.99999906z M5,0.74400098C6.4320002,0.74400098 7.5940003,1.9050018 7.5940003,3.3370028 7.5940003,4.7700039 6.4320002,5.9310046 5,5.9310046 3.5679998,5.9310046 2.4060001,4.7700039 2.4060001,3.3370028 2.4060001,1.9050018 3.5679998,0.74400098 5,0.74400098z M12.362,3.6379788E-12L28.638,3.6379788E-12C28.838001,-8.8515696E-07,29,0.16200168,29,0.36199898L29,12.639007C29,12.837997,28.838001,12.999999,28.639,12.999999L12.362,12.999999C12.162001,12.999999,12,12.837997,12,12.638L12,0.36199898C12,0.16200168,12.162001,-8.8515696E-07,12.362,3.6379788E-12z"
+                    Stretch="Uniform" Fill="{StaticResource PrimaryHueMidBrush}"
+                    RenderTransformOrigin="0.5,0.5">
+            <Path.RenderTransform>
+              <TransformGroup>
+                <TransformGroup.Children>
+                  <RotateTransform Angle="0" />
+                  <ScaleTransform ScaleX="1" ScaleY="1" />
+                </TransformGroup.Children>
+              </TransformGroup>
+            </Path.RenderTransform>
+          </Path>
           <TextBlock Text=" FACULTY AND STAFF" FontWeight="Bold" VerticalAlignment="Center"
                        Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
 
@@ -88,13 +102,73 @@
 
           <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Items}"
                     CanUserDeleteRows="True"
-                    CanUserAddRows="False"
+                    CanUserAddRows="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin}"
+                    FrozenColumnCount="1"
                     IsReadOnly="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}"
                   IsSynchronizedWithCurrentItem="True"
                     BeginningEdit="DataGrid_OnBeginningEdit"
                     CellEditEnding="DataGrid_OnCellEditEnding"
                   ClipboardCopyMode="None"
                   Grid.Row="1">
+            <DataGrid.Resources>
+              <Style TargetType="{x:Type DataGridRow}">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="SnapsToDevicePixels" Value="true"/>
+                <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
+                <Setter Property="ValidationErrorTemplate">
+                  <Setter.Value>
+                    <ControlTemplate>
+                      <TextBlock Foreground="#d50000" Margin="2,0,0,0" Text="!" VerticalAlignment="Center"/>
+                    </ControlTemplate>
+                  </Setter.Value>
+                </Setter>
+                <Setter Property="Template">
+                  <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridRow}">
+                      <Border x:Name="DGR_Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                        <SelectiveScrollingGrid>
+                          <SelectiveScrollingGrid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                          </SelectiveScrollingGrid.ColumnDefinitions>
+                          <SelectiveScrollingGrid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                          </SelectiveScrollingGrid.RowDefinitions>
+                          <DataGridCellsPresenter Grid.Column="1" ItemsPanel="{TemplateBinding ItemsPanel}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                          <DataGridDetailsPresenter Grid.Column="1" Grid.Row="1" SelectiveScrollingGrid.SelectiveScrollingOrientation="{Binding AreRowDetailsFrozen, ConverterParameter={x:Static SelectiveScrollingOrientation.Vertical}, Converter={x:Static DataGrid.RowDetailsScrollingConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" Visibility="{TemplateBinding DetailsVisibility}"/>
+                          <DataGridRowHeader Grid.RowSpan="2" SelectiveScrollingGrid.SelectiveScrollingOrientation="Vertical" Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Row}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+
+                          <StackPanel Orientation="Horizontal" x:Name="NewItem" IsHitTestVisible="False"
+                                      Visibility="{Binding Converter={converters:NewItemPlaceHolder}}"
+                                      Grid.ColumnSpan="2"
+                                      Opacity="0.7"
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Center"
+                                      Grid.RowSpan="2">
+                            <md:PackIcon Kind="AccountPlus"
+                                         Foreground="{StaticResource PrimaryHueMidBrush}"/>
+                            <TextBlock Text=" ADD NEW FACULTY HERE"
+                                       Foreground="{StaticResource PrimaryHueMidBrush}" />
+                          </StackPanel>
+                          
+                          </SelectiveScrollingGrid>
+                      </Border>
+                    </ControlTemplate>
+                  </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                  <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource MaterialDesignSelection}" />
+                  </Trigger>
+                  <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource MaterialDesignDivider}" />
+                  </Trigger>
+
+                </Style.Triggers>
+              </Style>
+              
+            </DataGrid.Resources>
             <DataGrid.Columns>
               
               <DataGridTemplateColumn Header="RFID" SortMemberPath="Rfid" IsReadOnly="True"
@@ -114,13 +188,13 @@
                 </DataGridTemplateColumn.CellTemplate>
               </DataGridTemplateColumn>
 
-              <DataGridTextColumn Header="FIRST NAME" Binding="{Binding Firstname,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+              <DataGridTextColumn Header="FIRST NAME" Binding="{Binding Firstname}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
-              <DataGridTextColumn Header="LAST NAME" Binding="{Binding Lastname,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+              <DataGridTextColumn Header="LAST NAME" Binding="{Binding Lastname}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
               <DataGridTextColumn Header="JOB DESCRIPTION" Binding="{Binding YearLevel,UpdateSourceTrigger=PropertyChanged}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
-              <DataGridTextColumn Header="CONTACT NUMBER" Binding="{Binding ContactNumber,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+              <DataGridTextColumn Header="CONTACT NUMBER" Binding="{Binding ContactNumber}"
                                   Visibility="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=IsContactVisible,Converter={converters:BooleanToVisibility}}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
             </DataGrid.Columns>
@@ -272,14 +346,14 @@
                   VerticalAlignment="Bottom"
                   Margin="20">
 
-        <Button Style="{StaticResource MaterialDesignFlatButton}"
+        <!--<Button Style="{StaticResource MaterialDesignFlatButton}"
                 Visibility="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:BooleanToVisibility}}"
                 Command="{Binding AddCommand}">
           <StackPanel Orientation="Horizontal">
             <md:PackIcon Kind="AccountPlus" />
-            <TextBlock Text=" NEW ITEM" />
+            <TextBlock Text=" ADD NEW" />
           </StackPanel>
-        </Button>
+        </Button>-->
 
       </StackPanel>
     </Grid>
@@ -302,3 +376,4 @@
                             Visibility="{Binding ShowRfidDialog,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}" />
   </Grid>
 </UserControl>
+
