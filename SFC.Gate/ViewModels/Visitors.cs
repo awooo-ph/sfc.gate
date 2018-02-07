@@ -38,6 +38,10 @@ namespace SFC.Gate.Material.ViewModels
             {
                 if (screen == MainViewModel.VISITORS)
                     RfidScanner.ExclusiveCallback = ScanCallback;
+                else
+                {
+                    ShowNewDialog = false;
+                }
             });
         }
 
@@ -65,16 +69,6 @@ namespace SFC.Gate.Material.ViewModels
                     return;
                 _IsAddingVisitor = value;
                 OnPropertyChanged(nameof(IsAddingVisitor));
-                if (value && MainViewModel.Instance.Screen == MainViewModel.VISITORS)
-                {
-                    RfidScanner.ExclusiveCallback = ScanAddVisitor;
-                    ScanCallback = ScanAddVisitor;
-                }
-                else
-                {
-                    RfidScanner.ExclusiveCallback = null;
-                    ScanCallback = null;
-                }
             }
         }
 

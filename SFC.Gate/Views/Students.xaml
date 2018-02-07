@@ -332,6 +332,7 @@
                   IsSynchronizedWithCurrentItem="True"
                   ClipboardCopyMode="None"
                   AllowDrop="True"
+                  x:Name="DataGrid"
                     SelectionMode="Single"
                     IsReadOnly="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}"
                   PreviewDrop="StudentsDrop"
@@ -408,17 +409,17 @@
                 </DataTemplate>
               </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
-              <DataGridTextColumn Header="STUDENT ID" Binding="{Binding StudentId,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+              <DataGridTextColumn Header="STUDENT ID" Binding="{Binding StudentId}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
-              <DataGridTextColumn Header="FIRST NAME" Binding="{Binding Firstname,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+              <DataGridTextColumn Header="FIRST NAME" Binding="{Binding Firstname}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
-              <DataGridTextColumn Header="LAST NAME" Binding="{Binding Lastname,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+              <DataGridTextColumn Header="LAST NAME" Binding="{Binding Lastname}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
               <DataGridTextColumn Header="YEAR LEVEL" Binding="{Binding YearLevel,UpdateSourceTrigger=PropertyChanged}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
               <md:MaterialDataGridComboBoxColumn Header="DEPARTMENT" SelectedItemBinding="{Binding Level}"
                                                  ItemsSourceBinding="{Binding Source={StaticResource Departments}}"/>
-              <DataGridTextColumn Header="CONTACT NUMBER" Binding="{Binding ContactNumber,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+              <DataGridTextColumn Header="CONTACT NUMBER" Binding="{Binding ContactNumber}"
                                   Visibility="{Binding Source={x:Static vm:MainViewModel.Instance},Path=IsContactVisible,Converter={converters:BooleanToVisibility}}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
             </DataGrid.Columns>
