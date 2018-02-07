@@ -67,7 +67,7 @@ namespace SFC.Gate.Material.ViewModels
                     return;
 
                 Welcome = pass == Student.PassReturnValues.Entry ? "WELCOME" : "GOODBYE";
-                
+                Student = stud;
                 _infoTimer?.Dispose();
                 if(Config.Rfid.StudentInfoDelay > 0)
                     _infoTimer = new Timer(HideStudentInfo, null, Config.Rfid.StudentInfoDelay * 1000,
