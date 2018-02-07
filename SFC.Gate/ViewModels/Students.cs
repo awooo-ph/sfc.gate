@@ -97,7 +97,7 @@ namespace SFC.Gate.Material.ViewModels
             {
                 ScanCallback = s =>
                 {
-                    if (Student.Cache.Any(x => x.Rfid.ToLower() == s.ToLower()))
+                    if (Student.Cache.Any(x => x.Rfid?.ToLower() == s.ToLower()))
                     {
                         InvalidRfidMessage = "INVALID! CARD IS IN USE";
                         IsNewRfidInvalid = true;
@@ -132,7 +132,7 @@ namespace SFC.Gate.Material.ViewModels
                 RfidScanner.ExclusiveCallback = ScanCallback;
 
                 ShowRfidDialog = true;
-            }));
+            },d=>d?.Id>0));
 
         public bool IsDialogOpen => ShowSmsDialog || ShowRfidDialog;
         private bool _IsNewRfidInvalid;
