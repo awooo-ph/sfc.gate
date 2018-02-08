@@ -10,6 +10,7 @@
              xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:views="clr-namespace:SFC.Gate.Material.Views"
+             xmlns:configurations="clr-namespace:SFC.Gate.Configurations;assembly=SFC.Gate.Core"
              SnapsToDevicePixels="True"
              DataContext="{Binding Source={x:Static vm:StudentsViewModel.Instance}}"
              d:DesignHeight="300" d:DesignWidth="300">
@@ -21,6 +22,7 @@
     </Grid.ColumnDefinitions>
 
       <Grid Grid.Column="1"
+            IsEnabled="{Binding IsDialogOpen,Converter={converters:Inverter}}"
             Visibility="{Binding Students/,Converter={converters:IsNullConverter ReturnVisibility=True,Invert=True},FallbackValue=Collapsed}">
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto"/>
@@ -207,7 +209,7 @@
                      FontWeight="Bold"
                      VerticalAlignment="Center"
                      Visibility="{Binding ElementName=LogTab,Path=IsSelected,Converter={converters:BooleanToVisibility}}" />
-          <TextBlock Text="SMS NOTIFICATIONS"
+          <TextBlock Text="NOTIFICATIONS"
                      Margin="0 0 10 0"
                      FontWeight="Bold"
                      VerticalAlignment="Center"
@@ -219,9 +221,9 @@
                        Cursor="Hand"
                        ToolTip="Violations"
                        x:Name="ListBoxItem"/>
-          <ListBoxItem Content="{md:PackIcon CellphoneBasic}"
+          <ListBoxItem Content="{md:PackIcon Bullhorn}"
                        Cursor="Hand"
-                       ToolTip="SMS Messages"
+                       ToolTip="Notifications sent to the student"
                        IsSelected="{Binding SmsTab}"
                        x:Name="SmsTab" />
             <ListBoxItem Content="{md:PackIcon CalendarClock}"
@@ -239,6 +241,7 @@
       </Grid>
     
       <Border x:Name="StudentsCard"
+              IsEnabled="{Binding IsDialogOpen,Converter={converters:Inverter}}"
               Grid.ColumnSpan="{Binding Students/,Converter={converters:IsNullConverter TrueValue=2,FalseValue=1},FallbackValue=2}"
               BorderBrush="#e8edec" BorderThickness="0 0 2 0">
         <Grid>
@@ -323,26 +326,32 @@
             </Grid>
         </md:ColorZone>
 
-          <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Students}"
+        <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Students}"
                     CanUserAddRows="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,FallbackValue=False}"
                   InitializingNewItem="DataGrid_OnInitializingNewItem"
                   IsSynchronizedWithCurrentItem="True"
                   ClipboardCopyMode="None"
                   AllowDrop="True"
+                  x:Name="DataGrid"
                     SelectionMode="Single"
                     IsReadOnly="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}"
                   PreviewDrop="StudentsDrop"
                   PreviewDragOver="StudentsDragEnter"
                     FrozenColumnCount="1"
                   Grid.Row="1">
-            <DataGrid.Resources>
-              <ObjectDataProvider x:Key="Departments" MethodName="GetValues"
+          <DataGrid.Resources>
+              <!--<ObjectDataProvider x:Key="Departments" MethodName="GetValues"
                                   ObjectType="{x:Type system:Enum}">
                 <ObjectDataProvider.MethodParameters>
                   <x:Type Type="models:Departments"/>
                 </ObjectDataProvider.MethodParameters>
-              </ObjectDataProvider>
-            </DataGrid.Resources>
+              </ObjectDataProvider>-->
+            <x:Array x:Key="Departments" Type="{x:Type models:Departments}">
+              <models:Departments>Elementary</models:Departments>
+              <models:Departments>HighSchool</models:Departments>
+              <models:Departments>College</models:Departments>
+            </x:Array>
+          </DataGrid.Resources>
             <DataGrid.Columns>
               
               <DataGridCheckBoxColumn EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"
@@ -384,19 +393,33 @@
                   </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
               </DataGridTemplateColumn>
-              <DataGridTextColumn Header="RFID" Binding="{Binding Rfid,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
-                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
-              <DataGridTextColumn Header="STUDENT ID" Binding="{Binding StudentId,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+            <DataGridTemplateColumn Header="RFID" SortMemberPath="Rfid" IsReadOnly="True"
+                                    Visibility="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}">
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate>
+                  <Grid>
+                    <TextBlock Text="{Binding Rfid}"/>
+                    <Button Height="Auto" Padding="0" Width="Auto"
+                            ToolTip="Change RFID"
+                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                            Command="{Binding Source={x:Static vm:StudentsViewModel.Instance},Path=ChangeRfidCommand}"
+                            CommandParameter="{Binding}"
+                            Style="{StaticResource MaterialDesignToolButton}"/>
+                  </Grid>
+                </DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+              <DataGridTextColumn Header="STUDENT ID" Binding="{Binding StudentId}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
-              <DataGridTextColumn Header="FIRST NAME" Binding="{Binding Firstname,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+              <DataGridTextColumn Header="FIRST NAME" Binding="{Binding Firstname}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
-              <DataGridTextColumn Header="LAST NAME" Binding="{Binding Lastname,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+              <DataGridTextColumn Header="LAST NAME" Binding="{Binding Lastname}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
               <DataGridTextColumn Header="YEAR LEVEL" Binding="{Binding YearLevel,UpdateSourceTrigger=PropertyChanged}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
               <md:MaterialDataGridComboBoxColumn Header="DEPARTMENT" SelectedItemBinding="{Binding Level}"
                                                  ItemsSourceBinding="{Binding Source={StaticResource Departments}}"/>
-              <DataGridTextColumn Header="CONTACT NUMBER" Binding="{Binding ContactNumber,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"
+              <DataGridTextColumn Header="CONTACT NUMBER" Binding="{Binding ContactNumber}"
                                   Visibility="{Binding Source={x:Static vm:MainViewModel.Instance},Path=IsContactVisible,Converter={converters:BooleanToVisibility}}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
             </DataGrid.Columns>
@@ -414,9 +437,10 @@
             </StackPanel>
           </Button>
           <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  Visibility="{Binding Source={x:Static configurations:Config.Sms},Path=Enabled,Converter={converters:BooleanToVisibility}}"
                   Command="{Binding SendBulkCommand}">
             <StackPanel Orientation="Horizontal">
-              <md:PackIcon Kind="MessageText" />
+              <md:PackIcon Kind="Bullhorn" />
               <TextBlock Text=" SEND MESSAGE" />
             </StackPanel>
           </Button>
@@ -431,5 +455,9 @@
 
     <views:SmsSender Grid.ColumnSpan="2"
       Visibility="{Binding ShowSmsDialog,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}" />
+    
+    <views:ChangeRfidDialog Grid.ColumnSpan="2"
+          Background="#77777777"
+          Visibility="{Binding ShowRfidDialog,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}"/>
   </Grid>
 </UserControl>

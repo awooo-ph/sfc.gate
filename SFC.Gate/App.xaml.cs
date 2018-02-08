@@ -24,11 +24,11 @@ namespace SFC.Gate.Material
 
         protected override void OnExit(ExitEventArgs e)
         {
-           // Violation.SaveAll();
-            
-            base.OnExit(e);
+            // Violation.SaveAll();
             Config.Save();
             Log.Add("Application Shutdown");
+            base.OnExit(e);
+            
         }
     }
 }

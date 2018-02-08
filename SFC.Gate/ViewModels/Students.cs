@@ -56,7 +56,157 @@ namespace SFC.Gate.Material.ViewModels
                 OnPropertyChanged(nameof(SelectionState));
                 OnPropertyChanged(nameof(HasSelected));
             });
+            
+            Messenger.Default.AddListener<int>(Messages.ScreenChanged, screen =>
+            {
+                if (screen == MainViewModel.STUDENTS)
+                {
+                    RfidScanner.ExclusiveCallback = ScanCallback;
+                }
+                else
+                {
+                    InvalidList.ForEach(x=>x.Reset());
+                    InvalidList.Clear();
+                }
+            });
+            
+            Messenger.Default.AddListener<Student>(Messages.CommitError, student =>
+            {
+                if (MainViewModel.Instance.Screen != MainViewModel.STUDENTS) return;
+                
+                if (student.Id == 0 &&
+                    string.IsNullOrEmpty(student.Firstname) &&
+                    string.IsNullOrEmpty(student.Lastname) &&
+                    string.IsNullOrEmpty(student.ContactNumber) &&
+                    string.IsNullOrEmpty(student.StudentId))
+                {
+                    Student.Cache.Remove(student);
+                }
+                else
+                {
+                    InvalidList.Add(student);
+                    MainViewModel.ShowMessage($"INVALID DATA: {student.GetLastError()}", null, null);
+                }
+                
+            });
         }
+        
+        private List<Student> InvalidList = new List<Student>();
+
+        private Action<string> ScanCallback = null;
+
+        private bool _ShowRfidDialog;
+
+        public bool ShowRfidDialog
+        {
+            get => _ShowRfidDialog;
+            set
+            {
+                if(value == _ShowRfidDialog)
+                    return;
+                _ShowRfidDialog = value;
+                OnPropertyChanged(nameof(ShowRfidDialog));
+                OnPropertyChanged(nameof(IsDialogOpen));
+            }
+        }
+
+        private ICommand _cancelRfidCommand;
+
+        public ICommand CancelRfidCommand => _cancelRfidCommand ?? (_cancelRfidCommand = new DelegateCommand(d =>
+        {
+            ScanCallback = null;
+            ShowRfidDialog = false;
+        }));
+
+        private ICommand _changeRfidCommand;
+        private DateTime _lastScan = DateTime.Now;
+        private bool _invalidScanShown;
+        public ICommand ChangeRfidCommand => _changeRfidCommand ?? (_changeRfidCommand = new DelegateCommand<Student>(
+            stud =>
+            {
+                ScanCallback = s =>
+                {
+                    if (Student.Cache.Any(x => x.Rfid?.ToLower() == s.ToLower()))
+                    {
+                        InvalidRfidMessage = "INVALID! CARD IS IN USE";
+                        IsNewRfidInvalid = true;
+                    }
+                    if (Visit.GetByRfid(s).Count > 0)
+                    {
+                        InvalidRfidMessage = "ALREADY REGISTERED AS VISITOR'S CARD";
+                        IsNewRfidInvalid = true;
+                    }
+
+                    if (IsNewRfidInvalid)
+                    {
+                        if (_invalidScanShown) return;
+                        _invalidScanShown = true;
+                        _lastScan = DateTime.Now;
+                        Task.Factory.StartNew(async () =>
+                        {
+                            while ((DateTime.Now - _lastScan).TotalMilliseconds < 4444)
+                                await TaskEx.Delay(100);
+                            _invalidScanShown = false;
+                            IsNewRfidInvalid = false;
+                        });
+                    }
+                    else
+                    {
+                        stud.Update(nameof(Student.Rfid),s);
+                        ShowRfidDialog = false;
+                        ScanCallback = null;
+                    }
+                };
+
+                RfidScanner.ExclusiveCallback = ScanCallback;
+
+                ShowRfidDialog = true;
+            },d=>d?.Id>0));
+
+        public bool IsDialogOpen => ShowSmsDialog || ShowRfidDialog;
+        private bool _IsNewRfidInvalid;
+
+        public bool IsNewRfidInvalid
+        {
+            get => _IsNewRfidInvalid;
+            set
+            {
+                if(value == _IsNewRfidInvalid)
+                    return;
+                _IsNewRfidInvalid = value;
+                OnPropertyChanged(nameof(IsNewRfidInvalid));
+            }
+        }
+
+        private string _InvalidRfidMessage;
+
+        public string InvalidRfidMessage
+        {
+            get => _InvalidRfidMessage;
+            set
+            {
+                if(value == _InvalidRfidMessage)
+                    return;
+                _InvalidRfidMessage = value;
+                OnPropertyChanged(nameof(InvalidRfidMessage));
+            }
+        }
+
+        private string _ChangeRfidMessage = "PLEASE SCAN CARD";
+
+        public string ChangeRfidMessage
+        {
+            get => _ChangeRfidMessage;
+            set
+            {
+                if(value == _ChangeRfidMessage)
+                    return;
+                _ChangeRfidMessage = value;
+                OnPropertyChanged(nameof(ChangeRfidMessage));
+            }
+        }
+
+        
 
         private static StudentsViewModel _instance;
         public static StudentsViewModel Instance => _instance ?? (_instance = new StudentsViewModel());
@@ -69,12 +219,15 @@ namespace SFC.Gate.Material.ViewModels
             {
                 if (_students != null)
                     return _students;
-                _students = (ListCollectionView) CollectionViewSource.GetDefaultView(Models.Student.Cache);
+                _students = new ListCollectionView(Models.Student.Cache);
+                _students.Filter = FilterStudents;
+               
                 Models.Student.Cache.CollectionChanged += (sender, args) =>
                 {
                     if (args.Action == NotifyCollectionChangedAction.Remove)
                     {
-                        var items = args.OldItems.Cast<Student>();
+                        var items = args.OldItems.Cast<Student>().ToList();
+                        if (items.First().Id == 0) return;
                         foreach (var item in items)
                         {
                             Log.Add("REVERT", $"{item.Fullname} is deleted.", "Students", item.Id);
@@ -117,10 +270,14 @@ namespace SFC.Gate.Material.ViewModels
                             $"{stud.Fullname}'s picture changed was undone.",
                             "Students", stud.Id);
                     });
-                }, s => s != null));
+                }, s => s != null && s.Id>0 && (MainViewModel.Instance.CurrentUser?.IsAdmin??false)));
 
+        
+        private DateTime _lastSearch = DateTime.Now;
+        private Task _searchTask;
+        
         private string _StudentsKeyword;
-
+        private bool _searchStarted;
         public string StudentsKeyword
         {
             get => _StudentsKeyword;
@@ -130,10 +287,23 @@ namespace SFC.Gate.Material.ViewModels
                     return;
                 _StudentsKeyword = value;
                 OnPropertyChanged(nameof(StudentsKeyword));
-                Students.Filter = FilterStudents;
+
+                _lastSearch = DateTime.Now;
+
+                if (_searchStarted)
+                    return;
+                _searchStarted = true;
+
+                Task.Factory.StartNew(async () =>
+                {
+                    while ((DateTime.Now - _lastSearch).TotalMilliseconds < 777)
+                        await TaskEx.Delay(10);
+                    awooo.Context.Post(d=> Students.Filter = FilterStudents,null);
+                    _searchStarted = false;
+                });
             }
         }
-
+        
         private string _Title = "ALL STUDENTS";
 
         public string Title
@@ -187,14 +357,14 @@ namespace SFC.Gate.Material.ViewModels
                 OnPropertyChanged(nameof(Title));
             }
         }
-
         
-
         private bool FilterStudents(object o)
         {
             if (!(o is Student s))
                 return false;
 
+            if (s.Level > Departments.College) return false;
+            
             var fe = FilterElementary || (!FilterElementary && !FilterCollege && !FilterHighSchool);
             var fh = FilterHighSchool || (!FilterElementary && !FilterCollege && !FilterHighSchool);
             var fc = FilterCollege || (!FilterElementary && !FilterCollege && !FilterHighSchool);
@@ -330,7 +500,7 @@ namespace SFC.Gate.Material.ViewModels
         {
             if (Students.CurrentItem == null) return false;
             if (!(o is Violation v)) return false;
-            return v.Level == ((Student) Students.CurrentItem).Level;
+            return v.Level == (Students.CurrentItem as Student)?.Level;
         }
 
         private ICommand _acceptAddViolationCommand;
@@ -698,6 +868,7 @@ namespace SFC.Gate.Material.ViewModels
                     return;
                 _ShowSmsDialog = value;
                 OnPropertyChanged(nameof(ShowSmsDialog));
+                OnPropertyChanged(nameof(IsDialogOpen));
             }
         }
 

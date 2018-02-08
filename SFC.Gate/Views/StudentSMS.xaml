@@ -7,6 +7,8 @@
              xmlns:converters="clr-namespace:SFC.Gate.Converters"
              mc:Ignorable="d" 
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:viewModels="clr-namespace:SFC.Gate.Material.ViewModels"
+             xmlns:configurations="clr-namespace:SFC.Gate.Configurations;assembly=SFC.Gate.Core"
              d:DesignHeight="300" d:DesignWidth="300">
   <Grid>
     <Grid.RowDefinitions>
@@ -65,11 +67,13 @@
     </ScrollViewer>
     
     <TextBox Grid.Row="1"
+             Visibility="{Binding Source={x:Static configurations:Config.Sms},Path=Enabled,Converter={converters:BooleanToVisibility}}"
              Margin="10 10 4 10"
              Text="{Binding NotificationMessage,UpdateSourceTrigger=PropertyChanged}"
              VerticalAlignment="Center"
              md:HintAssist.Hint="Your message here"/>
     <Button Grid.Row="1" Grid.Column="1"
+            Visibility="{Binding Source={x:Static configurations:Config.Sms},Path=Enabled,Converter={converters:BooleanToVisibility}}"
             Margin="0 0 10 0"
             ToolTip="Send"
             VerticalAlignment="Center"

@@ -9,6 +9,8 @@
         xmlns:views="clr-namespace:SFC.Gate.Material.Views"
         xmlns:viewModels="clr-namespace:SFC.Gate.Material.ViewModels"
         xmlns:converters="clr-namespace:SFC.Gate.Converters"
+        xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
+        xmlns:configurations="clr-namespace:SFC.Gate.Configurations;assembly=SFC.Gate.Core"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
@@ -16,22 +18,31 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"        
-        MinWidth="777" MinHeight="444"
+        MinWidth="888" MinHeight="666"
         WindowStartupLocation="CenterScreen"
         SnapsToDevicePixels="True"
         WindowStyle="None"
         Icon="/icon.ico"
         ResizeMode="CanResize"
+        WindowState="Maximized"
         Topmost="{Binding Screen,Converter={converters:EqualityConverter ReturnType=Boolean, Operand={x:Static viewModels:MainViewModel.GUARD_MODE}, Operation=Equals}}"
         DataContext="{Binding Source={x:Static viewModels:MainViewModel.Instance}}"
         Title="Saint Francis College" Height="555" Width="777">
-  <Grid>
+
+  <md:DialogHost Identifier="Main" SnackbarMessageQueue="{Binding MessageQueue}">
+    <md:DialogHost.Resources>
+      <DataTemplate DataType="{x:Type viewModels:MessageDialog}">
+        <views:MessageDialog/>
+      </DataTemplate>
+    </md:DialogHost.Resources>
+    <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto"/>
           <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-    <Grid Grid.Column="1" Background="#f5f6f6">
+    <Grid Grid.Column="1" Background="#f5f6f6"
+          IsEnabled="{Binding IsDialogOpen,Converter={converters:Inverter}}">
 
       <Grid.RowDefinitions>
         <RowDefinition Height="*"/>
@@ -40,6 +51,9 @@
       <md:Transitioner SelectedIndex="{Binding Screen}">
         <md:TransitionerSlide>
           <views:Students/>
+        </md:TransitionerSlide>
+        <md:TransitionerSlide>
+          <views:Faculty />
         </md:TransitionerSlide>
         <md:TransitionerSlide>
           <views:Visitors />
@@ -61,24 +75,11 @@
       <md:Snackbar Grid.Row="1" HorizontalAlignment="Stretch"
                    Width="Auto" MessageQueue="{Binding MessageQueue}"/>
       
-      <StackPanel Orientation="Horizontal"
-                  Grid.Row="0"
-                  VerticalAlignment="Top"
-                  HorizontalAlignment="Right">
-        <Button Style="{StaticResource WindowCommandButton}" Content="{md:PackIcon WindowMinimize}"
-                Click="MinimizeClicked" />
-        <Button Style="{StaticResource WindowCommandButton}"
-                Click="MaximizeClicked"
-                Content="{Binding RelativeSource={RelativeSource AncestorType=local:MainWindow},
-                          Path=WindowState,Converter={converters:WindowStateToPackIcon }}" />
-        <Button Style="{StaticResource WindowCloseButton}" Content="{md:PackIcon WindowClose}"
-                Click="CloseClicked">
-
-        </Button>
-      </StackPanel>
+     
     </Grid>
 
     <Grid Grid.Column="0" HorizontalAlignment="Left"
+          IsEnabled="{Binding IsDialogOpen,Converter={converters:Inverter}}"
           x:Name="SideBar">
     <md:ColorZone Grid.Column="0"
                   Visibility="{Binding HasLoggedIn,Converter={converters:BooleanToVisibility}}"
@@ -124,11 +125,44 @@
           </ListBoxItem>
           <ListBoxItem>
             <StackPanel Margin="4">
-              <md:PackIcon Kind="AccountStar"
-                           Height="32"
-                           HorizontalAlignment="Center"
-                           Width="32" />
-              <TextBlock Text="VISITORS"
+                  <Path VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Height="32"
+                    Width="32"
+                    Data="M10.799995,2.6999817C9.8999939,5.3999939,4.8999939,7.8999939,4.8999939,7.8999939L5.1999969,10 5.8999939,10C6.2999954,11.399994 7.5,12.799988 7.5,12.799988 9,14.399994 10.399994,13.100006 10.399994,13.100006 12.099998,12.100006 12.399994,9.8999939 12.399994,9.8999939 12.699997,10.100006 13.199997,10.100006 13.199997,10.100006L13.099998,7.6999817C11.099998,5.6000061,10.799995,2.6999817,10.799995,2.6999817z M15.299995,1.8999939L32,1.8999939 32,20.799988 20.399994,20.799988C20.299995,20.5,20.199997,20.199982,20.099998,19.899994L31,19.899994 31,2.7999878 15.899994,2.7999878C15.699997,2.5,15.5,2.1999817,15.299995,1.8999939z M8.0999985,0C9,0 10,0.3999939 11,1.3999939 11,1.3999939 16,1.1000061 14.899994,8.8999939 14.899994,8.8999939 14,12.600006 12.799995,15.199982L12.699997,15.399994 12.799995,15.399994C16.5,16.399994,19.199997,19.699982,19.199997,23.699982L19.199997,24.5 0,24.5 0,23.699982C0,19.799988,2.5999985,16.600006,6.0999985,15.5L6.3999939,15.399994C6.7999954,17.799988 8.0999985,25.199982 10.299995,22.899994 10.299995,22.899994 11.599998,21.699982 12.299995,15.799988L12.299995,15.600006C12.199997,15.600006 11.899994,15.199982 11.899994,12.799988 11.899994,12.799988 9.6999969,15.699982 6.7999954,13.100006 6.7999954,13.100006 6.6999969,15.5 6.3999939,15.399994 5.7999954,14.600006 1,8 4.2999954,2 4.2999954,2 6,0 8.0999985,0z"
+                    Stretch="Uniform" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem},Path=Foreground}"
+                    RenderTransformOrigin="0.5,0.5">
+                    <Path.RenderTransform>
+                      <TransformGroup>
+                        <TransformGroup.Children>
+                          <RotateTransform Angle="0" />
+                          <ScaleTransform ScaleX="1" ScaleY="1" />
+                        </TransformGroup.Children>
+                      </TransformGroup>
+                    </Path.RenderTransform>
+                  </Path>
+                  <TextBlock Text="STAFF"
+                         HorizontalAlignment="Center"
+                         FontSize="7pt" />
+            </StackPanel>
+          </ListBoxItem>
+            <ListBoxItem>
+            <StackPanel Margin="4">
+             
+              <Path
+                Data="M10.194297,4.5999994C10.894281,4.5999994 12.694242,5.7999997 12.994236,6.0999994 13.29423,6.3999996 14.994193,11.2 15.194188,11.4 15.394184,11.6 20.294078,13.4 20.294078,13.4 20.294078,13.4 20.994062,14.1 20.794066,15 20.594071,15.9 19.094104,15.7 19.094104,15.7 19.094104,15.7 13.794219,13.9 13.394227,13.5 12.994236,13.2 12.594244,12.5 12.594244,12.5L10.594288,17.299999C10.594288,17.299999 13.994214,21.599999 14.19421,22.2 14.394206,22.799999 14.794197,30.6 14.794197,30.6 14.794197,30.6 14.594201,32 12.994236,32 11.494268,32 11.394271,30.4 11.394271,30.4 11.394271,30.4 10.794284,23.7 10.694286,23.299999 10.694286,22.799999 7.9943443,20.2 7.9943442,20.2L3.0944505,30.9C3.0944505,30.9 2.0944724,32.1 0.89449835,31.6 -0.40547371,31.1 0.0945158,29.5 0.0945158,29.5L5.7943921,16.7C5.7943921,16.7 5.1944051,15.9 5.1944051,15.5 5.0944073,15.3 4.9944093,14.7 4.9944096,14.2 4.9944093,13.7 6.5943748,8.7999997 6.5943747,8.7999997 6.5943748,8.7999997 5.0944073,8.9999995 4.9944096,9.3999996 4.7944138,9.7999995 3.994431,14.4 3.994431,14.4 3.994431,14.4 3.59444,15.5 2.5944614,15.3 1.6944809,15.1 1.3944874,14.1 1.3944874,14.099999 1.3944874,14.1 2.1944704,7.6999998 2.6944594,7.1999998 3.2944465,6.5999994 9.3943139,4.5999994 10.194297,4.5999994z M13.494225,0C14.894195,0 15.994171,1.0999994 15.994171,2.5 15.994171,3.8999996 14.894195,5 13.594223,5 12.194253,5 11.094277,3.8999996 11.094277,2.5 11.094277,1.0999994 12.194253,0 13.494225,0z"
+                Stretch="Uniform" Fill="#FFFFFFFF" Width="26" Height="26" Margin="0,0,0,0"
+                RenderTransformOrigin="0.5,0.5">
+                <Path.RenderTransform>
+                  <TransformGroup>
+                    <TransformGroup.Children>
+                      <RotateTransform Angle="0" />
+                      <ScaleTransform ScaleX="1" ScaleY="1" />
+                    </TransformGroup.Children>
+                  </TransformGroup>
+                </Path.RenderTransform>
+              </Path>
+                  <TextBlock Text="VISITORS"
                          HorizontalAlignment="Center"
                          FontSize="7pt" />
             </StackPanel>
@@ -136,11 +170,22 @@
 
           <ListBoxItem IsEnabled="{Binding CurrentUser.IsAdmin}">
             <StackPanel Margin="4">
-              <md:PackIcon Kind="AccountMultipleOutline"
-                           Height="32"
-                           HorizontalAlignment="Center"
-                           Width="32" />
-              <TextBlock Text="USERS"
+                  <Path Data="M18.755025,22.173997C14.933005,22.173997,11.823998,25.282994,11.823999,29.105001L11.823999,30.030962 29.521011,30.030962 29.521011,29.105001C29.521011,25.282994,26.412004,22.173997,22.590045,22.173997z M20.642997,10.343053C18.194997,10.343053 16.203998,12.33505 16.203998,14.782047 16.203998,17.230044 18.194997,19.222041 20.642997,19.222041 23.090997,19.222041 25.081996,17.230044 25.081996,14.782047 25.081996,12.33505 23.090997,10.343053 20.642997,10.343053z M20.642997,8.3740549C24.175996,8.3740549 27.049995,11.249051 27.049995,14.782047 27.049995,17.101231 25.812267,19.136609 23.962821,20.261886L23.895027,20.300924 23.943722,20.307758C28.211416,20.961736,31.490004,24.658065,31.490004,29.105001L31.490004,32.00001 9.8550054,32.00001 9.8550054,29.105001C9.855005,24.658065,13.134445,20.961736,17.401572,20.307758L17.40202,20.307695 17.322455,20.261886C15.472726,19.136609 14.234998,17.101231 14.234998,14.782047 14.234998,11.249051 17.108997,8.3740549 20.642997,8.3740549z M9.8190052,1.9690018C7.8430076,1.9690018 6.2370095,3.5750046 6.237009,5.5510054 6.2370095,7.5260077 7.8430076,9.133009 9.8190052,9.133009 11.794003,9.133009 13.400001,7.5260077 13.400001,5.5510054 13.400001,3.5750046 11.794003,1.9690018 9.8190052,1.9690018z M9.8190052,0C12.879002,0 15.368999,2.4900036 15.368999,5.5510054 15.368999,7.3684759 14.491178,8.9846468 13.137429,9.9978313L12.952956,10.129128 13.199765,10.185238C13.672184,10.301455,14.138395,10.461709,14.579021,10.682021L13.698019,12.443021C12.646018,11.916021,11.197016,11.856021,10.198015,11.856021L9.1900133,11.856021C5.2760077,11.856021,1.9690032,15.064022,1.9690032,18.864023L1.9690032,20.715024 11.813017,20.715024 11.813017,22.684024 0,22.684024 0,18.864023C0,14.833538,2.8864989,11.322196,6.7075498,10.234238L6.8037729,10.208117 6.7174718,10.152739C5.2406669,9.154212 4.268012,7.4641323 4.268012,5.5510054 4.268012,2.4900036 6.758009,0 9.8190052,0z" 
+                        Stretch="Uniform" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem},Path=Foreground}"
+                        Height="32"
+                        HorizontalAlignment="Center"
+                        Width="32" 
+                         RenderTransformOrigin="0.5,0.5">
+                    <Path.RenderTransform>
+                      <TransformGroup>
+                        <TransformGroup.Children>
+                          <RotateTransform Angle="0" />
+                          <ScaleTransform ScaleX="1" ScaleY="1" />
+                        </TransformGroup.Children>
+                      </TransformGroup>
+                    </Path.RenderTransform>
+                  </Path>
+                  <TextBlock Text="USERS"
                          HorizontalAlignment="Center"
                          FontSize="7pt" />
             </StackPanel>
@@ -155,7 +200,7 @@
                 VerticalAlignment="Center"
                 Margin="0,0,0,4"
                 RenderTransformOrigin="0.5,0.5" />
-              <TextBlock Text="GUARD MODE"
+              <TextBlock Text="GUARD"
                          HorizontalAlignment="Center"
                          FontSize="7pt" />
             </StackPanel>
@@ -214,5 +259,29 @@
       </Grid>
     </md:ColorZone>
     </Grid>
+
+    <Grid Grid.Column="0" Grid.ColumnSpan="2" Background="#77777777"
+          Visibility="{Binding IsDialogOpen,Converter={converters:BooleanToVisibility}}">
+      <md:TransitioningContent Content="{Binding TimeCard}"/>
+    </Grid>
+
+    <StackPanel Orientation="Horizontal"
+                Grid.Column="0" Grid.ColumnSpan="2"
+                Grid.Row="0"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Right">
+      <Button Style="{StaticResource WindowCommandButton}" Content="{md:PackIcon WindowMinimize}"
+              Click="MinimizeClicked" />
+      <Button Style="{StaticResource WindowCommandButton}"
+              Click="MaximizeClicked"
+              Content="{Binding RelativeSource={RelativeSource AncestorType=local:MainWindow},
+                          Path=WindowState,Converter={converters:WindowStateToPackIcon }}" />
+      <Button Style="{StaticResource WindowCloseButton}" Content="{md:PackIcon WindowClose}"
+              Click="CloseClicked">
+
+      </Button>
+    </StackPanel>
   </Grid>
+  </md:DialogHost>
 </Window>
+

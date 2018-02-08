@@ -1,0 +1,107 @@
+﻿<UserControl x:Class="SFC.Gate.Material.Views.NewFacultyDialog"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SFC.Gate.Material.Views"
+             mc:Ignorable="d" 
+             xmlns:behaviors="clr-namespace:WPFTextBoxAutoComplete;assembly=WPFTextBoxAutoComplete"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
+             xmlns:converters="clr-namespace:SFC.Gate.Converters">
+  <UserControl.Triggers>
+    <EventTrigger RoutedEvent="UserControl.Loaded">
+      <EventTrigger.Actions>
+        <BeginStoryboard>
+          <Storyboard>
+            <!--<DoubleAnimation Duration="0:0:0.7" To="0" From="1" AutoReverse="True" RepeatBehavior="Forever"
+                             Storyboard.TargetName="Block" Storyboard.TargetProperty="Opacity"/>-->
+            <DoubleAnimation Duration="0:0:0.4" To="0" From="1" AutoReverse="True" RepeatBehavior="Forever"
+                             Storyboard.TargetName="Error" Storyboard.TargetProperty="Opacity" />
+          </Storyboard>
+        </BeginStoryboard>
+      </EventTrigger.Actions>
+    </EventTrigger>
+  </UserControl.Triggers>
+  <md:Card HorizontalAlignment="Center"
+           MinWidth="444"
+           md:ShadowAssist.ShadowDepth="Depth4"
+           md:ShadowAssist.Darken="True"
+           md:ShadowAssist.ShadowEdges="All"
+           UniformCornerRadius="7"
+             VerticalAlignment="Center">
+    <StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="10">
+        <Path Margin="5"
+              VerticalAlignment="Center"
+              Height="32"
+              Width="32"
+          Data="M10.799995,2.6999817C9.8999939,5.3999939,4.8999939,7.8999939,4.8999939,7.8999939L5.1999969,10 5.8999939,10C6.2999954,11.399994 7.5,12.799988 7.5,12.799988 9,14.399994 10.399994,13.100006 10.399994,13.100006 12.099998,12.100006 12.399994,9.8999939 12.399994,9.8999939 12.699997,10.100006 13.199997,10.100006 13.199997,10.100006L13.099998,7.6999817C11.099998,5.6000061,10.799995,2.6999817,10.799995,2.6999817z M15.299995,1.8999939L32,1.8999939 32,20.799988 20.399994,20.799988C20.299995,20.5,20.199997,20.199982,20.099998,19.899994L31,19.899994 31,2.7999878 15.899994,2.7999878C15.699997,2.5,15.5,2.1999817,15.299995,1.8999939z M8.0999985,0C9,0 10,0.3999939 11,1.3999939 11,1.3999939 16,1.1000061 14.899994,8.8999939 14.899994,8.8999939 14,12.600006 12.799995,15.199982L12.699997,15.399994 12.799995,15.399994C16.5,16.399994,19.199997,19.699982,19.199997,23.699982L19.199997,24.5 0,24.5 0,23.699982C0,19.799988,2.5999985,16.600006,6.0999985,15.5L6.3999939,15.399994C6.7999954,17.799988 8.0999985,25.199982 10.299995,22.899994 10.299995,22.899994 11.599998,21.699982 12.299995,15.799988L12.299995,15.600006C12.199997,15.600006 11.899994,15.199982 11.899994,12.799988 11.899994,12.799988 9.6999969,15.699982 6.7999954,13.100006 6.7999954,13.100006 6.6999969,15.5 6.3999939,15.399994 5.7999954,14.600006 1,8 4.2999954,2 4.2999954,2 6,0 8.0999985,0z"
+          Stretch="Uniform" Fill="{StaticResource MaterialDesignLightForeground}" RenderTransformOrigin="0.5,0.5">
+          <Path.RenderTransform>
+            <TransformGroup>
+              <TransformGroup.Children>
+                <RotateTransform Angle="0" />
+                <ScaleTransform ScaleX="1" ScaleY="1" />
+              </TransformGroup.Children>
+            </TransformGroup>
+          </Path.RenderTransform>
+        </Path>
+        <TextBlock Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                   VerticalAlignment="Center"
+                   Text="ADD FACULTY"/>
+      </StackPanel>
+      <Rectangle Height="1" Fill="{StaticResource PrimaryHueMidBrush}"/>
+      <TextBox md:HintAssist.IsFloating="True"
+               Style="{StaticResource MaterialDesignTextBox}"
+                Text="{Binding Item.Firstname,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                Margin="20 10 20 5"
+                md:HintAssist.Hint="FIRST NAME"/>
+      <TextBox md:HintAssist.IsFloating="True"
+               Margin="20 7"
+               Text="{Binding Item.Lastname,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+               md:HintAssist.Hint="LAST NAME" />
+      <TextBox md:HintAssist.IsFloating="True"
+               Margin="20 7"
+               Text="{Binding Item.YearLevel,UpdateSourceTrigger=PropertyChanged}"
+               behaviors:AutoCompleteBehavior.AutoCompleteItemsSource="{Binding Jobs}"
+               behaviors:AutoCompleteBehavior.AutoCompleteStringComparison="InvariantCultureIgnoreCase"
+               md:HintAssist.Hint="JOB DESCRIPTION" />
+      <TextBox md:HintAssist.IsFloating="True"
+               Margin="20 7"
+               Text="{Binding Item.ContactNumber,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+               md:HintAssist.Hint="CONTACT NUMBER" />
+
+      <md:Card Margin="20">
+        <Grid>
+          <Rectangle Fill="Red" x:Name="Error" Visibility="{Binding HasError,Converter={converters:BooleanToVisibility}}"/>
+        <Grid Margin="10">
+          <TextBlock HorizontalAlignment="Center"
+                     FontSize="20pt"
+                     FontWeight="Bold"
+                     FontFamily="Consolas"
+                     Visibility="{Binding HasRfid,Converter={converters:BooleanToVisibility}}"
+                   Text="{Binding Item.Rfid,UpdateSourceTrigger=PropertyChanged}"/>
+          <TextBlock Text="PLEASE SCAN CARD"
+                     FontSize="20pt"
+                     x:Name="Block"
+                     Visibility="{Binding HasRfid,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"/>
+        </Grid>
+        </Grid>
+      </md:Card>
+      
+      
+      <UniformGrid Rows="1" Margin="0 20 0 0">
+        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                IsCancel="True"
+                Command="{Binding CancelCommand}"
+                Content="CANCEL" />
+        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                Command="{Binding AcceptCommand}"
+                Content="ACCEPT"/>
+      </UniformGrid>
+    </StackPanel>
+  </md:Card>
+</UserControl>

@@ -23,24 +23,25 @@ namespace SFC.Gate.Material.ViewModels
         {
             Messenger.Default.AddListener<string>(Messages.Scan, code =>
             {
-                if (MainViewModel.Instance.Screen == MainViewModel.VISITORS || Configurations.Config.Rfid.GlobalScan)
-                if (Visit.Cache.Any(x => !x.HasLeft && x.Rfid.ToLower() == code?.ToLower()))
+                if (!MainViewModel.Instance.HasLoggedIn ||
+                    (MainViewModel.Instance.Screen != MainViewModel.VISITORS && !Configurations.Config.Rfid.GlobalScan) ||
+                    !Visit.Cache.Any(x => !x.HasLeft && x.Rfid.ToLower() == code?.ToLower())) return;
+
+                MainViewModel.Instance.Screen = MainViewModel.VISITORS;
+
+                ReturnRfid = code;
+                ShowReturnDialog = true;
+                IsReturningCard = true;
+            });
+            
+            Messenger.Default.AddListener<int>(Messages.ScreenChanged, screen =>
+            {
+                if (screen == MainViewModel.VISITORS)
+                    RfidScanner.ExclusiveCallback = ScanCallback;
+                else
                 {
-                    MainViewModel.Instance.Screen = MainViewModel.VISITORS;
-                    
-                    ReturnRfid = code;
-                    ShowReturnDialog = true;
-                    IsReturningCard = true;
-                    return;
+                    ShowNewDialog = false;
                 }
-
-                if(MainViewModel.Instance.Screen != MainViewModel.VISITORS)
-                    return;
-
-                if (IsAddingVisitor)
-                    ScanAddVisitor(code);
-                else if (IsReturningCard)
-                    ScanReturnCard(code);
             });
         }
 
@@ -51,8 +52,11 @@ namespace SFC.Gate.Material.ViewModels
 
         private void ScanAddVisitor(string code)
         {
+            if (Visit.Cache.Any(x => !x.HasLeft && x.Rfid.ToLower() == code?.ToLower())) return;
             NewRfid = code;
         }
+
+        private Action<string> ScanCallback;
 
         private bool _IsAddingVisitor;
 
@@ -65,7 +69,6 @@ namespace SFC.Gate.Material.ViewModels
                     return;
                 _IsAddingVisitor = value;
                 OnPropertyChanged(nameof(IsAddingVisitor));
-                Guard.Instance.IgnoreScans = !value;
             }
         }
 
@@ -80,7 +83,16 @@ namespace SFC.Gate.Material.ViewModels
                     return;
                 _IsReturningCard = value;
                 OnPropertyChanged(nameof(IsReturningCard));
-                Guard.Instance.IgnoreScans = !value;
+                if (value && MainViewModel.Instance.Screen == MainViewModel.VISITORS)
+                {
+                    RfidScanner.ExclusiveCallback = ScanReturnCard;
+                    ScanCallback = ScanReturnCard;
+                }
+                else
+                {
+                    RfidScanner.ExclusiveCallback = null;
+                    ScanCallback = null;
+                }
             }
         }
 

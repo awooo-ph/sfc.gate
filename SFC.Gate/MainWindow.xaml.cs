@@ -1,21 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using MaterialDesignThemes.Wpf;
 using SFC.Gate.Configurations;
 using SFC.Gate.Material.ViewModels;
@@ -34,7 +22,7 @@ namespace SFC.Gate.Material
         {
             InitializeComponent();
             
-            WindowState = Config.General.WindowMaximized ? WindowState.Maximized : WindowState.Normal;
+            WindowState = Config.General.WindowState;//.WindowMaximized ? WindowState.Maximized : WindowState.Normal;
             if(WindowState != WindowState.Maximized)
             {
                 Top = Config.General.WindowTop;
@@ -46,16 +34,20 @@ namespace SFC.Gate.Material
             
             Messenger.Default.AddListener<int>(Messages.ScreenChanged, s =>
             {
-                
+
                 if (s == MainViewModel.GUARD_MODE)
                 {
                     Task.Factory.StartNew(HideSideBar);
+                }
+                else
+                {
+                    SideBar.Visibility = Visibility.Visible;
                 }
             });
             
             
         }
-
+        
         private DateTime _hideCompleted = DateTime.Now;
         private async void HideSideBar()
         {
@@ -105,6 +97,8 @@ namespace SFC.Gate.Material
         {
             base.OnStateChanged(e);
             // Config.General.WindowMaximized = WindowState == WindowState.Maximized;
+            if (WindowState != WindowState.Minimized)
+                Config.General.WindowState = WindowState;
         }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
@@ -126,19 +120,27 @@ namespace SFC.Gate.Material
             base.OnClosed(e);
         }
 
-        protected override void OnClosing(CancelEventArgs e)
+        protected override async void OnClosing(CancelEventArgs e)
         {
-            if(Config.General.ConfirmExit && System.Windows.MessageBox.Show(
-                    "Are you sure you want to exit?", "Confirm Exit",
-                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            if (Config.General.ConfirmExit)
             {
                 e.Cancel = true;
-                return;
+                var dlg = new MessageDialog("CONFIRM EXIT",
+                    "Are you sure you want to exit?", PackIconKind.ExitToApp, "YES", true, "NO");
+                await this.ShowDialog(dlg, (sender, args) => {}, (sender, args) =>
+                {
+                    if (!(args.Parameter as bool? ?? false)) return;
+                        
+                    RfidScanner.UnHook();
+                    Application.Current.Shutdown(0);
+                });
+                
             }
+            
             RfidScanner.UnHook();
             base.OnClosing(e);
         }
-
+        
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
@@ -171,7 +173,7 @@ namespace SFC.Gate.Material
 
         private void MinimizeClicked(object sender, RoutedEventArgs e)
         {
-            if (MainViewModel.Instance.Screen == 3) return;
+            if (MainViewModel.Instance.Screen == MainViewModel.GUARD_MODE) return;
             WindowState = WindowState.Minimized;
         }
 
@@ -195,7 +197,7 @@ namespace SFC.Gate.Material
         protected override void OnDeactivated(EventArgs e)
         {
             base.OnDeactivated(e);
-            if (MainViewModel.Instance.Screen == 3) Activate();
+            if (MainViewModel.Instance.Screen == MainViewModel.GUARD_MODE) Activate();
         }
     }
 }

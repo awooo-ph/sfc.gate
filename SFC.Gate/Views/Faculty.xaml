@@ -1,0 +1,379 @@
+﻿<UserControl x:Class="SFC.Gate.Material.Views.Faculty"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SFC.Gate.Material.Views"
+             mc:Ignorable="d"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:SFC.Gate.Converters"
+             xmlns:viewModels="clr-namespace:SFC.Gate.Material.ViewModels"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
+             DataContext="{Binding Source={x:Static viewModels:Faculty.Instance}}"
+             d:DesignHeight="300" d:DesignWidth="300">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+
+    <md:ColorZone Mode="Light"
+                    IsEnabled="{Binding IsDialogOpen,Converter={converters:Inverter}}"
+                    Grid.ColumnSpan="2"
+                    Background="#f5f5f3"
+                    Grid.Row="0"
+                    BorderBrush="#e8edec"
+                    BorderThickness="0 0 0 2">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal" Margin="20">
+          <Path VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Height="48"
+                    Width="48"
+                Margin="7 0"
+                    Data="M25,22.032996C27.761001,22.032996,30,23.558997,30,25.440999L30,26.294999C30,27.236001,29.236,28.000001,28.294001,28.000001L21.705,28.000001C20.763,28.000001,20,27.236001,20,26.294L20,25.440999C20,23.558997,22.239,22.032996,25,22.032996z M11,22.032003C13.761,22.032003,16,23.558002,16,25.442002L16,26.295001C16,27.236001,15.236,28.000001,14.294,28.000001L7.7049999,28.000001C6.763,28.000001,6,27.236001,6,26.295001L6,25.442002C6,23.558002,8.2390001,22.032003,11,22.032003z M11,15.712994C12.432,15.712994 13.593,16.873994 13.592999,18.306995 13.593,19.737996 12.432,20.899997 11,20.899997 9.5680003,20.899997 8.4070003,19.737996 8.4070001,18.306995 8.4070003,16.873994 9.5680003,15.712994 11,15.712994z M25,15.541991C26.432001,15.541991 27.593001,16.702993 27.593001,18.135993 27.593001,19.566995 26.432001,20.728995 25,20.728995 23.567999,20.728995 22.406999,19.566995 22.406999,18.135993 22.406999,16.702993 23.567999,15.541991 25,15.541991z M5,7.0329996C7.7610002,7.0329996,10,8.559001,10,10.443002L10,11.295003C10,12.237003,9.2360001,13.000004,8.2940001,13.000004L1.7060003,13.000004C0.76399994,13.000004,0,12.237003,0,11.295003L0,10.443002C0,8.559001,2.2390003,7.0329996,5,7.0329996z M14.79,5.9999991L19.217999,5.9999991C19.416999,6.1119991 19.579,6.2739993 19.579,6.4739991 19.579,6.6739989 19.416999,6.8359991 19.217999,6.9999991L14.79,6.9999991C14.59,6.8359991 14.428,6.6739989 14.428001,6.4739991 14.428,6.2739993 14.59,6.1119991 14.79,5.9999991z M14.79,2.9999989L22.84,2.9999989C23.04,3.1739991 23.202001,3.3359991 23.202001,3.5359991 23.202001,3.7359992 23.04,3.8979991 22.84,3.9999991L14.79,3.9999991C14.59,3.8979991 14.428,3.7359992 14.428001,3.5359991 14.428,3.3359991 14.59,3.1739991 14.79,2.9999989z M13,0.99999906L13,10.999999 28,10.999999 28,0.99999906z M5,0.74400098C6.4320002,0.74400098 7.5940003,1.9050018 7.5940003,3.3370028 7.5940003,4.7700039 6.4320002,5.9310046 5,5.9310046 3.5679998,5.9310046 2.4060001,4.7700039 2.4060001,3.3370028 2.4060001,1.9050018 3.5679998,0.74400098 5,0.74400098z M12.362,3.6379788E-12L28.638,3.6379788E-12C28.838001,-8.8515696E-07,29,0.16200168,29,0.36199898L29,12.639007C29,12.837997,28.838001,12.999999,28.639,12.999999L12.362,12.999999C12.162001,12.999999,12,12.837997,12,12.638L12,0.36199898C12,0.16200168,12.162001,-8.8515696E-07,12.362,3.6379788E-12z"
+                    Stretch="Uniform" Fill="{StaticResource PrimaryHueMidBrush}"
+                    RenderTransformOrigin="0.5,0.5">
+            <Path.RenderTransform>
+              <TransformGroup>
+                <TransformGroup.Children>
+                  <RotateTransform Angle="0" />
+                  <ScaleTransform ScaleX="1" ScaleY="1" />
+                </TransformGroup.Children>
+              </TransformGroup>
+            </Path.RenderTransform>
+          </Path>
+          <TextBlock Text=" FACULTY AND STAFF" FontWeight="Bold" VerticalAlignment="Center"
+                       Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
+
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Column="1" 
+                          HorizontalAlignment="Right">
+          <Grid VerticalAlignment="Bottom" Margin="0 0 10 7">
+            <Grid>
+              <TextBox Width="174" md:HintAssist.Hint="SEARCH" md:HintAssist.IsFloating="False"
+                         md:TextFieldAssist.TextBoxViewMargin="0 0 20 0"
+                             Text="{Binding SearchKeyword,UpdateSourceTrigger=PropertyChanged}" />
+              <md:PackIcon Kind="Magnify" VerticalAlignment="Center"
+                                 IsHitTestVisible="False"
+                                 HorizontalAlignment="Right" />
+            </Grid>
+          </Grid>
+          <!--<ListBox Style="{StaticResource MaterialDesignToolToggleFlatListBox}"
+                   BorderBrush="{StaticResource MaterialDesignTextAreaBorder}"
+                   Focusable="False"
+                   BorderThickness="0 0 0 1"
+                   VerticalAlignment="Bottom" Margin="0 0 10 7">
+            <ListBoxItem Padding="4 2" ToolTip="Filter visitors who have not left yet."
+                         Focusable="False"
+                         IsSelected="{Binding FilterCurrentVisitors}">
+              <md:PackIcon Kind="AccountLocation"/>
+            </ListBoxItem>
+            <ListBoxItem Padding="4 2" ToolTip="Show all visitors today"
+                         Focusable="False"
+                         IsSelected="{Binding FilterVisitorsToday}">
+              <md:PackIcon Kind="CalendarToday" />
+            </ListBoxItem>
+          </ListBox>-->
+        </StackPanel>
+      </Grid>
+    </md:ColorZone>
+
+    <Grid Grid.Row="1" IsEnabled="{Binding IsDialogOpen,Converter={converters:Inverter}}">
+
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto"/>
+      </Grid.ColumnDefinitions>
+
+      <Border Grid.Column="0"
+              BorderBrush="#e8edec" BorderThickness="0 0 2 0">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+
+          <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Items}"
+                    CanUserDeleteRows="True"
+                    CanUserAddRows="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin}"
+                    FrozenColumnCount="1"
+                    IsReadOnly="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}"
+                  IsSynchronizedWithCurrentItem="True"
+                    BeginningEdit="DataGrid_OnBeginningEdit"
+                    CellEditEnding="DataGrid_OnCellEditEnding"
+                  ClipboardCopyMode="None"
+                  Grid.Row="1">
+            <DataGrid.Resources>
+              <Style TargetType="{x:Type DataGridRow}">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="SnapsToDevicePixels" Value="true"/>
+                <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
+                <Setter Property="ValidationErrorTemplate">
+                  <Setter.Value>
+                    <ControlTemplate>
+                      <TextBlock Foreground="#d50000" Margin="2,0,0,0" Text="!" VerticalAlignment="Center"/>
+                    </ControlTemplate>
+                  </Setter.Value>
+                </Setter>
+                <Setter Property="Template">
+                  <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridRow}">
+                      <Border x:Name="DGR_Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                        <SelectiveScrollingGrid>
+                          <SelectiveScrollingGrid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                          </SelectiveScrollingGrid.ColumnDefinitions>
+                          <SelectiveScrollingGrid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                          </SelectiveScrollingGrid.RowDefinitions>
+                          <DataGridCellsPresenter Grid.Column="1" ItemsPanel="{TemplateBinding ItemsPanel}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                          <DataGridDetailsPresenter Grid.Column="1" Grid.Row="1" SelectiveScrollingGrid.SelectiveScrollingOrientation="{Binding AreRowDetailsFrozen, ConverterParameter={x:Static SelectiveScrollingOrientation.Vertical}, Converter={x:Static DataGrid.RowDetailsScrollingConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" Visibility="{TemplateBinding DetailsVisibility}"/>
+                          <DataGridRowHeader Grid.RowSpan="2" SelectiveScrollingGrid.SelectiveScrollingOrientation="Vertical" Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Row}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+
+                          <StackPanel Orientation="Horizontal" x:Name="NewItem" IsHitTestVisible="False"
+                                      Visibility="{Binding Converter={converters:NewItemPlaceHolder}}"
+                                      Grid.ColumnSpan="2"
+                                      Opacity="0.7"
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Center"
+                                      Grid.RowSpan="2">
+                            <md:PackIcon Kind="AccountPlus"
+                                         Foreground="{StaticResource PrimaryHueMidBrush}"/>
+                            <TextBlock Text=" ADD NEW FACULTY HERE"
+                                       Foreground="{StaticResource PrimaryHueMidBrush}" />
+                          </StackPanel>
+                          
+                          </SelectiveScrollingGrid>
+                      </Border>
+                    </ControlTemplate>
+                  </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                  <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource MaterialDesignSelection}" />
+                  </Trigger>
+                  <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource MaterialDesignDivider}" />
+                  </Trigger>
+
+                </Style.Triggers>
+              </Style>
+              
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+              
+              <DataGridTemplateColumn Header="RFID" SortMemberPath="Rfid" IsReadOnly="True"
+                                      Visibility="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <Grid>
+                      <TextBlock Text="{Binding Rfid}" />
+                      <Button Height="Auto" Padding="0" Width="Auto"
+                              ToolTip="Change RFID"
+                              VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                              Command="{Binding Source={x:Static viewModels:Faculty.Instance},Path=ChangeRfidCommand}"
+                              CommandParameter="{Binding}"
+                              Style="{StaticResource MaterialDesignToolButton}" />
+                    </Grid>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+
+              <DataGridTextColumn Header="FIRST NAME" Binding="{Binding Firstname}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              <DataGridTextColumn Header="LAST NAME" Binding="{Binding Lastname}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              <DataGridTextColumn Header="JOB DESCRIPTION" Binding="{Binding YearLevel,UpdateSourceTrigger=PropertyChanged}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+              <DataGridTextColumn Header="CONTACT NUMBER" Binding="{Binding ContactNumber}"
+                                  Visibility="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=IsContactVisible,Converter={converters:BooleanToVisibility}}"
+                                EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </Grid>
+      </Border>
+
+      <Grid Grid.Column="1">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          
+          <Image Source="{Binding Items/Picture,Converter={converters:BytesToImage}}"
+                 Margin="10 0 0 0"
+                 Stretch="UniformToFill"
+                 VerticalAlignment="Center"
+                 Width="111"
+                 Height="111"/>
+          <Grid Margin="10 0 0 0"
+                Visibility="{Binding Items/HasPicture,Converter={converters:BooleanToVisibility Collapsed,Visible},FallbackValue=Collapsed}"
+                VerticalAlignment="Center"
+                Background="{StaticResource MaterialDesignDarkBackground}"
+                Height="111"
+                Width="111">
+          <md:PackIcon Kind="Account"
+                       Foreground="{StaticResource MaterialDesignDarkForeground}"
+                       Height="111"
+                       Width="111" />
+          </Grid>
+
+          <Button Height="Auto"
+                  VerticalAlignment="Stretch"
+                  HorizontalAlignment="Stretch"
+                  ToolTip="Click to change photo"
+                  Command="{Binding Source={x:Static viewModels:StudentsViewModel.Instance},Path=ChangePictureCommand}"
+                  CommandParameter="{Binding Items.CurrentItem}"
+                  Style="{StaticResource MaterialDesignToolButton}" />
+
+          <StackPanel Grid.Column="1" VerticalAlignment="Center"
+                      Margin="10 4">
+            <TextBlock Text="TOTAL HOURS" TextAlignment="Center"/>
+            <TextBlock FontSize="15pt"
+                       TextAlignment="Center"
+                       FontWeight="Bold"
+                       FontFamily="Consolas">
+              <Run Text="{Binding TotalHours.Hours,StringFormat=00,Mode=OneWay}" />:<Run 
+                   Text="{Binding TotalHours.Minutes,StringFormat=00,Mode=OneWay}" />:<Run 
+                   Text="{Binding TotalHours.Seconds,StringFormat=00,Mode=OneWay}" />
+            </TextBlock>
+            <TextBlock Text="THIS MONTH" 
+                       TextAlignment="Center"
+                       Margin="0 7 0 0"/>
+            <TextBlock TextAlignment="Center"
+                       FontSize="15pt"
+                       FontWeight="Bold"
+                       FontFamily="Consolas" >
+              <Run Text="{Binding ThisMonth.Hours,StringFormat=00,Mode=OneWay}" />:<Run 
+                   Text="{Binding ThisMonth.Minutes,StringFormat=00,Mode=OneWay}" />:<Run 
+                   Text="{Binding ThisMonth.Seconds,StringFormat=00,Mode=OneWay}" />
+            </TextBlock>
+            <Button Margin="0 7 0 0"
+                    Content="CLEAR"
+                    Command="{Binding ClearDtrCommand}"
+                    HorizontalAlignment="Center"/>
+          </StackPanel>
+        </Grid>
+        <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding TimeRecord}"
+                  Grid.Row="1"
+                  IsReadOnly="True"
+                  CanUserDeleteRows="False"
+                  IsSynchronizedWithCurrentItem="False"
+                  SelectionUnit="Cell"
+                  ClipboardCopyMode="None">
+          <DataGrid.GroupStyle>
+            <GroupStyle>
+              <GroupStyle.ContainerStyle>
+                <Style TargetType="{x:Type GroupItem}">
+                  <Setter Property="Template">
+                    <Setter.Value>
+                      <ControlTemplate TargetType="{x:Type GroupItem}">
+                        <StackPanel Margin="0 4 0 0">
+                          <Grid>
+                            <Grid.ColumnDefinitions>
+                              <ColumnDefinition Width="Auto"/>
+                              <ColumnDefinition Width="*"/>
+                              <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <md:PackIcon Kind="CalendarToday"
+                                         Margin="4 0 0 0"
+                                         VerticalAlignment="Center"/>
+                          <TextBlock Text="{Binding Name}"
+                                     Grid.Column="1"
+                                     VerticalAlignment="Center"
+                                     FontWeight="Bold"
+                                     Margin="4 7 10 7"/>
+                            <TextBlock Text="{Binding Converter={converters:DtrGroupConverter}}"
+                                       FontWeight="Bold"
+                                       Margin="10 7 8 7"
+                                       VerticalAlignment="Center"
+                                       Grid.Column="2"/>
+                          </Grid>
+                          <ItemsPresenter/>
+                        </StackPanel>
+                      </ControlTemplate>
+                    </Setter.Value>
+                  </Setter>
+                </Style>
+              </GroupStyle.ContainerStyle>
+             
+            </GroupStyle>
+          </DataGrid.GroupStyle>
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="TIME IN" Binding="{Binding TimeIn,StringFormat=t}"
+                                CanUserResize="False"
+                                CanUserSort="False"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="TIME OUT" Binding="{Binding TimeOut,StringFormat=t}"
+                                CanUserSort="False"
+                                CanUserResize="False"
+                                IsReadOnly="True" />
+            <DataGridTemplateColumn Header="SPAN" CanUserSort="False"
+                                    CanUserResize="False">
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate>
+                  <TextBlock>
+                    <Run Text="{Binding TimeSpan.Hours,StringFormat=00,Mode=OneWay}"/>
+                    <Run>:</Run>
+                    <Run Text="{Binding TimeSpan.Minutes,StringFormat=00,Mode=OneWay}" />
+                    <Run>:</Run>
+                    <Run Text="{Binding TimeSpan.Seconds,StringFormat=00,Mode=OneWay}" />
+                  </TextBlock>
+                </DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+          </DataGrid.Columns>
+        </DataGrid>
+      </Grid>
+
+      <StackPanel Orientation="Horizontal"
+                  Grid.Column="0"
+                  Grid.ColumnSpan="2"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Bottom"
+                  Margin="20">
+
+        <!--<Button Style="{StaticResource MaterialDesignFlatButton}"
+                Visibility="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:BooleanToVisibility}}"
+                Command="{Binding AddCommand}">
+          <StackPanel Orientation="Horizontal">
+            <md:PackIcon Kind="AccountPlus" />
+            <TextBlock Text=" ADD NEW" />
+          </StackPanel>
+        </Button>-->
+
+      </StackPanel>
+    </Grid>
+
+    <Grid Background="#77777777" Grid.Row="0" Grid.RowSpan="2"
+                        Visibility="{Binding IsDialogOpen,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}" >
+      <ContentControl Content="{Binding DialogContent}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center">
+        <ContentControl.Resources>
+          <DataTemplate DataType="{x:Type viewModels:NewFacultyViewModel}">
+            <local:NewFacultyDialog/>
+          </DataTemplate>
+        </ContentControl.Resources>
+      </ContentControl>
+    </Grid>
+
+    <local:ChangeRfidDialog Grid.RowSpan="2"
+                            Background="#77777777"
+                            Visibility="{Binding ShowRfidDialog,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}" />
+  </Grid>
+</UserControl>
+

@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using MaterialDesignThemes.Wpf;
 using SFC.Gate.Models;
 
 namespace SFC.Gate.Material.ViewModels
@@ -40,17 +41,34 @@ namespace SFC.Gate.Material.ViewModels
             {
                 _username = value;
                 OnPropertyChanged(nameof(Username));
+                Picture = User.Cache.FirstOrDefault(x => x.Username.ToLower() == value.ToLower())?.Picture;
             }
         }
 
+        private byte[] _Picture;
+
+        public byte[] Picture
+        {
+            get => _Picture;
+            set
+            {
+                if(value == _Picture)
+                    return;
+                _Picture = value;
+                OnPropertyChanged(nameof(Picture));
+                OnPropertyChanged(nameof(HasPicture));
+            }
+        }
+
+        public bool HasPicture => Picture?.Length > 0;
+
         private ICommand _loginCommand;
 
-        public ICommand LoginCommand => _loginCommand ?? (_loginCommand = new DelegateCommand<PasswordBox>(pwd =>
+        public ICommand LoginCommand => _loginCommand ?? (_loginCommand = new DelegateCommand<PasswordBox>(async pwd =>
         {
             if(string.IsNullOrEmpty(pwd.Password.Trim()))
             {
-                System.Windows.MessageBox.Show("Invalid Password!", "Login", MessageBoxButton.OK,
-                    MessageBoxImage.Asterisk);
+                ShowInvalidLogin();
                 return;
             }
 
@@ -59,21 +77,24 @@ namespace SFC.Gate.Material.ViewModels
             {
                 user = new User()
                 {
+                    Picture = Extensions.Generate(),
                     Username = Username,
                     Password = pwd.Password,
                     IsAdmin = true
                 };
                 user.Save();
                 MainViewModel.Instance.CurrentUser = user;
+                MainViewModel.Instance.Screen = MainViewModel.STUDENTS;
                 Log.Add("Login Successful", $"{Username} has logged in.", "Users", user.Id);
                 return;
             }
 
-            user = User.Cache.FirstOrDefault(x => x.Username.ToLower() == Username.ToLower() && x.Password == pwd.Password);
+            user = User.Cache.FirstOrDefault(x => x.Username.ToLower() == Username.ToLower()
+                                                  && (x.Password == pwd.Password || string.IsNullOrEmpty(x.Password)));
             if(user != null)
             {
                 MainViewModel.Instance.CurrentUser = user;
-                MainViewModel.Instance.Screen = 0;
+                MainViewModel.Instance.Screen = MainViewModel.STUDENTS;
                 Log.Add("Login Successful", $"{Username} has logged in.", "Users", user.Id);
                 Username = "";
                 pwd.Password = "";
@@ -82,10 +103,17 @@ namespace SFC.Gate.Material.ViewModels
 
             Log.Add("Login Failed", $"Login attempt failed using Username: {Username} and Password: {pwd.Password}.");
 
-            System.Windows.MessageBox.Show("Invalid username and password!", "Login", MessageBoxButton.OK,
-                MessageBoxImage.Asterisk);
+            ShowInvalidLogin();
 
         }, s => !string.IsNullOrEmpty(Username.Trim())));
+
+        private async void ShowInvalidLogin()
+        {
+            await Application.Current.MainWindow.ShowDialog(
+                new MessageDialog("AUTHENTICATION FAILED!",
+                    "The username/password you entered is invalid. Please try again.",
+                    PackIconKind.Lock, "OKAY"));
+        }
 
         private ICommand _exitCommand;
 
