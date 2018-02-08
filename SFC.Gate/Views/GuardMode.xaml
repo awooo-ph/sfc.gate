@@ -166,7 +166,7 @@
                          Text="{Binding Student.YearLevel}"/>
               <TextBox Grid.Column="2" Grid.Row="4" Margin="20" IsReadOnly="True" Focusable="False" KeyboardNavigation.IsTabStop="False"
                          VerticalAlignment="Center"
-                         Text="{Binding Student.Department}"/>
+                         Text="{Binding Student.Level}"/>
 
             </Grid>
 
