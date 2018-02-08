@@ -342,18 +342,17 @@
       <StackPanel Orientation="Horizontal"
                   Grid.Column="0"
                   Grid.ColumnSpan="2"
-                  HorizontalAlignment="Left"
+                  HorizontalAlignment="Right"
                   VerticalAlignment="Bottom"
                   Margin="20">
 
-        <!--<Button Style="{StaticResource MaterialDesignFlatButton}"
-                Visibility="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:BooleanToVisibility}}"
-                Command="{Binding AddCommand}">
+        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                Command="{Binding PrintLogCommand}">
           <StackPanel Orientation="Horizontal">
-            <md:PackIcon Kind="AccountPlus" />
-            <TextBlock Text=" ADD NEW" />
+            <md:PackIcon Kind="Printer" />
+            <TextBlock Text="PRINT" />
           </StackPanel>
-        </Button>-->
+        </Button>
 
       </StackPanel>
     </Grid>
