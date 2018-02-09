@@ -983,7 +983,7 @@ namespace SFC.Gate.Material.ViewModels
             switch (BulkSendTo)
             {
                 case 0:
-                    students = Student.Cache.ToList();
+                    students = Student.Cache.Where(x => x.Level < Departments.Faculty).ToList();
                     break;
                 case 1:
                     students = Student.Cache.Where(x => x.Level == Departments.Elementary).ToList();
@@ -995,7 +995,7 @@ namespace SFC.Gate.Material.ViewModels
                     students = Student.Cache.Where(x => x.Level == Departments.College).ToList();
                     break;
                 case 4:
-                    students = Student.Cache.Where(x => x.IsSelected).ToList();
+                    students = Student.Cache.Where(x => x.Level < Departments.Faculty && x.IsSelected).ToList();
                     break;
             }
             return students;
