@@ -62,6 +62,24 @@
         </StackPanel>
         </Border>
 
+        <StackPanel Margin="0 0 40 40">
+          <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}">
+            <Run Text="Sending Delay (" />
+            <Run Text="{Binding Source={x:Static cnf:Config.Sms},Path=Delay}" />
+            <Run Text="seconds)" />
+          </TextBlock>
+
+          <Slider Margin="4" Minimum="1" Interval="1"
+                  IsEnabled="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin}"
+                  Maximum="77" TickFrequency="1000" TickPlacement="BottomRight"
+                  Value="{Binding Source={x:Static cnf:Config.Sms},Path=Delay}" />
+
+          <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
+                     VerticalAlignment="Center"
+                     TextWrapping="Wrap"
+                     Text="The number of seconds to wait before sending another sms." />
+        </StackPanel>
+
         <StackPanel Margin="0 0 0 40">
           <CheckBox Content="NOTIFY ON GATE PASS"
                     IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"

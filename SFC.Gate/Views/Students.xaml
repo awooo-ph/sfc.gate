@@ -334,7 +334,6 @@
                   AllowDrop="True"
                   x:Name="DataGrid"
                     SelectionMode="Single"
-                    IsReadOnly="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}"
                   PreviewDrop="StudentsDrop"
                   PreviewDragOver="StudentsDragEnter"
                     FrozenColumnCount="1"
@@ -368,7 +367,8 @@
                 </DataGridCheckBoxColumn.Header>
               </DataGridCheckBoxColumn>
               
-              <DataGridTemplateColumn Header="PHOTO">
+              <DataGridTemplateColumn Header="PHOTO"
+                                      IsReadOnly="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}">
                 <DataGridTemplateColumn.CellTemplate>
                   <DataTemplate>
                     <Button Style="{StaticResource MaterialDesignToolButton}" Padding="0"
@@ -410,32 +410,52 @@
               </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
               <DataGridTextColumn Header="STUDENT ID" Binding="{Binding StudentId}"
+                                  IsReadOnly="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}"/>
               <DataGridTextColumn Header="FIRST NAME" Binding="{Binding Firstname}"
+                                  IsReadOnly="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
               <DataGridTextColumn Header="LAST NAME" Binding="{Binding Lastname}"
+                                  IsReadOnly="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
               <DataGridTextColumn Header="YEAR LEVEL" Binding="{Binding YearLevel,UpdateSourceTrigger=PropertyChanged}"
+                                  IsReadOnly="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
               <md:MaterialDataGridComboBoxColumn Header="DEPARTMENT" SelectedItemBinding="{Binding Level}"
+                                                 IsReadOnly="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}"
                                                  ItemsSourceBinding="{Binding Source={StaticResource Departments}}"/>
               <DataGridTextColumn Header="CONTACT NUMBER" Binding="{Binding ContactNumber}"
+                                  IsReadOnly="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}"
                                   Visibility="{Binding Source={x:Static vm:MainViewModel.Instance},Path=IsContactVisible,Converter={converters:BooleanToVisibility}}"
                                 EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
             </DataGrid.Columns>
           </DataGrid>
 
-        <UniformGrid Grid.Row="1" Rows="1"
-                     Margin="20"
-                     HorizontalAlignment="Left"
-                     VerticalAlignment="Bottom">
-          <Button Style="{StaticResource MaterialDesignFlatButton}"
+        
+      </Grid>
+      </Border>
+
+    
+
+    <GridSplitter Grid.Column="0"
+                  Visibility="{Binding Students/,Converter={converters:IsNullConverter ReturnVisibility=True,Invert=True},FallbackValue=Collapsed}"
+                  HorizontalAlignment="Right"
+                  Width="2"/>
+
+    <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="2"
+
+                    Margin="20"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom">
+      <UniformGrid Rows="1">
+        <Button Style="{StaticResource MaterialDesignFlatButton}"
                   Command="{Binding PrintCommand}">
-            <StackPanel Orientation="Horizontal">
-              <md:PackIcon Kind="Printer" />
-              <TextBlock Text=" PRINT LIST" />
-            </StackPanel>
-          </Button>
+          <StackPanel Orientation="Horizontal">
+            <md:PackIcon Kind="Printer" />
+            <TextBlock Text=" PRINT LIST" />
+          </StackPanel>
+        </Button>
+        <Grid Visibility="{Binding IsBulkSending,Converter={converters:BooleanToVisibility Collapsed,Visible}}">
           <Button Style="{StaticResource MaterialDesignFlatButton}"
                   Visibility="{Binding Source={x:Static configurations:Config.Sms},Path=Enabled,Converter={converters:BooleanToVisibility}}"
                   Command="{Binding SendBulkCommand}">
@@ -444,14 +464,43 @@
               <TextBlock Text=" SEND MESSAGE" />
             </StackPanel>
           </Button>
-        </UniformGrid>
-      </Grid>
-      </Border>
+        </Grid>
 
-    <GridSplitter Grid.Column="0"
-                  Visibility="{Binding Students/,Converter={converters:IsNullConverter ReturnVisibility=True,Invert=True},FallbackValue=Collapsed}"
-                  HorizontalAlignment="Right"
-                  Width="2"/>
+      </UniformGrid>
+      <md:ColorZone BorderBrush="{StaticResource MaterialDesignDivider}" BorderThickness="1"
+                    Visibility="{Binding IsBulkSending,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}">
+
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+          
+          <ProgressBar Grid.Column="0"
+                       Value="{Binding SendingProgress}"
+                       Maximum="{Binding SendingProgressMaximum}"
+                       IsIndeterminate="{Binding SendingProgressIndeterminate}"
+                       Height="24" Width="24"
+                       Margin="4"
+                       Style="{StaticResource MaterialDesignCircularProgressBar}" />
+          
+          <md:PackIcon Kind="Bullhorn" Margin="4 0"
+                           Grid.Column="0"
+                           HorizontalAlignment="Center"                         
+                           VerticalAlignment="Center" />
+          <TextBlock Text="{Binding SendingProgressText}"
+                         Grid.Column="1"
+                         Margin="0 0 10 0"
+                         VerticalAlignment="Center" />
+          <Button Content="ABORT"
+                      Grid.Column="2"
+                      Command="{Binding AbortSendingCommand}" />
+          
+        </Grid>
+
+      </md:ColorZone>
+    </StackPanel>
 
     <views:SmsSender Grid.ColumnSpan="2"
       Visibility="{Binding ShowSmsDialog,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}" />
@@ -459,5 +508,7 @@
     <views:ChangeRfidDialog Grid.ColumnSpan="2"
           Background="#77777777"
           Visibility="{Binding ShowRfidDialog,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}"/>
+    
+    
   </Grid>
 </UserControl>

@@ -161,7 +161,7 @@ namespace SFC.Gate.Material.ViewModels
                 RfidScanner.ExclusiveCallback = ScanCallback;
 
                 ShowRfidDialog = true;
-            },d=>d?.Id>0));
+            },d=>d?.Id>0 && (MainViewModel.Instance.CurrentUser?.IsAdmin??false)));
 
         public bool IsDialogOpen => ShowSmsDialog || ShowRfidDialog;
         private bool _IsNewRfidInvalid;
@@ -255,6 +255,8 @@ namespace SFC.Gate.Material.ViewModels
             new DelegateCommand<Student>(
                 stud =>
                 {
+                    if (!MainViewModel.Instance.CurrentUser?.IsAdmin ?? false) return;
+                    
                     var file = Extensions.GetPicture();
                     if (file == null)
                         return;
@@ -270,7 +272,7 @@ namespace SFC.Gate.Material.ViewModels
                             $"{stud.Fullname}'s picture changed was undone.",
                             "Students", stud.Id);
                     });
-                }, s => s != null && s.Id>0 && (MainViewModel.Instance.CurrentUser?.IsAdmin??false)));
+                }, s => s != null && s.Id>0));
 
         
         private DateTime _lastSearch = DateTime.Now;
@@ -883,7 +885,7 @@ namespace SFC.Gate.Material.ViewModels
                 BulkSendTo = 4;
             else
                 BulkSendTo = 0;
-        },d=>MainViewModel.Instance.CurrentUser?.IsAdmin??false || Config.Sms.AllowNonAdmin));
+        },d=>(MainViewModel.Instance.CurrentUser?.IsAdmin??false) || Config.Sms.AllowNonAdmin));
 
         private int _BulkSendTo;
 
@@ -942,82 +944,120 @@ namespace SFC.Gate.Material.ViewModels
         private ICommand _acceptSendBulkCommand;
         private Task _bulkSenderTask;
         private CancellationTokenSource _bulkToken;
+        private Queue<Student> _sendList;
+        private int _sentCount = 0;
         public ICommand AcceptBulkSendCommand =>
             _acceptSendBulkCommand ?? (_acceptSendBulkCommand = new DelegateCommand(
                 d =>
                 {
-                    
+                    _sentCount = 0;
+                    _sentCount = 0;
+                    _aborting = false;
+                    ShowSmsDialog = false;
                     IsBulkSending = true;
                     SendingProgressIndeterminate = true;
                     SendingProgress = 0;
                     _bulkToken = new CancellationTokenSource();
-                    
-                    _bulkSenderTask = Task.Factory.StartNew(async () =>
+
+                    var students = GetSendList();
+
+                    if (students?.Count > 0)
                     {
-                        List<Student> students = null;
-                        switch (BulkSendTo)
-                        {
-                            case 0:
-                                students = Student.Cache.ToList();
-                                break;
-                            case 1:
-                                students = Student.Cache.Where(x => x.Level == Departments.Elementary).ToList();
-                                break;
-                            case 2:
-                                students = Student.Cache.Where(x => x.Level == Departments.HighSchool).ToList();
-                                break;
-                            case 3:
-                                students = Student.Cache.Where(x => x.Level == Departments.College).ToList();
-                                break;
-                            case 4:
-                                students = Student.Cache.Where(x => x.IsSelected).ToList();
-                                break;
-                        }
-
-                        if (students == null)
-                        {
-                            IsBulkSending = false;
-                            return;
-                        }
-                        
                         SendingProgressMaximum = students.Count;
-                        for (var i = 0; i < SendingProgressMaximum; i++)
-                        {
-                            var student = students[i];
-                            SendingProgressText = $"Sending {i + 1}/{SendingProgressMaximum} ...";
-                            
-                            new SmsNotification()
-                            {
-                                UserId = MainViewModel.Instance.CurrentUser.Id,
-                                StudentId = student.Id,
-                                Message = BulkMessage
-                            }.Save();
 
-                            var msg = BulkMessage;
-                            if (Config.Sms.IncludeUsername)
-                                msg = $"{BulkMessage}\nSent By: {MainViewModel.Instance.CurrentUser.Username}";
-                            
-                            await SMS.SendAsync(msg, student.ContactNumber);
+                        _sendList = new Queue<Student>(students);
 
-                            if (_bulkToken.IsCancellationRequested)
-                            {
-                                SendingProgressText = "Aborted";
-                                await TaskEx.Delay(1000);
-                                IsBulkSending = false;
-                                ShowSmsDialog = false;
-                                return;
-                            }
-                        }
-                        
-                        SendingProgressText = "Done";
-                        await TaskEx.Delay(1000);
-                        
+                        SendNext(_sendList.Dequeue());
+                    }
+                    else
+                    {
                         IsBulkSending = false;
-                        ShowSmsDialog = false;
-                        BulkMessage = "";
-                    }, _bulkToken.Token);
-                    
-                },d=>!string.IsNullOrWhiteSpace(BulkMessage)));
+                    }
+                        
+                       
+                },d=>!string.IsNullOrWhiteSpace(BulkMessage) && GetSendList()?.Count>0));
+
+        private List<Student> GetSendList()
+        {
+            List<Student> students = null;
+            switch (BulkSendTo)
+            {
+                case 0:
+                    students = Student.Cache.ToList();
+                    break;
+                case 1:
+                    students = Student.Cache.Where(x => x.Level == Departments.Elementary).ToList();
+                    break;
+                case 2:
+                    students = Student.Cache.Where(x => x.Level == Departments.HighSchool).ToList();
+                    break;
+                case 3:
+                    students = Student.Cache.Where(x => x.Level == Departments.College).ToList();
+                    break;
+                case 4:
+                    students = Student.Cache.Where(x => x.IsSelected).ToList();
+                    break;
+            }
+            return students;
+        }
+
+        private async void SentCallback(int code)
+        {
+            if (_aborting) return;
+            if (code != 777) return;
+            _sentCount++;
+            if (_sendList.Count == 0)
+            {
+                ShowDone();
+                return;
+            }
+            var student = _sendList.Dequeue();
+            if (student == null)
+            {
+                ShowDone();
+                return;
+            }
+            
+            if (_bulkToken.IsCancellationRequested)
+            {
+                SendingProgressText = "Aborted";
+                await TaskEx.Delay(1000);
+                IsBulkSending = false;
+                return;
+            }
+            
+            SendNext(student);
+        }
+
+        private async void ShowDone()
+        {
+            _aborting = true;
+            SendingProgressText = "Done";
+            await TaskEx.Delay(1000);
+
+            IsBulkSending = false;
+
+            BulkMessage = "";
+        }
+
+        private void SendNext(Student student)
+        {
+            SendingProgressText = $"Sending {_sentCount + 1}/{SendingProgressMaximum} ...";
+
+            new SmsNotification()
+            {
+                UserId = MainViewModel.Instance.CurrentUser.Id,
+                StudentId = student.Id,
+                Message = BulkMessage
+            }.Save();
+
+            var msg = BulkMessage;
+            if (Config.Sms.IncludeUsername)
+                msg = $"{BulkMessage}\nSent By: {MainViewModel.Instance.CurrentUser.Username}";
+
+            SMS.Send(msg, student.ContactNumber, SentCallback, 777);
+            
+        }
 
         private bool _IsBulkSending;
 
@@ -1033,7 +1073,7 @@ namespace SFC.Gate.Material.ViewModels
             }
         }
 
-        private string _SendingProgressText;
+        private string _SendingProgressText = "Sending 0/7 ...";
 
         public string SendingProgressText
         {
@@ -1047,7 +1087,7 @@ namespace SFC.Gate.Material.ViewModels
             }
         }
 
-        private bool _SendingProgressIndeterminate;
+        private bool _SendingProgressIndeterminate = true;
 
         public bool SendingProgressIndeterminate
         {
@@ -1091,11 +1131,14 @@ namespace SFC.Gate.Material.ViewModels
 
         private ICommand _abortSendingCommand;
         private bool _aborting = false;
-        public ICommand AbortSendingCommand => _abortSendingCommand ?? (_abortSendingCommand = new DelegateCommand(d =>
+        public ICommand AbortSendingCommand => _abortSendingCommand ?? (_abortSendingCommand = new DelegateCommand(
+        async d =>
         {
             _aborting = true;
             _bulkToken?.Cancel();
             SendingProgressText = "Aborting...";
+            await TaskEx.Delay(2000);
+            IsBulkSending = false;
         },d=>!_aborting));
 
         public void ShowStudent(Student student)
