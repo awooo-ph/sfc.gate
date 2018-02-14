@@ -36,6 +36,16 @@ namespace SFC.Gate.Material.ViewModels
                 if (string.IsNullOrEmpty(msg)) return;
                 MessageQueue.Enqueue($"SMS Notification: {msg}");
             });
+            
+            Messenger.Default.AddListener<Gate.ViewModels.Sms>(Messages.SmsReceived, sms =>
+            {
+                awooo.Context.Post(d =>
+                {
+                    var dlg = new MessageDialog($"Message Received from {sms.Sender}", sms.Message,
+                        PackIconKind.MessageText, "OKAY");
+                    dlg.Show();
+                },null);
+            });
         }
 
         private bool _ShowSideBar;
@@ -266,11 +276,7 @@ namespace SFC.Gate.Material.ViewModels
                 OnPropertyChanged(nameof(TimeCard));
             }
         }
-
         
-
-
-
         private bool _IsDialogOpen;
 
         public bool IsDialogOpen
@@ -282,7 +288,5 @@ namespace SFC.Gate.Material.ViewModels
                 OnPropertyChanged(nameof(IsDialogOpen));
             }
         }
-
-        
     }
 }
