@@ -1,0 +1,64 @@
+﻿<UserControl x:Class="SFC.Gate.Material.Views.ViolatorsPrinter"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SFC.Gate.Material.Views"
+             xmlns:converters="clr-namespace:SFC.Gate.Converters"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:viewModels="clr-namespace:SFC.Gate.Material.ViewModels"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" 
+             DataContext="{Binding Source={x:Static viewModels:StudentsViewModel.Instance}}"
+             d:DesignHeight="300" d:DesignWidth="300">
+  <Grid Background="#77777777" >
+    <materialDesign:Card HorizontalAlignment="Center" VerticalAlignment="Center"
+                         UniformCornerRadius="7"
+                         Margin="20">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+          <materialDesign:PackIcon Kind="Printer" Height="48" Width="48"
+                         Margin="10"
+                         Foreground="{StaticResource PrimaryHueMidBrush}"
+                         VerticalAlignment="Center"/>
+          <TextBlock Text="PRINT VIOLATIONS" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                       Foreground="{StaticResource PrimaryHueMidBrush}"
+                       VerticalAlignment="Center"
+                       Margin="10"/>
+        </StackPanel>
+        <Rectangle Fill="{StaticResource MaterialDesignDivider}" Height="1" VerticalAlignment="Bottom"/>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="20">
+          <Calendar Margin="10" DisplayDateEnd="{Binding PrintViolatorsTo}"
+                    DisplayDateStart="{Binding MinDate,Mode=OneWay}"
+                    SelectedDate="{Binding PrintViolatorsFrom}"/>
+          <materialDesign:PackIcon Kind="ArrowLeft" VerticalAlignment="Center" Margin="10" />
+          <materialDesign:PackIcon Kind="ArrowRight" VerticalAlignment="Center" Margin="10" />
+          <Calendar Margin="10" DisplayDateStart="{Binding PrintViolatorsFrom}"
+                    DisplayDateEnd="{Binding Source={x:Static system:DateTime.Now},Mode=OneWay}"
+                    SelectedDate="{Binding PrintViolatorsTo}"/>
+        </StackPanel>
+        
+        <UniformGrid Grid.Row="3" Rows="1" Margin="0 10 0 0">
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  Command="{Binding CancelPrintingViolatorsCommand}"
+                  Content="CANCEL"/>
+          
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  Command="{Binding AcceptPrintingViolatorsCommand}"
+                  Content="PRINT (BY VIOLATION)" />
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  Command="{Binding AcceptPrintViolatorsByDepartmentCommand}"
+                  Content="PRINT (BY DEPARTMENT)" />
+        </UniformGrid>
+      </Grid>
+    </materialDesign:Card>
+  </Grid>
+</UserControl>
+

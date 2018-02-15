@@ -178,20 +178,20 @@
 
               <UniformGrid Rows="1" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10">
                 <Button Style="{StaticResource MaterialDesignFlatButton}"
-                        Command="{Binding PrintLogCommand}">
-                  <StackPanel Orientation="Horizontal">
-                    <md:PackIcon Kind="Printer" />
-                    <TextBlock Text=" PRINT" />
-                  </StackPanel>
-                </Button>
-                <Button Style="{StaticResource MaterialDesignFlatButton}"
                         Command="{Binding ClearLogCommand}">
                   <StackPanel Orientation="Horizontal">
                     <md:PackIcon Kind="CalendarRemove" />
                     <TextBlock Text=" CLEAR" />
                   </StackPanel>
                 </Button>
-              </UniformGrid>
+              <Button Style="{StaticResource MaterialDesignFlatButton}"
+                      Command="{Binding PrintLogCommand}">
+                <StackPanel Orientation="Horizontal">
+                  <md:PackIcon Kind="Printer" />
+                  <TextBlock Text=" ACTIVITY LOG" />
+                </StackPanel>
+              </Button>
+            </UniformGrid>
             </Grid>
           </md:TransitionerSlide>
         </md:Transitioner>
@@ -442,19 +442,52 @@
                   HorizontalAlignment="Right"
                   Width="2"/>
 
+    <md:PopupBox Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
+                 PopupMode="MouseOver"
+                 PlacementMode="TopAndAlignRightEdges"
+                 Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="20">
+      <md:PopupBox.ToggleContent>
+        <md:PackIcon Kind="Printer" Height="32" Width="32"/>
+      </md:PopupBox.ToggleContent>
+      <md:PopupBox.ToggleCheckedContent>
+        <md:PackIcon Kind="ChevronDoubleUp" Height="32" Width="32"/>
+      </md:PopupBox.ToggleCheckedContent>
+      <md:PopupBox.PopupContent>
+        <md:Card>
+        <StackPanel>
+          
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  ToolTip="Print Students"
+                  HorizontalContentAlignment="Left"
+                  Command="{Binding PrintCommand}">
+            <StackPanel Orientation="Horizontal">
+              <md:PackIcon Kind="School" />
+              <TextBlock Text="  STUDENTS" />
+            </StackPanel>
+          </Button>
+            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                    ToolTip="Print Violations Committed"
+                  HorizontalContentAlignment="Left"
+                  Command="{Binding PrintViolatorsCommand}">
+              <StackPanel Orientation="Horizontal">
+                <md:PackIcon Kind="AlertOutline" />
+                <TextBlock Text="  VIOLATIONS" />
+              </StackPanel>
+            </Button>
+          
+          </StackPanel>
+        </md:Card>
+      </md:PopupBox.PopupContent>
+    </md:PopupBox>
+
     <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="2"
 
                     Margin="20"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom">
       <UniformGrid Rows="1">
-        <Button Style="{StaticResource MaterialDesignFlatButton}"
-                  Command="{Binding PrintCommand}">
-          <StackPanel Orientation="Horizontal">
-            <md:PackIcon Kind="Printer" />
-            <TextBlock Text=" PRINT LIST" />
-          </StackPanel>
-        </Button>
+        
+        
         <Grid Visibility="{Binding IsBulkSending,Converter={converters:BooleanToVisibility Collapsed,Visible}}">
           <Button Style="{StaticResource MaterialDesignFlatButton}"
                   Visibility="{Binding Source={x:Static configurations:Config.Sms},Path=Enabled,Converter={converters:BooleanToVisibility}}"
@@ -509,6 +542,7 @@
           Background="#77777777"
           Visibility="{Binding ShowRfidDialog,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}"/>
     
-    
+    <views:ViolatorsPrinter Grid.ColumnSpan="2"
+                            Visibility="{Binding IsPrintingViolators,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}"/>
   </Grid>
 </UserControl>

@@ -711,7 +711,7 @@ namespace SFC.Gate.Material.ViewModels
 
         private ICommand _printLogCommand;
 
-        public ICommand PrintLogCommand => _printLogCommand ?? (_printCommand = new DelegateCommand(d =>
+        public ICommand PrintLogCommand => _printLogCommand ?? (_printLogCommand = new DelegateCommand(d =>
         {
             PrintLog((Student) Students.CurrentItem);
         },d=>(Students.CurrentItem as Student)?.Logs.Count>0));
@@ -1170,5 +1170,226 @@ namespace SFC.Gate.Material.ViewModels
                 MainViewModel.Instance.Screen = MainViewModel.STUDENTS;
             }, null);
         }
+
+        private bool _IsPrintingViolators;
+
+        public bool IsPrintingViolators
+        {
+            get => _IsPrintingViolators;
+            set
+            {
+                if(value == _IsPrintingViolators)
+                    return;
+                _IsPrintingViolators = value;
+                OnPropertyChanged(nameof(IsPrintingViolators));
+            }
+        }
+
+        private ICommand _printViolatorsCommand;
+
+        public ICommand PrintViolatorsCommand =>
+            _printViolatorsCommand ?? (_printViolatorsCommand = new DelegateCommand(
+                d =>
+                {
+                    IsPrintingViolators = true;
+                }));
+
+        private ICommand _cancelPrintingViolatorsCommand;
+
+        public ICommand CancelPrintingViolatorsCommand =>
+            _cancelPrintingViolatorsCommand ?? (_cancelPrintingViolatorsCommand = new DelegateCommand(
+                d =>
+                {
+                    IsPrintingViolators = false;
+                }));
+
+        private DateTime _PrintViolatorsFrom = DateTime.Now.AddDays(-1);
+
+        public DateTime PrintViolatorsFrom
+        {
+            get => _PrintViolatorsFrom;
+            set
+            {
+                if(value == _PrintViolatorsFrom)
+                    return;
+                _PrintViolatorsFrom = value;
+                OnPropertyChanged(nameof(PrintViolatorsFrom));
+            }
+        }
+
+        private DateTime _PrintViolatorsTo = DateTime.Now;
+
+        public DateTime PrintViolatorsTo
+        {
+            get => _PrintViolatorsTo;
+            set
+            {
+                if(value == _PrintViolatorsTo)
+                    return;
+                _PrintViolatorsTo = value;
+                OnPropertyChanged(nameof(PrintViolatorsTo));
+            }
+        }
+
+        public DateTime MinDate => Models.StudentsViolations
+                                       .Cache
+                                       .OrderByDescending(x=>x.DateCommitted).FirstOrDefault()?.DateCommitted
+                                   ?? DateTime.Parse("2/14/2018");
+
+        private ICommand _acceptPrintingViolatorsCommand;
+
+
+        public ICommand AcceptPrintingViolatorsCommand =>
+            _acceptPrintingViolatorsCommand ?? (_acceptPrintingViolatorsCommand = new DelegateCommand(
+                d =>
+                {
+                    IsPrintingViolators = false;
+                    var violations = Models.StudentsViolations.Cache
+                        .Where(x => x.DateCommitted.Date >= PrintViolatorsFrom &&
+                                    x.DateCommitted.Date <= PrintViolatorsTo)
+                        .OrderBy(x => x.Violation.Name);
+
+                    if(!Directory.Exists("Temp"))
+                        Directory.CreateDirectory("Temp");
+                    var groups = violations.Select(x => x.ViolationId).Distinct();
+
+                    foreach(var vid in groups)
+                    {
+                        var ids = new List<long>();
+                        var temp = Path.Combine("Temp", $"Student Violations By Violation [{DateTime.Now.Ticks}].docx");
+                        using(var doc = DocX.Load(@"Templates\ViolationsByViolation.docx"))
+                        {
+
+                            var date = "";
+                            if(PrintViolatorsFrom.Date == PrintViolatorsTo.Date)
+                            {
+                                date = PrintViolatorsFrom.Date.ToString("MMMM d, yyyy");
+                            } else
+                            {
+                                date = $"{PrintViolatorsFrom:MMM d, yyyy} - {PrintViolatorsTo:MMM d, yyyy}";
+                            }
+                            doc.ReplaceText("[INCLUSIVE_DATE]", date);
+                            doc.ReplaceText("[VIOLATION]", Models.Violation.Cache.FirstOrDefault(x => x.Id == vid)?.Name);
+                            var list = doc.AddList();
+                            foreach(var v in violations.Where(x => x.ViolationId == vid))
+                            {
+                                if(ids.Contains(v.StudentId))
+                                    continue;
+                                ids.Add(v.StudentId);
+
+                                var violateCount = violations.Count(x =>
+                                    x.StudentId == v.StudentId &&
+                                    x.ViolationId == v.ViolationId);
+                                var sCount = violateCount > 1 ? $"({violateCount} times)" : "";
+
+                                doc.AddListItem(list, $"{v.Student.Fullname} {sCount}");
+
+                            }
+                            doc.InsertList(list);
+
+                            File.Delete(temp);
+                            doc.SaveAs(temp);
+                        }
+                        Extensions.Print(temp);
+                    }
+
+
+
+                }));
+        
+        private ICommand _acceptPrintViolatorsByDepartmentCommand;
+       
+       
+        public ICommand AcceptPrintViolatorsByDepartmentCommand =>
+            _acceptPrintViolatorsByDepartmentCommand ?? (_acceptPrintViolatorsByDepartmentCommand = new DelegateCommand(
+                d =>
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+
+                    
+                    IsPrintingViolators = false;
+                    var violations = Models.StudentsViolations.Cache
+                        .Where(x => x.DateCommitted.Date >= PrintViolatorsFrom &&
+                                    x.DateCommitted.Date <= PrintViolatorsTo)
+                        .OrderBy(x=>x.Violation.Name);
+                    
+                    if (!Directory.Exists("Temp"))
+                        Directory.CreateDirectory("Temp");
+                    var groups = violations.Select(x=>x.Violation.Level).Distinct();
+                    
+                    foreach (var department in groups)
+                    {
+                        var ids = new List<long>();
+                        var temp = Path.Combine("Temp", $"Student Violations By Department [{DateTime.Now.Ticks}].docx");
+                        using (var doc = DocX.Load(@"Templates\ViolationsByDepartment.docx"))
+                        {
+                            
+                            var date = "";
+                            if (PrintViolatorsFrom.Date == PrintViolatorsTo.Date)
+                            {
+                                date = PrintViolatorsFrom.Date.ToString("MMMM d, yyyy");
+                            }
+                            else
+                            {
+                                date = $"{PrintViolatorsFrom:MMM d, yyyy} - {PrintViolatorsTo:MMM d, yyyy}";
+                            }
+                            doc.ReplaceText("[INCLUSIVE_DATE]", date);
+                            doc.ReplaceText("[DEPARTMENT]", department.ToString().ToUpper() + " DEPARTMENT");
+
+                            var tbl = doc.Tables.First();
+                                
+                            foreach (var v in violations.Where(x => x.Student.Level == department))
+                            {
+                                if (ids.Contains(v.StudentId))
+                                    continue;
+                                ids.Add(v.StudentId);
+                                
+                                var r = tbl.InsertRow();
+                                var p = r.Cells[0].Paragraphs.First().Append(v.Student.Fullname);
+                                p.Alignment = Alignment.left;
+
+                                var studentViolations = violations.Where(x => x.StudentId == v.StudentId);
+                                var sV = "";
+                                var violationIds = new List<long>();
+                                foreach (var sv in studentViolations)
+                                {
+                                    if(violationIds.Contains(sv.ViolationId)) continue;
+                                    violationIds.Add(sv.ViolationId);
+                                    
+                                    var violateCount = violations.Count(x =>
+                                        x.StudentId == v.StudentId &&
+                                        x.ViolationId == sv.ViolationId);
+                                    var sCount = violateCount > 1 ? $" ({violateCount})" : "";
+
+                                    sV += sv.Violation.Name + sCount + ", ";
+                                }
+                                
+                                p = r.Cells[1].Paragraphs.First().Append(sV);
+                                p.Alignment = Alignment.left;
+                            }
+                            
+                            var border = new Xceed.Words.NET.Border(BorderStyle.Tcbs_single, BorderSize.one, 0,
+                                System.Drawing.Color.Black);
+                            tbl.SetBorder(TableBorderType.Bottom, border);
+                            tbl.SetBorder(TableBorderType.Left, border);
+                            tbl.SetBorder(TableBorderType.Right, border);
+                            tbl.SetBorder(TableBorderType.Top, border);
+                            tbl.SetBorder(TableBorderType.InsideV, border);
+                            tbl.SetBorder(TableBorderType.InsideH, border);
+
+                            
+                            
+                            File.Delete(temp);
+                            doc.SaveAs(temp);
+                        }
+                        Extensions.Print(temp);
+                    }
+
+
+                    });
+
+                }));
+
     }
 }
