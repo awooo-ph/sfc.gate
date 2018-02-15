@@ -1243,57 +1243,62 @@ namespace SFC.Gate.Material.ViewModels
             _acceptPrintingViolatorsCommand ?? (_acceptPrintingViolatorsCommand = new DelegateCommand(
                 d =>
                 {
-                    IsPrintingViolators = false;
-                    var violations = Models.StudentsViolations.Cache
-                        .Where(x => x.DateCommitted.Date >= PrintViolatorsFrom &&
-                                    x.DateCommitted.Date <= PrintViolatorsTo)
-                        .OrderBy(x => x.Violation.Name);
-
-                    if(!Directory.Exists("Temp"))
-                        Directory.CreateDirectory("Temp");
-                    var groups = violations.Select(x => x.ViolationId).Distinct();
-
-                    foreach(var vid in groups)
+                    Task.Factory.StartNew(() =>
                     {
-                        var ids = new List<long>();
-                        var temp = Path.Combine("Temp", $"Student Violations By Violation [{DateTime.Now.Ticks}].docx");
-                        using(var doc = DocX.Load(@"Templates\ViolationsByViolation.docx"))
+                        IsPrintingViolators = false;
+                        var violations = Models.StudentsViolations.Cache
+                            .Where(x => x.DateCommitted.Date >= PrintViolatorsFrom &&
+                                        x.DateCommitted.Date <= PrintViolatorsTo)
+                            .OrderBy(x => x.Violation.Name);
+
+                        if (!Directory.Exists("Temp"))
+                            Directory.CreateDirectory("Temp");
+                        var groups = violations.Select(x => x.ViolationId).Distinct();
+
+                        foreach (var vid in groups)
                         {
+                            var ids = new List<long>();
+                            var temp = Path.Combine("Temp",
+                                $"Student Violations By Violation [{DateTime.Now.Ticks}].docx");
+                            using (var doc = DocX.Load(@"Templates\ViolationsByViolation.docx"))
+                            {
 
-                            var date = "";
-                            if(PrintViolatorsFrom.Date == PrintViolatorsTo.Date)
-                            {
-                                date = PrintViolatorsFrom.Date.ToString("MMMM d, yyyy");
-                            } else
-                            {
-                                date = $"{PrintViolatorsFrom:MMM d, yyyy} - {PrintViolatorsTo:MMM d, yyyy}";
+                                var date = "";
+                                if (PrintViolatorsFrom.Date == PrintViolatorsTo.Date)
+                                {
+                                    date = PrintViolatorsFrom.Date.ToString("MMMM d, yyyy");
+                                }
+                                else
+                                {
+                                    date = $"{PrintViolatorsFrom:MMM d, yyyy} - {PrintViolatorsTo:MMM d, yyyy}";
+                                }
+                                doc.ReplaceText("[INCLUSIVE_DATE]", date);
+                                doc.ReplaceText("[VIOLATION]",
+                                    Models.Violation.Cache.FirstOrDefault(x => x.Id == vid)?.Name);
+                                var list = doc.AddList();
+                                foreach (var v in violations.Where(x => x.ViolationId == vid))
+                                {
+                                    if (ids.Contains(v.StudentId))
+                                        continue;
+                                    ids.Add(v.StudentId);
+
+                                    var violateCount = violations.Count(x =>
+                                        x.StudentId == v.StudentId &&
+                                        x.ViolationId == v.ViolationId);
+                                    var sCount = violateCount > 1 ? $"({violateCount} times)" : "";
+
+                                    doc.AddListItem(list, $"{v.Student.Fullname} {sCount}");
+
+                                }
+                                doc.InsertList(list);
+
+                                File.Delete(temp);
+                                doc.SaveAs(temp);
                             }
-                            doc.ReplaceText("[INCLUSIVE_DATE]", date);
-                            doc.ReplaceText("[VIOLATION]", Models.Violation.Cache.FirstOrDefault(x => x.Id == vid)?.Name);
-                            var list = doc.AddList();
-                            foreach(var v in violations.Where(x => x.ViolationId == vid))
-                            {
-                                if(ids.Contains(v.StudentId))
-                                    continue;
-                                ids.Add(v.StudentId);
-
-                                var violateCount = violations.Count(x =>
-                                    x.StudentId == v.StudentId &&
-                                    x.ViolationId == v.ViolationId);
-                                var sCount = violateCount > 1 ? $"({violateCount} times)" : "";
-
-                                doc.AddListItem(list, $"{v.Student.Fullname} {sCount}");
-
-                            }
-                            doc.InsertList(list);
-
-                            File.Delete(temp);
-                            doc.SaveAs(temp);
+                            Extensions.Print(temp);
                         }
-                        Extensions.Print(temp);
-                    }
 
-
+                    });
 
                 }));
         
