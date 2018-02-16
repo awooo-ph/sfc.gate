@@ -49,7 +49,7 @@ namespace SFC.Gate.Material.ViewModels
                 if (Config.Sms.ForwardReceivedSms && Config.Sms.ForwardSmsTo.IsCellNumber())
                 {
                     var stud = Student.GetByNumber(sms.Sender);
-                    var sender = stud != null ? $"{stud.Fullname}'s Parent" : $"UNKNOWN [{sms.Sender}]";
+                    var sender = stud != null ? $"{stud.Fullname}'s Parent" : $"{sms.Sender}";
                     SMS.Send($"Message from: {sender}\n{sms.Message}",Config.Sms.ForwardSmsTo);
                 }
                 if (Config.Sms.EnableAutoReply && !string.IsNullOrEmpty(Config.Sms.AutoReply))
@@ -84,11 +84,11 @@ namespace SFC.Gate.Material.ViewModels
             awooo.Context.Post(d =>
             {
                 var stud = Student.GetByNumber(sms.Sender);
-                var title = $"UNKNOWN [{sms.Sender}]";
+                var title = sms.Sender.IsCellNumber() ? $"UNKNOWN [{sms.Sender}]" : sms.Sender;
                 if (stud != null)
                     title = $"{stud.Fullname}'s Parent";
 
-                var dlg = new MessageDialog(title, sms.Message,
+                var dlg = new MessageDialog($"Message from {title}", sms.Message,
                     PackIconKind.MessageText, "CLOSE");
                 dlg.Show(() =>
                 {
@@ -166,7 +166,7 @@ namespace SFC.Gate.Material.ViewModels
             }
         }
 
-        public bool IsContactVisible => CurrentUser?.IsAdmin ?? false || !Config.General.HideContactNumber;
+        public bool IsContactVisible => (CurrentUser?.IsAdmin ?? false) || !Config.General.HideContactNumber;
 
         private ICommand _logoutCommand;
 

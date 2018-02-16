@@ -38,7 +38,6 @@ namespace SFC.Gate
                             GIF Files|*.GIF|
                             PNG Files|*.PNG",
                     Title = "Select Picture",
-                    InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
                 };
                 if (!(dialog.ShowDialog() ?? false))
                     return null;
