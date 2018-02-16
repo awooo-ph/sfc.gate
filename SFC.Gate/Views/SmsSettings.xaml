@@ -117,7 +117,7 @@
           <CheckBox Content="INCLUDE USERNAME"
                     IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
                     FontWeight="Bold"
-                    IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=AllowNonAdmin}" />
+                    IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=IncludeUsername}" />
           <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
                      VerticalAlignment="Center"
                      TextWrapping="Wrap"
