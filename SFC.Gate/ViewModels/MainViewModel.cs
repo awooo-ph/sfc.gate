@@ -39,15 +39,51 @@ namespace SFC.Gate.Material.ViewModels
             
             Messenger.Default.AddListener<Gate.ViewModels.Sms>(Messages.SmsReceived, sms =>
             {
-                awooo.Context.Post(d =>
-                {
-                    var dlg = new MessageDialog($"Message Received from {sms.Sender}", sms.Message,
-                        PackIconKind.MessageText, "OKAY");
-                    dlg.Show();
-                },null);
+                lock(_smsLock)
+                    _smsQueue.Enqueue(sms);
+                ShowMessages();
             });
         }
 
+        private object _smsLock = new object();
+        private Queue<Gate.ViewModels.Sms> _smsQueue = new Queue<Gate.ViewModels.Sms>();
+        private bool _messagesRunning;
+
+        private void ShowMessages()
+        {
+            lock(_smsLock)
+                if(_smsQueue.Count==0) return;
+
+            if (_messagesRunning)
+                return;
+            _messagesRunning = true;
+            
+            Gate.ViewModels.Sms sms = null;
+            lock (_smsLock)
+                sms = _smsQueue.Dequeue();
+            if (sms == null)
+            {
+                _messagesRunning = false;
+                return;
+            }
+            
+            awooo.Context.Post(d =>
+            {
+                var stud = Student.GetByNumber(sms.Sender);
+                var title = $"UNKNOWN [{sms.Sender}]";
+                if (stud != null)
+                    title = $"{stud.Fullname}'s Parent";
+
+                var dlg = new MessageDialog(title, sms.Message,
+                    PackIconKind.MessageText, "CLOSE");
+                dlg.Show(() =>
+                {
+                    _messagesRunning = false;
+                    ShowMessages();
+                });
+            }, null);
+        }
+        
         private bool _ShowSideBar;
         
         public bool ShowSideBar
