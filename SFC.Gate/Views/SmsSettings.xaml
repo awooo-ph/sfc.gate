@@ -49,8 +49,8 @@
               </Grid.ColumnDefinitions>
             <ComboBox Margin="4" SelectedItem="{Binding Source={x:Static cnf:Config.Sms},Path=Port}" 
                       ItemsSource="{Binding Source={x:Static viewModels1:SMS.Instance},Path=Ports}"/>
-              <TextBlock Grid.Column="1" Text="{Binding Source={x:Static viewModels1:SMS.Instance},Path=Status}"
-                         Margin="10 0 0 0" VerticalAlignment="Center"/>
+              <!--<TextBlock Grid.Column="1" Text="{Binding Source={x:Static viewModels1:SMS.Instance},Path=Status}"
+                         Margin="10 0 0 0" VerticalAlignment="Center"/>-->
             </Grid>
             <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
                        VerticalAlignment="Center">
@@ -62,49 +62,97 @@
         </StackPanel>
         </Border>
 
-        <StackPanel Margin="0 0 0 40">
+        <Border BorderBrush="{StaticResource MaterialDesignDivider}"
+                IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
+                Margin="0 0 0 40"
+                Padding="20"
+                BorderThickness="1"
+                CornerRadius="7">
+          <StackPanel Margin="4">
+          <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}">
+            <Run Text="SENDING DELAY (" />
+            <Run Text="{Binding Source={x:Static cnf:Config.Sms},Path=Delay}" />
+            <Run Text="SECONDS)" />
+          </TextBlock>
+
+          <Slider Margin="4" Minimum="1" Interval="1"
+                  IsEnabled="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin}"
+                  Maximum="77" TickFrequency="1000" TickPlacement="BottomRight"
+                  Value="{Binding Source={x:Static cnf:Config.Sms},Path=Delay}" />
+
+          <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
+                     VerticalAlignment="Center"
+                     TextWrapping="Wrap"
+                     Text="The number of seconds to wait before sending another sms." />
+        </StackPanel></Border>
+
+        <Border BorderBrush="{StaticResource MaterialDesignDivider}"
+                IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
+                Margin="0 0 0 40"
+                Padding="20"
+                BorderThickness="1"
+                CornerRadius="7">
+        <StackPanel Margin="4">
           <CheckBox Content="NOTIFY ON GATE PASS"
                     IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
                     FontWeight="Bold"
                     IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=NotifyOnGatePass}" />
-          <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+          <TextBlock Margin="4" FontStyle="Italic" Opacity="0.7"
                      VerticalAlignment="Center"
                      TextWrapping="Wrap"
                      Text="Check this to automatically send SMS notifications to parents or guardians when a student enters or leaves the campus." />
-        </StackPanel>
-
-        <StackPanel Margin="0 0 0 40">
+        </StackPanel></Border>
+        
+        <Border BorderBrush="{StaticResource MaterialDesignDivider}"
+                IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
+                Margin="0 0 0 40"
+                Padding="20"
+                BorderThickness="1"
+                CornerRadius="7">
+          <StackPanel Margin="4">
           <CheckBox Content="NOTIFY ON VIOLATION"
                     IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
                     FontWeight="Bold"
                     IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=NotifyOnViolation}" />
-          <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+          <TextBlock Margin="4 4 4 4" FontStyle="Italic" Opacity="0.7"
                      VerticalAlignment="Center"
                      TextWrapping="Wrap"
                      Text="Allow non Admin users to send SMS. Gate pass and violation notifications are not affected." />
-        </StackPanel>
-        
-        <StackPanel Margin="0 0 0 40">
+        </StackPanel></Border>
+
+        <Border BorderBrush="{StaticResource MaterialDesignDivider}"
+                IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
+                Margin="0 0 0 40"
+                Padding="20"
+                BorderThickness="1"
+                CornerRadius="7">
+          <StackPanel Margin="4">
           <CheckBox Content="ALLOW NON ADMINISTRATORS"
                     IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
                     FontWeight="Bold"
                     IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=AllowNonAdmin}" />
-          <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+          <TextBlock Margin="4 4 4 4" FontStyle="Italic" Opacity="0.7"
                      VerticalAlignment="Center"
                      TextWrapping="Wrap"
                      Text="Allow non Admin users to send SMS. Gate pass and violation notifications are not affected." />
-        </StackPanel>
+        </StackPanel></Border>
 
-        <StackPanel Margin="0 0 0 40">
+        <Border BorderBrush="{StaticResource MaterialDesignDivider}"
+                IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
+                Margin="0 0 0 40"
+                Padding="20"
+                BorderThickness="1"
+                CornerRadius="7">
+        <StackPanel Margin="4">
           <CheckBox Content="INCLUDE USERNAME"
                     IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
                     FontWeight="Bold"
-                    IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=AllowNonAdmin}" />
-          <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                    IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=IncludeUsername}" />
+          <TextBlock Margin="4 4 4 4" FontStyle="Italic" Opacity="0.7"
                      VerticalAlignment="Center"
                      TextWrapping="Wrap"
                      Text="Whether or not to include the current user's username when sending SMS messages." />
-        </StackPanel>
+        </StackPanel></Border>
 
         <Border BorderBrush="{StaticResource MaterialDesignDivider}"
                 IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
@@ -113,14 +161,14 @@
                 BorderThickness="1"
                 CornerRadius="7">
           <StackPanel>
-          <TextBlock Text="School Entry Message Template" Margin="4" FontWeight="Bold"/>
-          <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=EntryTemplate}"
+          <TextBlock Text="SCHOOL ENTRY MESSAGE" Margin="4" FontWeight="Bold"/>
+          <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=EntryTemplate,UpdateSourceTrigger=PropertyChanged}"
                                          TextWrapping="Wrap"
                                          AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
                                          HorizontalScrollBarVisibility="Disabled"/>
-          <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+          <TextBlock Margin="4 4 4 4" FontStyle="Italic" Opacity="0.7"
                                            VerticalAlignment="Center">
-                                    <Run Text="The message sent to parents or guardians when their students enter the school campus."/>
+                                    <Run Text="Template of the message sent to parents or guardians when their students enter the school campus."/>
           </TextBlock>
         </StackPanel>
           </Border>
@@ -131,14 +179,14 @@
                 BorderThickness="1"
                 CornerRadius="7">
           <StackPanel>
-            <TextBlock Text="School Exit Message Template" Margin="4" FontWeight="Bold"/>
-            <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=ExitTemplate}"
+            <TextBlock Text="SCHOOL EXIT MESSAGE" Margin="4" FontWeight="Bold"/>
+            <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=ExitTemplate,UpdateSourceTrigger=PropertyChanged}"
                                          TextWrapping="Wrap"
                                          AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
                                          HorizontalScrollBarVisibility="Disabled"/>
-            <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+            <TextBlock Margin="4 4 4 4" FontStyle="Italic" Opacity="0.7"
                                            VerticalAlignment="Center">
-                                    <Run Text="The message sent to parents or guardians when their students leave the school campus."/>
+                                    <Run Text="Template of the message sent to parents or guardians when their students leave the school campus."/>
             </TextBlock>
 
           </StackPanel>
@@ -153,19 +201,89 @@
           <StackPanel >
 
             
-          <TextBlock Text="Violation Message Template" Margin="4" FontWeight="Bold"/>
-          <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=ViolationTemplate}"
+          <TextBlock Text="VIOLATION MESSAGE TEMPLATE" Margin="4" FontWeight="Bold"/>
+            <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=ViolationTemplate,UpdateSourceTrigger=PropertyChanged}"
                                          TextWrapping="Wrap"
                                          AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
                                          HorizontalScrollBarVisibility="Disabled"/>
-          <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+          <TextBlock Margin="4 4 4 4" FontStyle="Italic" Opacity="0.7"
                                            VerticalAlignment="Center">
                                     <Run Text="The message sent to parents or guardians when their students committed a violation."/>
           </TextBlock>
         </StackPanel>
 </Border>
+
+        <Border BorderBrush="{StaticResource MaterialDesignDivider}"
+                IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
+                Margin="0 0 0 40"
+                Padding="20"
+                BorderThickness="1"
+                CornerRadius="7">
+
+          <StackPanel Margin="4">
+          <CheckBox Content="SHOW RECEIVED MESSAGES"
+                    IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
+                    FontWeight="Bold"
+                    IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=ShowReceivedSms}" />
+          <TextBlock Margin="4 4 4 4" FontStyle="Italic" Opacity="0.7"
+                     VerticalAlignment="Center"
+                     TextWrapping="Wrap"
+                     Text="Whether to show or not received messages. This does not affect forwarding and auto-reply options." />
+        </StackPanel>
+        </Border>
         
 
+        <Border BorderBrush="{StaticResource MaterialDesignDivider}"
+                IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
+                Margin="0 0 0 40"
+                Padding="20"
+                BorderThickness="1"
+                CornerRadius="7">
+          <StackPanel>
+            <StackPanel Margin="4">
+              <CheckBox Content="FORWARD RECEIVED MESSAGES"                       
+                        FontWeight="Bold"
+                        IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=ForwardReceivedSms}" />
+              <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                         VerticalAlignment="Center"
+                         TextWrapping="Wrap"
+                         Text="All received messages will be forwared to the number below." />
+              <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=ForwardSmsTo,UpdateSourceTrigger=PropertyChanged}"
+                       IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=ForwardReceivedSms}"
+                       materialDesign:HintAssist.Hint="CELLPHONE NUMBER"
+                       TextWrapping="Wrap"
+                       AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                       HorizontalScrollBarVisibility="Disabled" />
+            </StackPanel>
+
+          </StackPanel>
+        </Border>
+
+        <Border BorderBrush="{StaticResource MaterialDesignDivider}"
+                IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=Enabled}"
+                Margin="0 0 0 40"
+                Padding="20"
+                BorderThickness="1"
+                CornerRadius="7">
+          <StackPanel>
+            <StackPanel Margin="4">
+              <CheckBox Content="AUTO-REPLY"
+                        FontWeight="Bold"
+                        IsChecked="{Binding Source={x:Static cnf:Config.Sms},Path=EnableAutoReply}" />
+              <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                         VerticalAlignment="Center"
+                         TextWrapping="Wrap"
+                         Text="When a message is received, the system will automatically reply with the message below." />
+              <TextBox Margin="4" Text="{Binding Source={x:Static cnf:Config.Sms},Path=AutoReply,UpdateSourceTrigger=PropertyChanged}"
+                       IsEnabled="{Binding Source={x:Static cnf:Config.Sms},Path=EnableAutoReply}"
+                       materialDesign:HintAssist.Hint="Auto Reply Message"
+                       TextWrapping="Wrap"
+                       AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                       HorizontalScrollBarVisibility="Disabled" />
+            </StackPanel>
+
+          </StackPanel>
+        </Border>
 
       </StackPanel>
     </ScrollViewer>

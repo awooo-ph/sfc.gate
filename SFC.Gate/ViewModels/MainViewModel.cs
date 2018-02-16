@@ -16,6 +16,7 @@ using Microsoft.Win32;
 using SFC.Gate.Configurations;
 using SFC.Gate.Material.Views;
 using SFC.Gate.Models;
+using SFC.Gate.ViewModels;
 
 namespace SFC.Gate.Material.ViewModels
 {
@@ -36,8 +37,67 @@ namespace SFC.Gate.Material.ViewModels
                 if (string.IsNullOrEmpty(msg)) return;
                 MessageQueue.Enqueue($"SMS Notification: {msg}");
             });
+            
+            Messenger.Default.AddListener<Gate.ViewModels.Sms>(Messages.SmsReceived, sms =>
+            {
+                if (Config.Sms.ShowReceivedSms)
+                {
+                    lock (_smsLock)
+                        _smsQueue.Enqueue(sms);
+                    ShowMessages();
+                }
+                if (Config.Sms.ForwardReceivedSms && Config.Sms.ForwardSmsTo.IsCellNumber())
+                {
+                    var stud = Student.GetByNumber(sms.Sender);
+                    var sender = stud != null ? $"{stud.Fullname}'s Parent" : $"{sms.Sender}";
+                    SMS.Send($"Message from: {sender}\n{sms.Message}",Config.Sms.ForwardSmsTo);
+                }
+                if (Config.Sms.EnableAutoReply && !string.IsNullOrEmpty(Config.Sms.AutoReply))
+                {
+                    SMS.Send(Config.Sms.AutoReply,sms.Sender);
+                }
+            });
         }
 
+        private object _smsLock = new object();
+        private Queue<Gate.ViewModels.Sms> _smsQueue = new Queue<Gate.ViewModels.Sms>();
+        private bool _messagesRunning;
+
+        private void ShowMessages()
+        {
+            lock(_smsLock)
+                if(_smsQueue.Count==0) return;
+
+            if (_messagesRunning)
+                return;
+            _messagesRunning = true;
+            
+            Gate.ViewModels.Sms sms = null;
+            lock (_smsLock)
+                sms = _smsQueue.Dequeue();
+            if (sms == null)
+            {
+                _messagesRunning = false;
+                return;
+            }
+            
+            awooo.Context.Post(d =>
+            {
+                var stud = Student.GetByNumber(sms.Sender);
+                var title = sms.Sender.IsCellNumber() ? $"UNKNOWN [{sms.Sender}]" : sms.Sender;
+                if (stud != null)
+                    title = $"{stud.Fullname}'s Parent";
+
+                var dlg = new MessageDialog($"Message from {title}", sms.Message,
+                    PackIconKind.MessageText, "CLOSE");
+                dlg.Show(() =>
+                {
+                    _messagesRunning = false;
+                    ShowMessages();
+                });
+            }, null);
+        }
+        
         private bool _ShowSideBar;
         
         public bool ShowSideBar
@@ -106,7 +166,7 @@ namespace SFC.Gate.Material.ViewModels
             }
         }
 
-        public bool IsContactVisible => CurrentUser?.IsAdmin ?? false || !Config.General.HideContactNumber;
+        public bool IsContactVisible => (CurrentUser?.IsAdmin ?? false) || !Config.General.HideContactNumber;
 
         private ICommand _logoutCommand;
 
@@ -266,11 +326,7 @@ namespace SFC.Gate.Material.ViewModels
                 OnPropertyChanged(nameof(TimeCard));
             }
         }
-
         
-
-
-
         private bool _IsDialogOpen;
 
         public bool IsDialogOpen
@@ -282,7 +338,5 @@ namespace SFC.Gate.Material.ViewModels
                 OnPropertyChanged(nameof(IsDialogOpen));
             }
         }
-
-        
     }
 }

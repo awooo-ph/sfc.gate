@@ -161,7 +161,7 @@ namespace SFC.Gate.Material.ViewModels
                 RfidScanner.ExclusiveCallback = ScanCallback;
 
                 ShowRfidDialog = true;
-            },d=>d?.Id>0));
+            },d=>d?.Id>0 && (MainViewModel.Instance.CurrentUser?.IsAdmin??false)));
 
         public bool IsDialogOpen => ShowSmsDialog || ShowRfidDialog;
         private bool _IsNewRfidInvalid;
@@ -255,6 +255,8 @@ namespace SFC.Gate.Material.ViewModels
             new DelegateCommand<Student>(
                 stud =>
                 {
+                    if (!MainViewModel.Instance.CurrentUser?.IsAdmin ?? false) return;
+                    
                     var file = Extensions.GetPicture();
                     if (file == null)
                         return;
@@ -270,7 +272,7 @@ namespace SFC.Gate.Material.ViewModels
                             $"{stud.Fullname}'s picture changed was undone.",
                             "Students", stud.Id);
                     });
-                }, s => s != null && s.Id>0 && (MainViewModel.Instance.CurrentUser?.IsAdmin??false)));
+                }, s => s != null && s.Id>0));
 
         
         private DateTime _lastSearch = DateTime.Now;
@@ -709,7 +711,7 @@ namespace SFC.Gate.Material.ViewModels
 
         private ICommand _printLogCommand;
 
-        public ICommand PrintLogCommand => _printLogCommand ?? (_printCommand = new DelegateCommand(d =>
+        public ICommand PrintLogCommand => _printLogCommand ?? (_printLogCommand = new DelegateCommand(d =>
         {
             PrintLog((Student) Students.CurrentItem);
         },d=>(Students.CurrentItem as Student)?.Logs.Count>0));
@@ -883,7 +885,7 @@ namespace SFC.Gate.Material.ViewModels
                 BulkSendTo = 4;
             else
                 BulkSendTo = 0;
-        },d=>MainViewModel.Instance.CurrentUser?.IsAdmin??false || Config.Sms.AllowNonAdmin));
+        },d=>(MainViewModel.Instance.CurrentUser?.IsAdmin??false) || Config.Sms.AllowNonAdmin));
 
         private int _BulkSendTo;
 
@@ -942,82 +944,120 @@ namespace SFC.Gate.Material.ViewModels
         private ICommand _acceptSendBulkCommand;
         private Task _bulkSenderTask;
         private CancellationTokenSource _bulkToken;
+        private Queue<Student> _sendList;
+        private int _sentCount = 0;
         public ICommand AcceptBulkSendCommand =>
             _acceptSendBulkCommand ?? (_acceptSendBulkCommand = new DelegateCommand(
                 d =>
                 {
-                    
+                    _sentCount = 0;
+                    _sentCount = 0;
+                    _aborting = false;
+                    ShowSmsDialog = false;
                     IsBulkSending = true;
                     SendingProgressIndeterminate = true;
                     SendingProgress = 0;
                     _bulkToken = new CancellationTokenSource();
-                    
-                    _bulkSenderTask = Task.Factory.StartNew(async () =>
+
+                    var students = GetSendList();
+
+                    if (students?.Count > 0)
                     {
-                        List<Student> students = null;
-                        switch (BulkSendTo)
-                        {
-                            case 0:
-                                students = Student.Cache.ToList();
-                                break;
-                            case 1:
-                                students = Student.Cache.Where(x => x.Level == Departments.Elementary).ToList();
-                                break;
-                            case 2:
-                                students = Student.Cache.Where(x => x.Level == Departments.HighSchool).ToList();
-                                break;
-                            case 3:
-                                students = Student.Cache.Where(x => x.Level == Departments.College).ToList();
-                                break;
-                            case 4:
-                                students = Student.Cache.Where(x => x.IsSelected).ToList();
-                                break;
-                        }
-
-                        if (students == null)
-                        {
-                            IsBulkSending = false;
-                            return;
-                        }
-                        
                         SendingProgressMaximum = students.Count;
-                        for (var i = 0; i < SendingProgressMaximum; i++)
-                        {
-                            var student = students[i];
-                            SendingProgressText = $"Sending {i + 1}/{SendingProgressMaximum} ...";
-                            
-                            new SmsNotification()
-                            {
-                                UserId = MainViewModel.Instance.CurrentUser.Id,
-                                StudentId = student.Id,
-                                Message = BulkMessage
-                            }.Save();
 
-                            var msg = BulkMessage;
-                            if (Config.Sms.IncludeUsername)
-                                msg = $"{BulkMessage}\nSent By: {MainViewModel.Instance.CurrentUser.Username}";
-                            
-                            await SMS.SendAsync(msg, student.ContactNumber);
+                        _sendList = new Queue<Student>(students);
 
-                            if (_bulkToken.IsCancellationRequested)
-                            {
-                                SendingProgressText = "Aborted";
-                                await TaskEx.Delay(1000);
-                                IsBulkSending = false;
-                                ShowSmsDialog = false;
-                                return;
-                            }
-                        }
-                        
-                        SendingProgressText = "Done";
-                        await TaskEx.Delay(1000);
-                        
+                        SendNext(_sendList.Dequeue());
+                    }
+                    else
+                    {
                         IsBulkSending = false;
-                        ShowSmsDialog = false;
-                        BulkMessage = "";
-                    }, _bulkToken.Token);
-                    
-                },d=>!string.IsNullOrWhiteSpace(BulkMessage)));
+                    }
+                        
+                       
+                },d=>!string.IsNullOrWhiteSpace(BulkMessage) && GetSendList()?.Count>0));
+
+        private List<Student> GetSendList()
+        {
+            List<Student> students = null;
+            switch (BulkSendTo)
+            {
+                case 0:
+                    students = Student.Cache.Where(x => x.Level < Departments.Faculty).ToList();
+                    break;
+                case 1:
+                    students = Student.Cache.Where(x => x.Level == Departments.Elementary).ToList();
+                    break;
+                case 2:
+                    students = Student.Cache.Where(x => x.Level == Departments.HighSchool).ToList();
+                    break;
+                case 3:
+                    students = Student.Cache.Where(x => x.Level == Departments.College).ToList();
+                    break;
+                case 4:
+                    students = Student.Cache.Where(x => x.Level < Departments.Faculty && x.IsSelected).ToList();
+                    break;
+            }
+            return students;
+        }
+
+        private async void SentCallback(int code)
+        {
+            if (_aborting) return;
+            if (code != 777) return;
+            _sentCount++;
+            if (_sendList.Count == 0)
+            {
+                ShowDone();
+                return;
+            }
+            var student = _sendList.Dequeue();
+            if (student == null)
+            {
+                ShowDone();
+                return;
+            }
+            
+            if (_bulkToken.IsCancellationRequested)
+            {
+                SendingProgressText = "Aborted";
+                await TaskEx.Delay(1000);
+                IsBulkSending = false;
+                return;
+            }
+            
+            SendNext(student);
+        }
+
+        private async void ShowDone()
+        {
+            _aborting = true;
+            SendingProgressText = "Done";
+            await TaskEx.Delay(1000);
+
+            IsBulkSending = false;
+
+            BulkMessage = "";
+        }
+
+        private void SendNext(Student student)
+        {
+            SendingProgressText = $"Sending {_sentCount + 1}/{SendingProgressMaximum} ...";
+
+            new SmsNotification()
+            {
+                UserId = MainViewModel.Instance.CurrentUser.Id,
+                StudentId = student.Id,
+                Message = BulkMessage
+            }.Save();
+
+            var msg = BulkMessage;
+            if (Config.Sms.IncludeUsername)
+                msg = $"{BulkMessage}\nSent By: {MainViewModel.Instance.CurrentUser.Username}";
+
+            SMS.Send(msg, student.ContactNumber, SentCallback, 777);
+            
+        }
 
         private bool _IsBulkSending;
 
@@ -1033,7 +1073,7 @@ namespace SFC.Gate.Material.ViewModels
             }
         }
 
-        private string _SendingProgressText;
+        private string _SendingProgressText = "Sending 0/7 ...";
 
         public string SendingProgressText
         {
@@ -1047,7 +1087,7 @@ namespace SFC.Gate.Material.ViewModels
             }
         }
 
-        private bool _SendingProgressIndeterminate;
+        private bool _SendingProgressIndeterminate = true;
 
         public bool SendingProgressIndeterminate
         {
@@ -1091,11 +1131,14 @@ namespace SFC.Gate.Material.ViewModels
 
         private ICommand _abortSendingCommand;
         private bool _aborting = false;
-        public ICommand AbortSendingCommand => _abortSendingCommand ?? (_abortSendingCommand = new DelegateCommand(d =>
+        public ICommand AbortSendingCommand => _abortSendingCommand ?? (_abortSendingCommand = new DelegateCommand(
+        async d =>
         {
             _aborting = true;
             _bulkToken?.Cancel();
             SendingProgressText = "Aborting...";
+            await TaskEx.Delay(2000);
+            IsBulkSending = false;
         },d=>!_aborting));
 
         public void ShowStudent(Student student)
@@ -1127,5 +1170,231 @@ namespace SFC.Gate.Material.ViewModels
                 MainViewModel.Instance.Screen = MainViewModel.STUDENTS;
             }, null);
         }
+
+        private bool _IsPrintingViolators;
+
+        public bool IsPrintingViolators
+        {
+            get => _IsPrintingViolators;
+            set
+            {
+                if(value == _IsPrintingViolators)
+                    return;
+                _IsPrintingViolators = value;
+                OnPropertyChanged(nameof(IsPrintingViolators));
+            }
+        }
+
+        private ICommand _printViolatorsCommand;
+
+        public ICommand PrintViolatorsCommand =>
+            _printViolatorsCommand ?? (_printViolatorsCommand = new DelegateCommand(
+                d =>
+                {
+                    IsPrintingViolators = true;
+                }));
+
+        private ICommand _cancelPrintingViolatorsCommand;
+
+        public ICommand CancelPrintingViolatorsCommand =>
+            _cancelPrintingViolatorsCommand ?? (_cancelPrintingViolatorsCommand = new DelegateCommand(
+                d =>
+                {
+                    IsPrintingViolators = false;
+                }));
+
+        private DateTime _PrintViolatorsFrom = DateTime.Now.AddDays(-1);
+
+        public DateTime PrintViolatorsFrom
+        {
+            get => _PrintViolatorsFrom;
+            set
+            {
+                if(value == _PrintViolatorsFrom)
+                    return;
+                _PrintViolatorsFrom = value;
+                OnPropertyChanged(nameof(PrintViolatorsFrom));
+            }
+        }
+
+        private DateTime _PrintViolatorsTo = DateTime.Now;
+
+        public DateTime PrintViolatorsTo
+        {
+            get => _PrintViolatorsTo;
+            set
+            {
+                if(value == _PrintViolatorsTo)
+                    return;
+                _PrintViolatorsTo = value;
+                OnPropertyChanged(nameof(PrintViolatorsTo));
+            }
+        }
+
+        public DateTime MinDate => Models.StudentsViolations
+                                       .Cache
+                                       .OrderByDescending(x=>x.DateCommitted).FirstOrDefault()?.DateCommitted
+                                   ?? DateTime.Parse("2/14/2018");
+
+        private ICommand _acceptPrintingViolatorsCommand;
+
+
+        public ICommand AcceptPrintingViolatorsCommand =>
+            _acceptPrintingViolatorsCommand ?? (_acceptPrintingViolatorsCommand = new DelegateCommand(
+                d =>
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+                        IsPrintingViolators = false;
+                        var violations = Models.StudentsViolations.Cache
+                            .Where(x => x.DateCommitted.Date >= PrintViolatorsFrom &&
+                                        x.DateCommitted.Date <= PrintViolatorsTo)
+                            .OrderBy(x => x.Violation.Name);
+
+                        if (!Directory.Exists("Temp"))
+                            Directory.CreateDirectory("Temp");
+                        var groups = violations.Select(x => x.ViolationId).Distinct();
+
+                        foreach (var vid in groups)
+                        {
+                            var ids = new List<long>();
+                            var temp = Path.Combine("Temp",
+                                $"Student Violations By Violation [{DateTime.Now.Ticks}].docx");
+                            using (var doc = DocX.Load(@"Templates\ViolationsByViolation.docx"))
+                            {
+
+                                var date = "";
+                                if (PrintViolatorsFrom.Date == PrintViolatorsTo.Date)
+                                {
+                                    date = PrintViolatorsFrom.Date.ToString("MMMM d, yyyy");
+                                }
+                                else
+                                {
+                                    date = $"{PrintViolatorsFrom:MMM d, yyyy} - {PrintViolatorsTo:MMM d, yyyy}";
+                                }
+                                doc.ReplaceText("[INCLUSIVE_DATE]", date);
+                                doc.ReplaceText("[VIOLATION]",
+                                    Models.Violation.Cache.FirstOrDefault(x => x.Id == vid)?.Name);
+                                var list = doc.AddList();
+                                foreach (var v in violations.Where(x => x.ViolationId == vid))
+                                {
+                                    if (ids.Contains(v.StudentId))
+                                        continue;
+                                    ids.Add(v.StudentId);
+
+                                    var violateCount = violations.Count(x =>
+                                        x.StudentId == v.StudentId &&
+                                        x.ViolationId == v.ViolationId);
+                                    var sCount = violateCount > 1 ? $"({violateCount} times)" : "";
+
+                                    doc.AddListItem(list, $"{v.Student.Fullname} {sCount}");
+
+                                }
+                                doc.InsertList(list);
+
+                                File.Delete(temp);
+                                doc.SaveAs(temp);
+                            }
+                            Extensions.Print(temp);
+                        }
+
+                    });
+
+                }));
+        
+        private ICommand _acceptPrintViolatorsByDepartmentCommand;
+       
+       
+        public ICommand AcceptPrintViolatorsByDepartmentCommand =>
+            _acceptPrintViolatorsByDepartmentCommand ?? (_acceptPrintViolatorsByDepartmentCommand = new DelegateCommand(
+                d =>
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+
+                    
+                    IsPrintingViolators = false;
+                    var violations = Models.StudentsViolations.Cache
+                        .Where(x => x.DateCommitted.Date >= PrintViolatorsFrom &&
+                                    x.DateCommitted.Date <= PrintViolatorsTo)
+                        .OrderBy(x=>x.Violation.Name);
+                    
+                    if (!Directory.Exists("Temp"))
+                        Directory.CreateDirectory("Temp");
+                    var groups = violations.Select(x=>x.Violation.Level).Distinct();
+                    
+                    foreach (var department in groups)
+                    {
+                        var ids = new List<long>();
+                        var temp = Path.Combine("Temp", $"Student Violations By Department [{DateTime.Now.Ticks}].docx");
+                        using (var doc = DocX.Load(@"Templates\ViolationsByDepartment.docx"))
+                        {
+                            
+                            var date = "";
+                            if (PrintViolatorsFrom.Date == PrintViolatorsTo.Date)
+                            {
+                                date = PrintViolatorsFrom.Date.ToString("MMMM d, yyyy");
+                            }
+                            else
+                            {
+                                date = $"{PrintViolatorsFrom:MMM d, yyyy} - {PrintViolatorsTo:MMM d, yyyy}";
+                            }
+                            doc.ReplaceText("[INCLUSIVE_DATE]", date);
+                            doc.ReplaceText("[DEPARTMENT]", department.ToString().ToUpper() + " DEPARTMENT");
+
+                            var tbl = doc.Tables.First();
+                                
+                            foreach (var v in violations.Where(x => x.Student.Level == department))
+                            {
+                                if (ids.Contains(v.StudentId))
+                                    continue;
+                                ids.Add(v.StudentId);
+                                
+                                var r = tbl.InsertRow();
+                                var p = r.Cells[0].Paragraphs.First().Append(v.Student.Fullname);
+                                p.Alignment = Alignment.left;
+
+                                var studentViolations = violations.Where(x => x.StudentId == v.StudentId);
+                                var sV = "";
+                                var violationIds = new List<long>();
+                                foreach (var sv in studentViolations)
+                                {
+                                    if(violationIds.Contains(sv.ViolationId)) continue;
+                                    violationIds.Add(sv.ViolationId);
+                                    
+                                    var violateCount = violations.Count(x =>
+                                        x.StudentId == v.StudentId &&
+                                        x.ViolationId == sv.ViolationId);
+                                    var sCount = violateCount > 1 ? $" ({violateCount})" : "";
+
+                                    sV += sv.Violation.Name + sCount + ", ";
+                                }
+                                
+                                p = r.Cells[1].Paragraphs.First().Append(sV);
+                                p.Alignment = Alignment.left;
+                            }
+                            
+                            var border = new Xceed.Words.NET.Border(BorderStyle.Tcbs_single, BorderSize.one, 0,
+                                System.Drawing.Color.Black);
+                            tbl.SetBorder(TableBorderType.Bottom, border);
+                            tbl.SetBorder(TableBorderType.Left, border);
+                            tbl.SetBorder(TableBorderType.Right, border);
+                            tbl.SetBorder(TableBorderType.Top, border);
+                            tbl.SetBorder(TableBorderType.InsideV, border);
+                            tbl.SetBorder(TableBorderType.InsideH, border);
+
+                            
+                            
+                            File.Delete(temp);
+                            doc.SaveAs(temp);
+                        }
+                        Extensions.Print(temp);
+                    }
+
+
+                    });
+
+                }));
+
     }
 }

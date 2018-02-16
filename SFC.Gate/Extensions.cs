@@ -27,20 +27,28 @@ namespace SFC.Gate
         
         public static string GetPicture()
         {
-            var dialog = new OpenFileDialog
+            try
             {
-                Multiselect = false,
-                Filter = @"All Images|*.BMP;*.JPG;*.JPEG;*.GIF;*.PNG|
+                var dialog = new OpenFileDialog
+                {
+                    Multiselect = false,
+                    Filter = @"All Images|*.BMP;*.JPG;*.JPEG;*.GIF;*.PNG|
                             BMP Files|*.BMP;*.DIB;*.RLE|
                             JPEG Files|*.JPG;*.JPEG;*.JPE;*.JFIF|
                             GIF Files|*.GIF|
                             PNG Files|*.PNG",
-                Title = "Select Picture",
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
-            };
-            if (!(dialog.ShowDialog() ?? false)) return null;
+                    Title = "Select Picture",
+                };
+                if (!(dialog.ShowDialog() ?? false))
+                    return null;
 
-            return dialog.FileName;
+                return dialog.FileName;
+            }
+            catch (Exception e)
+            {
+                //
+            }
+            return null;
         }
 
         private static ICommand _openModemsCommand;

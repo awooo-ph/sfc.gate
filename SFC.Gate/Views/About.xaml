@@ -22,7 +22,7 @@
           <TextBlock Text="Gate Monitoring System Version 0.9" Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
 
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Style="{StaticResource MaterialDesignFlatButton}"
+            <!--<Button Style="{StaticResource MaterialDesignFlatButton}"
                     Height="Auto"
                     Command="{Binding RunExternalCommand}"
                     CommandParameter="https://github.com/awooo-ph/sfc.gate">
@@ -31,8 +31,8 @@
                 <TextBlock Text=" Check for Update"
                            VerticalAlignment="Center" />
               </StackPanel>
-            </Button>
-            <Button Style="{StaticResource MaterialDesignFlatButton}"
+            </Button>-->
+            <!--<Button Style="{StaticResource MaterialDesignFlatButton}"
                     Height="Auto"
                     Command="{Binding RunExternalCommand}"
                     CommandParameter="https://github.com/awooo-ph/sfc.gate">
@@ -41,7 +41,7 @@
                 <TextBlock Text=" View Source" 
                            VerticalAlignment="Center"/>
               </StackPanel>
-            </Button>
+            </Button>-->
            
           </StackPanel>
         </StackPanel>
@@ -63,11 +63,11 @@
         
           <Image Source="/Dev/chan.jpg" Grid.ColumnSpan="2"/>
 
-        <Image Source="/Dev/tan.jpg" Grid.ColumnSpan="2" Grid.Column="2"/>
+        <Image Source="/Dev/tan.jpg" Grid.ColumnSpan="2" Grid.Column="2" Grid.Row="1"/>
 
         <Image Source="/Dev/ellah.jpg" Grid.ColumnSpan="2" Grid.Row="1"/>
 
-        <Image Source="/Dev/bohol.jpg" Grid.ColumnSpan="2" Grid.Column="2" Grid.Row="1"/>
+        <Image Source="/Dev/bohol.jpg" Grid.ColumnSpan="2" Grid.Column="2" Grid.Row="0"/>
 
         <Grid Grid.Column="0" Grid.Row="0" Margin="10">
           <StackPanel Orientation="Horizontal" VerticalAlignment="Top"
@@ -76,29 +76,25 @@
                     Command="{Binding RunExternalCommand}" Foreground="White"
                     CommandParameter="https://www.facebook.com/jessa.chan.104"
                     Content="{md:PackIcon Facebook}"/>
-            <Button Style="{StaticResource MaterialDesignToolButton}"
-                    Command="{Binding RunExternalCommand}" Foreground="White"
-                    CommandParameter=""
-                    Content="{md:PackIcon Twitter}" />
-            <Button Style="{StaticResource MaterialDesignToolButton}"
-                    Command="{Binding RunExternalCommand}" Foreground="White"
-                    CommandParameter=""
-                    Content="{md:PackIcon Instagram}" />
-            <Button Style="{StaticResource MaterialDesignToolButton}"
-                    Command="{Binding RunExternalCommand}" Foreground="White"
-                    CommandParameter=""
-                    Content="{md:PackIcon Gmail}" />
           </StackPanel>
           <StackPanel HorizontalAlignment="Right"
                       VerticalAlignment="Bottom">
             <TextBlock Text="Jessa Chan" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
                        TextAlignment="Right"/>
-            <TextBlock Text="Project Manager" Foreground="White" Style="{StaticResource MaterialDesignSubheadingTextBlock}"
-                       TextAlignment="Right" />
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    FontWeight="Normal"
+                    FontStyle="Italic"
+                    Command="{Binding RunExternalCommand}" Foreground="White"
+                    CommandParameter="https://www.facebook.com/jessa.chan.104">
+              <StackPanel Orientation="Horizontal">
+                <md:PackIcon Kind="Facebook" VerticalAlignment="Center"/>
+                <TextBlock Text=" jessa.chan.104" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
           </StackPanel>
         </Grid>
 
-        <Grid Grid.Column="2" Grid.Row="0" Margin="10">
+        <Grid Grid.Column="3" Grid.Row="1" Margin="10">
           <StackPanel Orientation="Horizontal" VerticalAlignment="Top"
                       HorizontalAlignment="Left">
             <Button Style="{StaticResource MaterialDesignToolButton}"
@@ -120,14 +116,14 @@
           </StackPanel>
           <StackPanel HorizontalAlignment="Right"
                       VerticalAlignment="Bottom">
-            <TextBlock Text="Tan Nea" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+            <TextBlock Text="Niña Mae P. Tan" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
                        TextAlignment="Right" />
             <TextBlock Text="Programmer" Foreground="White" TextAlignment="Right" 
                        Style="{StaticResource MaterialDesignSubheadingTextBlock}" />
           </StackPanel>
         </Grid>
 
-        <Grid Grid.Column="3" Grid.Row="1" Margin="10">
+        <Grid Grid.Column="2" Grid.Row="0" Margin="10">
           <StackPanel Orientation="Horizontal" VerticalAlignment="Top"
                       HorizontalAlignment="Left">
             <Button Style="{StaticResource MaterialDesignToolButton}"
@@ -149,7 +145,7 @@
           </StackPanel>
           <StackPanel HorizontalAlignment="Right"
                       VerticalAlignment="Bottom">
-            <TextBlock Text="Jhonnah Bohol" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+            <TextBlock Text="Jonah B. Gimena" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
                        TextAlignment="Right" />
             <TextBlock Text="Graphic Designer" Foreground="White" TextAlignment="Right" 
                        Style="{StaticResource MaterialDesignSubheadingTextBlock}" />
@@ -179,7 +175,7 @@
           </StackPanel>
           <StackPanel HorizontalAlignment="Right"
                       VerticalAlignment="Bottom">
-            <TextBlock Text="Ëllãh Dênch" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+            <TextBlock Text="Chattylyn M. Malayo" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
                        TextAlignment="Right" />
             <TextBlock Text="Programmer" Foreground="White"
                        TextAlignment="Right" 

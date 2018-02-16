@@ -74,6 +74,7 @@ namespace SFC.Gate
                 }
                 else
                 {
+                    if (_input.Length == 0) return;
                     e.Handled = true;
                     
                     if (ExclusiveCallback != null)

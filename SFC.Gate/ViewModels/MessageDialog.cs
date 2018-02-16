@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using MaterialDesignThemes.Wpf;
@@ -15,13 +16,17 @@ namespace SFC.Gate.Material.ViewModels
         {}
 
         private static bool _shown;
-        public async void Show()
+        public async void Show(Action close)
         {
            // if (_shown) return;
             //_shown = true;
             try
             {
-                await Application.Current.MainWindow.ShowDialog(this);
+                await Application.Current.MainWindow.ShowDialog(this, (sender, args) => {}, async (sender, args) =>
+                {
+                    await TaskEx.Delay(1111);
+                    close?.Invoke();
+                });
             }
             catch (Exception e)
             {
@@ -39,7 +44,7 @@ namespace SFC.Gate.Material.ViewModels
         public static void Show(string title, string message, PackIconKind icon, string acceptText, bool isCancellable,
             string cancelText)
         {
-            new MessageDialog(title,message,icon,acceptText,isCancellable,cancelText).Show();
+            new MessageDialog(title,message,icon,acceptText,isCancellable,cancelText).Show(null);
         }
 
         public MessageDialog(string title, string message, PackIconKind icon, string acceptText, bool isCancellable, string cancelText)

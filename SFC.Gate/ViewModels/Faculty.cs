@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using System.Windows.Input;
 using MaterialDesignThemes.Wpf;
 using SFC.Gate.Material.Views;
 using SFC.Gate.Models;
+using Xceed.Words.NET;
 
 namespace SFC.Gate.Material.ViewModels
 {
@@ -378,7 +380,58 @@ namespace SFC.Gate.Material.ViewModels
                 });
             }
         }
-        
+
+        private ICommand _printLogCOmmand;
+
+        public ICommand PrintLogCommand => _printLogCOmmand ?? (_printLogCOmmand = new DelegateCommand(d =>
+        {
+            PrintLog((Student) Items.CurrentItem);
+        }));
+
+        private void PrintLog(Student stud)
+        {
+            if (!Directory.Exists("Temp"))
+                Directory.CreateDirectory("Temp");
+            var temp = Path.Combine("Temp", $"{stud.Fullname}'s DTR [{DateTime.Now:d-MMM-yyyy}].docx");
+            using (var doc = DocX.Load(@"Templates\DTR.docx"))
+            {
+                var tbl = doc.Tables.First(); // doc.InsertTable(1, 6);
+
+                doc.ReplaceText("{NAME}", stud.Fullname);
+                var items = TimeRecord.Cast<DailyTimeRecord>().ToList();
+                var total = TimeSpan.FromMilliseconds(items.Sum(x => x.TimeSpan.TotalMilliseconds));
+                
+                doc.ReplaceText("{TOTAL_HOURS}",$"{total.Hours}:{total.Minutes:00}");
+                
+                foreach (var item in items)
+                {
+                    var r = tbl.InsertRow();
+                    var p = r.Cells[0].Paragraphs.First().Append(item.TimeIn.ToString("g"));
+                    p.LineSpacingAfter = 0;
+                    p.Alignment = Alignment.center;
+
+                    p = r.Cells[1].Paragraphs.First().Append(item.TimeOut?.ToString("g")??"");
+                    p.LineSpacingAfter = 0;
+                    p.Alignment = Alignment.center;
+
+                    if(item.HasLeft)
+                    r.Cells[2].Paragraphs.First().Append($"{item.TimeSpan.Hours}:{item.TimeSpan.Minutes:00}").Alignment=Alignment.center;
+
+                }
+                var border = new Xceed.Words.NET.Border(BorderStyle.Tcbs_single, BorderSize.one, 0,
+                    System.Drawing.Color.Black);
+                tbl.SetBorder(TableBorderType.Bottom, border);
+                tbl.SetBorder(TableBorderType.Left, border);
+                tbl.SetBorder(TableBorderType.Right, border);
+                tbl.SetBorder(TableBorderType.Top, border);
+                tbl.SetBorder(TableBorderType.InsideV, border);
+                tbl.SetBorder(TableBorderType.InsideH, border);
+                File.Delete(temp);
+                doc.SaveAs(temp);
+            }
+            Extensions.Print(temp);
+        }
+
         private bool Filter(object o)
         {
             if (!(o is Student s)) return false;
