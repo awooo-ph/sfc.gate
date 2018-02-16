@@ -16,6 +16,7 @@ using Microsoft.Win32;
 using SFC.Gate.Configurations;
 using SFC.Gate.Material.Views;
 using SFC.Gate.Models;
+using SFC.Gate.ViewModels;
 
 namespace SFC.Gate.Material.ViewModels
 {
@@ -39,9 +40,22 @@ namespace SFC.Gate.Material.ViewModels
             
             Messenger.Default.AddListener<Gate.ViewModels.Sms>(Messages.SmsReceived, sms =>
             {
-                lock(_smsLock)
-                    _smsQueue.Enqueue(sms);
-                ShowMessages();
+                if (Config.Sms.ShowReceivedSms)
+                {
+                    lock (_smsLock)
+                        _smsQueue.Enqueue(sms);
+                    ShowMessages();
+                }
+                if (Config.Sms.ForwardReceivedSms && Config.Sms.ForwardSmsTo.IsCellNumber())
+                {
+                    var stud = Student.GetByNumber(sms.Sender);
+                    var sender = stud != null ? $"{stud.Fullname}'s Parent" : $"UNKNOWN [{sms.Sender}]";
+                    SMS.Send($"Message from: {sender}\n{sms.Message}",Config.Sms.ForwardSmsTo);
+                }
+                if (Config.Sms.EnableAutoReply && !string.IsNullOrEmpty(Config.Sms.AutoReply))
+                {
+                    SMS.Send(Config.Sms.AutoReply,sms.Sender);
+                }
             });
         }
 
