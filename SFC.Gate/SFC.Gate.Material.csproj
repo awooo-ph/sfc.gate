@@ -38,8 +38,7 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FastMember, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="FastMember, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\FastMember.1.2.0\lib\net40\FastMember.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -55,11 +54,10 @@
       <HintPath>..\packages\NIdenticon.1.2.1.0\lib\net35-client\NIdenticon.dll</HintPath>
     </Reference>
     <Reference Include="RawInputProcessor, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>RawInputProcessor.1.0.0\lib\net40\RawInputProcessor.1.0.0\lib\net40\RawInputProcessor.dll</HintPath>
+      <HintPath>..\packages\RawInputProcessor.1.0.0\lib\net40\RawInputProcessor.dll</HintPath>
     </Reference>
-    <Reference Include="SFC.Gate.Core, Version=1.0.225.33, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>...\packages\SFC.Gate.Core.1.0.225.33\lib\net40\SFC.Gate.Core.dll</HintPath>
+    <Reference Include="SFC.Gate.Core, Version=1.0.500.125, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SFC.Gate.Core.1.0.500.125\lib\net40\SFC.Gate.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -200,6 +198,9 @@
     <Compile Include="Views\ViolationSelector.xaml.cs">
       <DependentUpon>ViolationSelector.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ViolatorsPrinter.xaml.cs">
+      <DependentUpon>ViolatorsPrinter.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Visitors.xaml.cs">
       <DependentUpon>Visitors.xaml</DependentUpon>
     </Compile>
@@ -307,6 +308,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ViolatorsPrinter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Visitors.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -336,6 +341,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Templates\DTR.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Templates\Log.docx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -349,6 +357,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Templates\Violations.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\ViolationsByDepartment.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\ViolationsByViolation.docx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
