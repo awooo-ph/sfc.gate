@@ -70,27 +70,33 @@
         <Image Source="/Dev/bohol.jpg" Grid.ColumnSpan="2" Grid.Column="2" Grid.Row="0"/>
 
         <Grid Grid.Column="0" Grid.Row="0" Margin="10">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
           <StackPanel Orientation="Horizontal" VerticalAlignment="Top"
                       HorizontalAlignment="Left">
             <Button Style="{StaticResource MaterialDesignToolButton}"
+                    ToolTip="Jessa's Facebook Profile"
                     Command="{Binding RunExternalCommand}" Foreground="White"
                     CommandParameter="https://www.facebook.com/jessa.chan.104"
                     Content="{md:PackIcon Facebook}"/>
+            <Button Style="{StaticResource MaterialDesignToolButton}"
+                    ToolTip="Jessa's Instagram"
+                    Command="{Binding RunExternalCommand}" Foreground="White"
+                    CommandParameter="https://www.instagram.com/itsmejessachan/"
+                    Content="{md:PackIcon Instagram}" />
           </StackPanel>
+         
+      
           <StackPanel HorizontalAlignment="Right"
+                      Grid.Row="2"
                       VerticalAlignment="Bottom">
             <TextBlock Text="Jessa Chan" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
                        TextAlignment="Right"/>
-            <Button Style="{StaticResource MaterialDesignToolButton}"
-                    FontWeight="Normal"
-                    FontStyle="Italic"
-                    Command="{Binding RunExternalCommand}" Foreground="White"
-                    CommandParameter="https://www.facebook.com/jessa.chan.104">
-              <StackPanel Orientation="Horizontal">
-                <md:PackIcon Kind="Facebook" VerticalAlignment="Center"/>
-                <TextBlock Text=" jessa.chan.104" VerticalAlignment="Center"/>
-              </StackPanel>
-            </Button>
+            <TextBlock Text="Project Manager" Foreground="White" TextAlignment="Right"
+                       Style="{StaticResource MaterialDesignSubheadingTextBlock}" />
           </StackPanel>
         </Grid>
 
@@ -98,21 +104,11 @@
           <StackPanel Orientation="Horizontal" VerticalAlignment="Top"
                       HorizontalAlignment="Left">
             <Button Style="{StaticResource MaterialDesignToolButton}"
+                    ToolTip="Niña's Facebook Profile"
                     Command="{Binding RunExternalCommand}" Foreground="White"
                     CommandParameter="https://www.facebook.com/tan.nenmia"
                     Content="{md:PackIcon Facebook}" />
-            <Button Style="{StaticResource MaterialDesignToolButton}"
-                    Command="{Binding RunExternalCommand}" Foreground="White"
-                    CommandParameter=""
-                    Content="{md:PackIcon Twitter}" />
-            <Button Style="{StaticResource MaterialDesignToolButton}"
-                    Command="{Binding RunExternalCommand}" Foreground="White"
-                    CommandParameter=""
-                    Content="{md:PackIcon Instagram}" />
-            <Button Style="{StaticResource MaterialDesignToolButton}"
-                    Command="{Binding RunExternalCommand}" Foreground="White"
-                    CommandParameter=""
-                    Content="{md:PackIcon Gmail}" />
+           
           </StackPanel>
           <StackPanel HorizontalAlignment="Right"
                       VerticalAlignment="Bottom">
@@ -127,21 +123,11 @@
           <StackPanel Orientation="Horizontal" VerticalAlignment="Top"
                       HorizontalAlignment="Left">
             <Button Style="{StaticResource MaterialDesignToolButton}"
+                    ToolTip="Jonah's Facebook Profile"
                     Command="{Binding RunExternalCommand}" Foreground="White"
                     CommandParameter="https://www.facebook.com/jonah.joycelle"
                     Content="{md:PackIcon Facebook}" />
-            <Button Style="{StaticResource MaterialDesignToolButton}"
-                    Command="{Binding RunExternalCommand}" Foreground="White"
-                    CommandParameter=""
-                    Content="{md:PackIcon Twitter}" />
-            <Button Style="{StaticResource MaterialDesignToolButton}"
-                    Command="{Binding RunExternalCommand}" Foreground="White"
-                    CommandParameter=""
-                    Content="{md:PackIcon Instagram}" />
-            <Button Style="{StaticResource MaterialDesignToolButton}"
-                    Command="{Binding RunExternalCommand}" Foreground="White"
-                    CommandParameter=""
-                    Content="{md:PackIcon Gmail}" />
+           
           </StackPanel>
           <StackPanel HorizontalAlignment="Right"
                       VerticalAlignment="Bottom">
@@ -156,22 +142,11 @@
           <StackPanel Orientation="Horizontal" VerticalAlignment="Top"
                       HorizontalAlignment="Left">
             <Button Style="{StaticResource MaterialDesignToolButton}"
+                    ToolTip="Chatty's Facebook Profile"
                     Command="{Binding RunExternalCommand}" Foreground="White"
-                    CommandParameter="https://www.facebook.com/rhouelladenchmari.roble"
+                    CommandParameter="https://www.facebook.com/chattee.leen"
                     Content="{md:PackIcon Facebook}" />
-            <Button Style="{StaticResource MaterialDesignToolButton}"
-                    Command="{Binding RunExternalCommand}" Foreground="White"
-                    CommandParameter=""
-                    Content="{md:PackIcon Twitter}" />
-            <Button Style="{StaticResource MaterialDesignToolButton}"
-                    Command="{Binding RunExternalCommand}" Foreground="White"
-                    CommandParameter=""
-                    Content="{md:PackIcon Instagram}" />
-            <Button Style="{StaticResource MaterialDesignToolButton}"
-                    Foreground="White"
-                    Command="{Binding RunExternalCommand}"
-                    CommandParameter=""
-                    Content="{md:PackIcon Gmail}" />
+           
           </StackPanel>
           <StackPanel HorizontalAlignment="Right"
                       VerticalAlignment="Bottom">
