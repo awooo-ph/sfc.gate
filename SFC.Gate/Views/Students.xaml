@@ -355,6 +355,7 @@
               
               <DataGridCheckBoxColumn EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"
                                       Binding="{Binding IsSelected,UpdateSourceTrigger=PropertyChanged}"
+                                      CanUserResize="False"
                                       ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}">
                 <DataGridCheckBoxColumn.Header>
                   

@@ -95,8 +95,8 @@
                       VerticalAlignment="Bottom">
             <TextBlock Text="Jessa Chan" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
                        TextAlignment="Right"/>
-            <TextBlock Text="Project Manager" Foreground="White" TextAlignment="Right"
-                       Style="{StaticResource MaterialDesignSubheadingTextBlock}" />
+            <!--<TextBlock Text="Project Manager" Foreground="White" TextAlignment="Right"
+                       Style="{StaticResource MaterialDesignSubheadingTextBlock}" />-->
           </StackPanel>
         </Grid>
 
@@ -114,8 +114,8 @@
                       VerticalAlignment="Bottom">
             <TextBlock Text="Niña Mae P. Tan" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
                        TextAlignment="Right" />
-            <TextBlock Text="Programmer" Foreground="White" TextAlignment="Right" 
-                       Style="{StaticResource MaterialDesignSubheadingTextBlock}" />
+            <!--<TextBlock Text="Programmer" Foreground="White" TextAlignment="Right" 
+                       Style="{StaticResource MaterialDesignSubheadingTextBlock}" />-->
           </StackPanel>
         </Grid>
 
@@ -133,8 +133,8 @@
                       VerticalAlignment="Bottom">
             <TextBlock Text="Jonah B. Gimena" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
                        TextAlignment="Right" />
-            <TextBlock Text="Graphic Designer" Foreground="White" TextAlignment="Right" 
-                       Style="{StaticResource MaterialDesignSubheadingTextBlock}" />
+            <!--<TextBlock Text="Graphic Designer" Foreground="White" TextAlignment="Right" 
+                       Style="{StaticResource MaterialDesignSubheadingTextBlock}" />-->
           </StackPanel>
         </Grid>
 
@@ -152,9 +152,9 @@
                       VerticalAlignment="Bottom">
             <TextBlock Text="Chattylyn M. Malayo" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
                        TextAlignment="Right" />
-            <TextBlock Text="Programmer" Foreground="White"
+            <!--<TextBlock Text="Programmer" Foreground="White"
                        TextAlignment="Right" 
-                       Style="{StaticResource MaterialDesignSubheadingTextBlock}" />
+                       Style="{StaticResource MaterialDesignSubheadingTextBlock}" />-->
           </StackPanel>
         </Grid>
       </Grid>

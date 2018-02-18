@@ -172,6 +172,7 @@
             <DataGrid.Columns>
               
               <DataGridTemplateColumn Header="RFID" SortMemberPath="Rfid" IsReadOnly="True"
+                                      MaxWidth="222"
                                       Visibility="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}">
                 <DataGridTemplateColumn.CellTemplate>
                   <DataTemplate>
