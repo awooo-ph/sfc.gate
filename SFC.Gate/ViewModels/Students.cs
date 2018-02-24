@@ -28,13 +28,25 @@ namespace SFC.Gate.Material.ViewModels
             awooo.Context.Post(d =>
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            },null);   
+            }, null);
         }
 
         private StudentsViewModel()
         {
-            Messenger.Default.AddListener<Student>(Messages.ModelSelected, s =>
+            Messenger.Default.AddListener<Student>(Messages.ModelDeleted, student =>
+                {
+                    MainViewModel.ShowMessage($"A student was deleted.", "UNDO", () =>
+                    {
+                        
+                            Log.Add("REVERT", $"{student.Fullname} is undeleted.", "Students", student.Id);
+                            student.Undelete();
+                        
+                    });
+                });
+
+    Messenger.Default.AddListener<Student>(Messages.ModelSelected, s =>
             {
+                if (s.Level > Departments.College) return;
                 var students = Student.Cache.Where(FilterStudents).ToList();
                 bool? sel = null;
                 foreach (var student in students)
@@ -224,24 +236,6 @@ namespace SFC.Gate.Material.ViewModels
                
                 Models.Student.Cache.CollectionChanged += (sender, args) =>
                 {
-                    if (args.Action == NotifyCollectionChangedAction.Remove)
-                    {
-                        var items = args.OldItems.Cast<Student>().ToList();
-                        if (items.First().Id == 0) return;
-                        foreach (var item in items)
-                        {
-                            Log.Add("REVERT", $"{item.Fullname} is deleted.", "Students", item.Id);
-                            item.Delete();
-                        }
-                        MainViewModel.ShowMessage($"{args.OldItems.Count} items were deleted.", "UNDO", () =>
-                        {
-                            foreach (var student in items)
-                            {
-                                Log.Add("REVERT", $"{student.Fullname} is undeleted.", "Students", student.Id);
-                                student.Undelete();
-                            }
-                        });
-                    }
                     if(!_students.IsAddingNew)
                         _students.Filter = FilterStudents;
                 };
@@ -572,7 +566,7 @@ namespace SFC.Gate.Material.ViewModels
 
         public ICommand PrintCommand => _printCommand ?? (_printCommand = new DelegateCommand(d =>
         {
-            PrintList(Student.Cache);
+            PrintList(Student.Cache.Where(x=>x.Level<Departments.Faculty));
         }, d => Student.Cache.Count > 0));
 
         private ICommand _printSelectedCommand;
@@ -580,7 +574,7 @@ namespace SFC.Gate.Material.ViewModels
         public ICommand PrintSelectedCommand => _printSelectedCommand ?? (_printSelectedCommand = new DelegateCommand(
                                                     d =>
                                                     {
-                                                        PrintList(Student.Cache.Where(x => x.IsSelected));
+                                                        PrintList(Student.Cache.Where(x => x.IsSelected && x.Level<Departments.Faculty));
                                                     }, d => Student.Cache.Any(x => x.IsSelected)));
 
         private static void PrintList(IEnumerable<Student> students)
@@ -1396,5 +1390,22 @@ namespace SFC.Gate.Material.ViewModels
 
                 }));
 
+        private ICommand _deleteSelectedCommand;
+
+        public ICommand DeleteSelectedCommand =>
+            _deleteSelectedCommand ?? (_deleteSelectedCommand = new DelegateCommand(
+                d =>
+                {
+                    var list = Student.Cache.Where(x=>x.IsSelected && x.Level < Departments.Faculty).ToList();
+                    foreach (var student in list)
+                    {
+                        student.Delete(false);
+                    }
+                    var s = list.Count>1 ? "students were":"student was";
+                    MainViewModel.ShowMessage($"{list.Count} {s} deleted","UNDO", () =>
+                    {
+                        list.ForEach(x=>x.Undelete());
+                    });
+                },d=>HasSelected));
     }
 }

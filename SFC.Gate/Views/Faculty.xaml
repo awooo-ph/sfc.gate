@@ -101,7 +101,7 @@
           </Grid.RowDefinitions>
 
           <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Items}"
-                    CanUserDeleteRows="True"
+                    CanUserDeleteRows="False"
                     CanUserAddRows="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin}"
                     FrozenColumnCount="1"
                     IsReadOnly="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:Inverter},FallbackValue=True}"
@@ -170,7 +170,21 @@
               
             </DataGrid.Resources>
             <DataGrid.Columns>
-              
+              <DataGridCheckBoxColumn
+                EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}"
+                Binding="{Binding IsSelected,UpdateSourceTrigger=PropertyChanged}"
+                CanUserResize="False"
+                ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}">
+                <DataGridCheckBoxColumn.Header>
+
+                  <CheckBox VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Focusable="False"
+                            Margin="2 0 0 0"
+                            IsChecked="{Binding Source={x:Static viewModels:Faculty.Instance},Path=SelectionState}"
+                            Padding="0" />
+                </DataGridCheckBoxColumn.Header>
+              </DataGridCheckBoxColumn>
               <DataGridTemplateColumn Header="RFID" SortMemberPath="Rfid" IsReadOnly="True"
                                       MaxWidth="222"
                                       Visibility="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:BooleanToVisibility},FallbackValue=Collapsed}">
@@ -340,6 +354,21 @@
         </DataGrid>
       </Grid>
 
+      <Button Style="{StaticResource MaterialDesignFlatButton}"
+              Grid.Column="0"
+              Grid.ColumnSpan="2"
+              HorizontalAlignment="Left"
+              VerticalAlignment="Bottom"
+              Margin="10"
+              Visibility="{Binding Source={x:Static viewModels:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:BooleanToVisibility}}"
+              Command="{Binding DeleteSelectedCommand}">
+        
+        <StackPanel Orientation="Horizontal">
+          <md:PackIcon Kind="CheckboxMarked" />
+          <TextBlock Text=" DELETE SELECTED" />
+        </StackPanel>
+      </Button>
+      
       <StackPanel Orientation="Horizontal"
                   Grid.Column="0"
                   Grid.ColumnSpan="2"

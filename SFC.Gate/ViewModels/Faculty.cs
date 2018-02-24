@@ -20,6 +20,31 @@ namespace SFC.Gate.Material.ViewModels
     {
         private Faculty()
         {
+            Messenger.Default.AddListener<Student>(Messages.ModelSelected, s =>
+            {
+                if (s.Level != Departments.Faculty) return;
+                var students = Student.Cache.Where(Filter).ToList();
+                bool? sel = null;
+                foreach (var student in students)
+                {
+                    if (sel == null)
+                    {
+                        sel = student.IsSelected;
+                    }
+                    else
+                    {
+                        if (sel != student.IsSelected)
+                        {
+                            sel = null;
+                            break;
+                        }
+                    }
+                }
+                _SelectionState = sel;
+                OnPropertyChanged(nameof(SelectionState));
+                OnPropertyChanged(nameof(HasSelected));
+            });
+            
             Messenger.Default.AddListener<int>(Messages.ScreenChanged, screen =>
             {
                 if (screen == MainViewModel.FACULTY)
@@ -95,7 +120,26 @@ namespace SFC.Gate.Material.ViewModels
             }
         }
 
-        
+        private ICommand _deleteSelectedCommand;
+
+        public ICommand DeleteSelectedCommand =>
+            _deleteSelectedCommand ?? (_deleteSelectedCommand = new DelegateCommand(
+                d =>
+                {
+                    var list = Student.Cache.Where(x=>x.IsSelected && x.Level == Departments.Faculty).ToList();
+                    
+                    var s = list.Count > 1 ? "items were" : "item was";
+                    
+                    foreach (var student in list)
+                    {
+                        student.Delete(false);
+                    }
+                    
+                    MainViewModel.ShowMessage($"{list.Count} {s} deleted", "UNDO", () =>
+                    {
+                        list.ForEach(x => x.Undelete());
+                    });
+                }, d => HasSelected));
 
         private ICommand _cancelRfidCommand;
 
@@ -260,6 +304,43 @@ namespace SFC.Gate.Material.ViewModels
                     OnPropertyChanged(nameof(TotalHours));
                 };
                 return _timeRecord;
+            }
+        }
+
+        private bool? _SelectionState = false;
+
+        public bool? SelectionState
+        {
+            get => _SelectionState;
+            set
+            {
+                if (value == _SelectionState)
+                    return;
+                _SelectionState = value;
+                OnPropertyChanged(nameof(SelectionState));
+
+                var students = Student.Cache.Where(Filter);
+                foreach (var student in students)
+                {
+                    student.Select(_SelectionState ?? false);
+                }
+                OnPropertyChanged(nameof(HasSelected));
+            }
+        }
+
+        private bool _HasSelected;
+
+        public bool HasSelected
+        {
+            get
+            {
+                var students = Student.Cache.Where(Filter);
+                return students.Any(x => x.IsSelected);
+            }
+            set
+            {
+                _HasSelected = value;
+                OnPropertyChanged(nameof(HasSelected));
             }
         }
 

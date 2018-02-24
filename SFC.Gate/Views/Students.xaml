@@ -334,6 +334,7 @@
                   x:Name="DataGrid"
                   AllowDrop="True"
                     SelectionMode="Single"
+                  CanUserDeleteRows="False"
                   PreviewDrop="StudentsDrop"
                   PreviewDragOver="StudentsDragEnter"
                     FrozenColumnCount="1"
@@ -489,8 +490,18 @@
       <UniformGrid Rows="1">
         
         
-        <Grid Visibility="{Binding IsBulkSending,Converter={converters:BooleanToVisibility Collapsed,Visible}}">
+        <UniformGrid Rows="1" Visibility="{Binding IsBulkSending,Converter={converters:BooleanToVisibility Collapsed,Visible}}">
           <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  Margin="0 0 4 0"
+                  Visibility="{Binding Source={x:Static vm:MainViewModel.Instance},Path=CurrentUser.IsAdmin,Converter={converters:BooleanToVisibility}}"
+                  Command="{Binding DeleteSelectedCommand}">
+            <StackPanel Orientation="Horizontal">
+              <md:PackIcon Kind="CheckboxMarked" />
+              <TextBlock Text=" DELETE SELECTED" />
+            </StackPanel>
+          </Button>
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  Margin="4 0 0 0"
                   Visibility="{Binding Source={x:Static configurations:Config.Sms},Path=Enabled,Converter={converters:BooleanToVisibility}}"
                   Command="{Binding SendBulkCommand}">
             <StackPanel Orientation="Horizontal">
@@ -498,7 +509,7 @@
               <TextBlock Text=" SEND MESSAGE" />
             </StackPanel>
           </Button>
-        </Grid>
+        </UniformGrid>
 
       </UniformGrid>
       <md:ColorZone BorderBrush="{StaticResource MaterialDesignDivider}" BorderThickness="1"
