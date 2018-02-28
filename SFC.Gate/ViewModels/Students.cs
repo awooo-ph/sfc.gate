@@ -374,19 +374,19 @@ namespace SFC.Gate.Material.ViewModels
 
             if(string.IsNullOrEmpty(StudentsKeyword))
                 return true;
-            if (s.Firstname.ToLower().Contains(StudentsKeyword.ToLower()))
+            if (s.Firstname?.ToLower().Contains(StudentsKeyword.ToLower())??false)
                 return true;
-            if (s.Lastname.ToLower().Contains(StudentsKeyword.ToLower()))
+            if (s.Lastname?.ToLower().Contains(StudentsKeyword.ToLower())??false)
                 return true;
-            if (s.YearLevel.ToLower().Contains(StudentsKeyword.ToLower()))
+            if (s.YearLevel?.ToLower().Contains(StudentsKeyword.ToLower())??false)
                 return true;
-            if (s.Department.ToLower().Contains(StudentsKeyword.ToLower()))
+           // if (s.Department?.ToLower().Contains(StudentsKeyword.ToLower()))
+                //return true;
+            if (s.Rfid?.ToLower().Contains(StudentsKeyword.ToLower())??false)
                 return true;
-            if (s.Rfid.ToLower().Contains(StudentsKeyword.ToLower()))
+            if (s.StudentId?.ToLower().Contains(StudentsKeyword.ToLower())??false)
                 return true;
-            if (s.StudentId.ToLower().Contains(StudentsKeyword.ToLower()))
-                return true;
-            if (s.ContactNumber.ToLower().Contains(StudentsKeyword.ToLower()))
+            if (s.ContactNumber?.ToLower().Contains(StudentsKeyword.ToLower())??false)
                 return true;
             
             s.Select(false);
