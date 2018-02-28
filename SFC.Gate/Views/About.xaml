@@ -19,7 +19,8 @@
         <StackPanel Orientation="Vertical"
                     VerticalAlignment="Center">
           <TextBlock Text="Saint Francis College Guihulngan"  Style="{StaticResource MaterialDesignTitleTextBlock}"/>
-          <TextBlock Text="Gate Monitoring System Version 0.9" Style="{StaticResource MaterialDesignHeadlineTextBlock}"/>
+          <TextBlock Text="ELECTRONIC IDENTIFICATION MANAGEMENT SYSTEM USING RFID TECHNOLOGY" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                     TextWrapping="Wrap"/>
 
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <!--<Button Style="{StaticResource MaterialDesignFlatButton}"
