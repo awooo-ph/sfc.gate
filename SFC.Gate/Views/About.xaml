@@ -17,9 +17,14 @@
                Margin="20"
                VerticalAlignment="Center"/>
         <StackPanel Orientation="Vertical"
+                    MaxWidth="555"
+                    HorizontalAlignment="Center"
                     VerticalAlignment="Center">
-          <TextBlock Text="Saint Francis College Guihulngan"  Style="{StaticResource MaterialDesignTitleTextBlock}"/>
-          <TextBlock Text="ELECTRONIC IDENTIFICATION MANAGEMENT SYSTEM USING RFID TECHNOLOGY" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+          <TextBlock Text="SAINT FRANCIS COLLEGE GUIHULNGAN"  Style="{StaticResource MaterialDesignTitleTextBlock}"
+                     TextAlignment="Center"/>
+          <TextBlock Text="Electronic Identification Management System Using RFID Technology" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                     FontWeight="Bold"
+                     TextAlignment="Center"
                      TextWrapping="Wrap"/>
 
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -95,6 +100,7 @@
                       Grid.Row="2"
                       VerticalAlignment="Bottom">
             <TextBlock Text="Jessa Chan" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                       FontSize="14pt"
                        TextAlignment="Right"/>
             <!--<TextBlock Text="Project Manager" Foreground="White" TextAlignment="Right"
                        Style="{StaticResource MaterialDesignSubheadingTextBlock}" />-->
@@ -114,6 +120,7 @@
           <StackPanel HorizontalAlignment="Right"
                       VerticalAlignment="Bottom">
             <TextBlock Text="Niña Mae P. Tan" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                       FontSize="14pt"
                        TextAlignment="Right" />
             <!--<TextBlock Text="Programmer" Foreground="White" TextAlignment="Right" 
                        Style="{StaticResource MaterialDesignSubheadingTextBlock}" />-->
@@ -133,6 +140,8 @@
           <StackPanel HorizontalAlignment="Right"
                       VerticalAlignment="Bottom">
             <TextBlock Text="Jonah B. Gimena" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                       
+                       FontSize="14pt"
                        TextAlignment="Right" />
             <!--<TextBlock Text="Graphic Designer" Foreground="White" TextAlignment="Right" 
                        Style="{StaticResource MaterialDesignSubheadingTextBlock}" />-->
@@ -152,6 +161,7 @@
           <StackPanel HorizontalAlignment="Right"
                       VerticalAlignment="Bottom">
             <TextBlock Text="Chattylyn M. Malayo" Foreground="White" Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                       FontSize="14pt"
                        TextAlignment="Right" />
             <!--<TextBlock Text="Programmer" Foreground="White"
                        TextAlignment="Right" 
