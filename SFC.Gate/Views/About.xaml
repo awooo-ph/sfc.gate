@@ -95,7 +95,6 @@
                     Content="{md:PackIcon Instagram}" />
           </StackPanel>
          
-      
           <StackPanel HorizontalAlignment="Right"
                       Grid.Row="2"
                       VerticalAlignment="Bottom">

@@ -40,26 +40,58 @@
                 Margin="0 0 0 40"
                 BorderThickness="1"
                 CornerRadius="7">
-          <StackPanel Margin="20">
-            <TextBlock Text="MODEM COM PORT" Margin="4" FontWeight="Bold" />
-            <Grid>
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-              </Grid.ColumnDefinitions>
-            <ComboBox Margin="4" SelectedItem="{Binding Source={x:Static cnf:Config.Sms},Path=Port}" 
+          <TabControl Margin="10">
+            <TabItem Header="USE GSM MODEM">
+              <StackPanel Margin="20">
+                <TextBlock Text="MODEM COM PORT" Margin="4" FontWeight="Bold" />
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                  </Grid.ColumnDefinitions>
+                  <ComboBox Margin="4" SelectedItem="{Binding Source={x:Static cnf:Config.Sms},Path=Port}" 
                       ItemsSource="{Binding Source={x:Static viewModels1:SMS.Instance},Path=Ports}"/>
-              <!--<TextBlock Grid.Column="1" Text="{Binding Source={x:Static viewModels1:SMS.Instance},Path=Status}"
+                  <!--<TextBlock Grid.Column="1" Text="{Binding Source={x:Static viewModels1:SMS.Instance},Path=Status}"
                          Margin="10 0 0 0" VerticalAlignment="Center"/>-->
-            </Grid>
-            <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
+                </Grid>
+                <TextBlock Margin="4 4 4 17" FontStyle="Italic" Opacity="0.7"
                        VerticalAlignment="Center">
               <Run Text="COM port the GSM Modem is attached into." />
               <Hyperlink Command="{Binding Source={x:Static local:Extensions.OpenModemsCommand}}">See Installed Modems</Hyperlink>
               <Run Text=". Click "/><Hyperlink Command="{Binding Source={x:Static viewModels1:SMS.Instance},Path=RefreshPortsCommand}">here</Hyperlink>
             <Run> to refresh the list.</Run>
-          </TextBlock>
-        </StackPanel>
+                </TextBlock>
+              </StackPanel>
+            </TabItem>
+            <TabItem Header="USE ANDROID SMS GATEWAY" IsSelected="{Binding Source={x:Static cnf:Config.Sms},Path=UseAndroidGateway}">
+              <StackPanel Margin="20">
+                <TextBlock Text="GATEWAY URL" Margin="4" FontWeight="Bold" />
+                <TextBox Margin="4"
+                         materialDesign:HintAssist.Hint="http://192.168.1.111:4786"
+                         Text="{Binding Source={x:Static cnf:Config.Sms},Path=GatewayUrl,UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Text="TEST GATEWAY" Margin="4 10 4 4" FontWeight="Bold" />
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <TextBox Grid.Column="0"
+                           Margin="4"
+                           Text="{Binding SampleMessage}"
+                           materialDesign:HintAssist.Hint="TEST MESSAGE TO SEND"
+                           materialDesign:HintAssist.IsFloating="True"/>
+                  <TextBox Grid.Column="1"
+                           Margin="4"
+                           Text="{Binding SampleNumber}"
+                           materialDesign:HintAssist.Hint="NUMBER TO SEND TEST MESSAGE TO"
+                           materialDesign:HintAssist.IsFloating="True" />
+                  <Button Grid.Column="2" Margin="4" Content="SEND"
+                          Command="{Binding SendSampleCommand}"/>
+                </Grid>
+              </StackPanel>
+            </TabItem>
+          </TabControl>
         </Border>
 
         <Border BorderBrush="{StaticResource MaterialDesignDivider}"
