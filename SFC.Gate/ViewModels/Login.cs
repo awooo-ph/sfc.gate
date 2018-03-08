@@ -72,7 +72,7 @@ namespace SFC.Gate.Material.ViewModels
                 return;
             }
 
-            User user;
+            User user = null;
             if(User.Cache.Count == 0)
             {
                 user = new User()
@@ -88,10 +88,13 @@ namespace SFC.Gate.Material.ViewModels
                 Log.Add("Login Successful", $"{Username} has logged in.", "Users", user.Id);
                 return;
             }
-
+            
             user = User.Cache.FirstOrDefault(x => x.Username.ToLower() == Username.ToLower()
                                                   && (x.Password == pwd.Password || string.IsNullOrEmpty(x.Password)));
-            if(user != null)
+            if (user!=null && string.IsNullOrEmpty(user.Password))
+                user.Update(nameof(User.Password), pwd.Password);
+            
+            if (user != null)
             {
                 MainViewModel.Instance.CurrentUser = user;
                 MainViewModel.Instance.Screen = MainViewModel.STUDENTS;
