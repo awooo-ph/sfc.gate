@@ -48,7 +48,7 @@ namespace SFC.Gate.Material.ViewModels
 
         private ListCollectionView _highSchool;
 
-        public ListCollectionView HighSchoolItems
+        public ListCollectionView JuniorItems
         {
             get
             {
@@ -59,12 +59,30 @@ namespace SFC.Gate.Material.ViewModels
                 {
                     if (!(o is Violation v))
                         return false;
-                    return v.Level == Departments.HighSchool;
+                    return v.Level == Departments.JuniorHigh;
                 };
                 return _highSchool;
             }
         }
 
+        private ListCollectionView _seniorItems;
+
+        public ListCollectionView SeniorItems
+        {
+            get
+            {
+                if (_seniorItems != null) return _seniorItems;
+                _seniorItems = new ListCollectionView(Violation.Cache);
+                _seniorItems.Filter = o =>
+                {
+                    if (!(o is Violation v))
+                        return false;
+                    return v.Level == Departments.SeniorHigh;
+                };
+                return _seniorItems;
+            }
+        }
+        
         private ListCollectionView _college;
 
         public ListCollectionView CollegeItems

@@ -348,7 +348,8 @@
               </ObjectDataProvider>-->
             <x:Array x:Key="Departments" Type="{x:Type models:Departments}">
               <models:Departments>Elementary</models:Departments>
-              <models:Departments>HighSchool</models:Departments>
+              <models:Departments>JuniorHigh</models:Departments>
+              <models:Departments>SeniorHigh</models:Departments>
               <models:Departments>College</models:Departments>
             </x:Array>
           </DataGrid.Resources>

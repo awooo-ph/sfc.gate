@@ -367,7 +367,7 @@ namespace SFC.Gate.Material.ViewModels
 
             if (!fe && s.Level == Departments.Elementary)
                 return false;
-            if (!fh && s.Level == Departments.HighSchool)
+            if (!fh && (s.Level == Departments.JuniorHigh || s.Level == Departments.SeniorHigh))
                 return false;
             if (!fc && s.Level == Departments.College)
                 return false;
@@ -600,7 +600,7 @@ namespace SFC.Gate.Material.ViewModels
 
                     r.Cells[2].Paragraphs.First().Append(item.YearLevel).LineSpacingAfter = 0;
 
-                    p = r.Cells[3].Paragraphs.First().Append(item.Department);
+                    p = r.Cells[3].Paragraphs.First().Append(item.Level.EnumDescription());
                     p.Alignment = Alignment.left;
                     p.LineSpacingAfter = 0;
                 }
@@ -983,7 +983,7 @@ namespace SFC.Gate.Material.ViewModels
                     students = Student.Cache.Where(x => x.Level == Departments.Elementary).ToList();
                     break;
                 case 2:
-                    students = Student.Cache.Where(x => x.Level == Departments.HighSchool).ToList();
+                    students = Student.Cache.Where(x => (x.Level == Departments.JuniorHigh || x.Level == Departments.SeniorHigh)).ToList();
                     break;
                 case 3:
                     students = Student.Cache.Where(x => x.Level == Departments.College).ToList();
@@ -1150,7 +1150,8 @@ namespace SFC.Gate.Material.ViewModels
                         case Departments.Elementary:
                             FilterElementary = true;
                             break;
-                        case Departments.HighSchool:
+                        case Departments.JuniorHigh:
+                        case Departments.SeniorHigh:
                             FilterHighSchool = true;
                             break;
                         case Departments.College:

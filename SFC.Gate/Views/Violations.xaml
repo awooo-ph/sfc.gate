@@ -120,10 +120,15 @@
                         Margin="20 0 0 20"
                     ItemsSource="{Binding ElementaryItems}">
           </ItemsControl>
-          <TextBlock Text="HIGH SCHOOL" Style="{StaticResource MaterialDesignTitleTextBlock}"/>
+          <TextBlock Text="JUNIOR HIGH SCHOOL" Style="{StaticResource MaterialDesignTitleTextBlock}"/>
           <ItemsControl Grid.IsSharedSizeScope="True"
                         Margin="20 0 0 20"
-                    ItemsSource="{Binding HighSchoolItems}">
+                    ItemsSource="{Binding JuniorItems}">
+          </ItemsControl>
+          <TextBlock Text="SENIOR HIGH SCHOOL" Style="{StaticResource MaterialDesignTitleTextBlock}" />
+          <ItemsControl Grid.IsSharedSizeScope="True"
+                        Margin="20 0 0 20"
+                        ItemsSource="{Binding SeniorItems}">
           </ItemsControl>
           <TextBlock Text="COLLEGE" Style="{StaticResource MaterialDesignTitleTextBlock}"/>
           <ItemsControl Grid.IsSharedSizeScope="True"
