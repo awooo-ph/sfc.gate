@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Data;
 using System.Windows.Input;
+using SFC.Gate.Converters;
 using SFC.Gate.Models;
+using Xceed.Words.NET;
 
 namespace SFC.Gate.Material.ViewModels
 {
@@ -494,5 +497,60 @@ namespace SFC.Gate.Material.ViewModels
         }
 
         public string ReturnErrorMessage => GetDataError(nameof(ReturnRfid));
+
+        private ICommand _printListCommand;
+
+        public ICommand PrintListCommand => _printListCommand ?? (_printListCommand = new DelegateCommand(d =>
+        {
+            
+                if (!Directory.Exists("Temp"))
+                    Directory.CreateDirectory("Temp");
+                var temp = Path.Combine("Temp", $"List of Visitors [{DateTime.Now:d-MMM-yyyy}].docx");
+            
+            
+                using (var doc = DocX.Load(@"Templates\Visitors.docx"))
+                {
+                    var tbl = doc.Tables.First();
+
+                    var pt = (1F / 72F);
+                    foreach (var item in Visitor.Cache.ToList())
+                    {
+                        var r = tbl.InsertRow();
+                        var p = r.Cells[0].Paragraphs.First().Append(item.Name);
+                        p.LineSpacingAfter = 0;
+                        p.Alignment = Alignment.left;
+
+                        p = r.Cells[1].Paragraphs.First().Append(item.Address);
+                        p.LineSpacingAfter = 0;
+                        p.Alignment = Alignment.left;
+
+                    p = r.Cells[2].Paragraphs.First().Append(item.Number);
+                        p.LineSpacingAfter = 0;
+                        p.Alignment = Alignment.center;
+
+                    p = r.Cells[3].Paragraphs.First().Append(item.VisitCount.ToString("0"));
+                        p.LineSpacingAfter = 0;
+                        p.Alignment = Alignment.center;
+
+                    p = r.Cells[4].Paragraphs.First().Append(LastVisitConverter.ConvertToString(item.LastVisit));
+                        p.Alignment = Alignment.left;
+                        p.LineSpacingAfter = 0;
+                    }
+                    var border = new Xceed.Words.NET.Border(BorderStyle.Tcbs_single, BorderSize.one, 0,
+                        System.Drawing.Color.Black);
+                    tbl.SetBorder(TableBorderType.Bottom, border);
+                    tbl.SetBorder(TableBorderType.Left, border);
+                    tbl.SetBorder(TableBorderType.Right, border);
+                    tbl.SetBorder(TableBorderType.Top, border);
+                    tbl.SetBorder(TableBorderType.InsideV, border);
+                    tbl.SetBorder(TableBorderType.InsideH, border);
+                    File.Delete(temp);
+                    doc.SaveAs(temp);
+                }
+                Extensions.Print(temp);
+            
+        }));
+        
+        
     }
 }
