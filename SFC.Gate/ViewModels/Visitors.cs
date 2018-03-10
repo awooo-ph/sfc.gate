@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
 using SFC.Gate.Converters;
@@ -53,11 +54,11 @@ namespace SFC.Gate.Material.ViewModels
             ReturnRfid = code;
         }
 
-        private void ScanAddVisitor(string code)
-        {
-            if (Visit.Cache.Any(x => !x.HasLeft && x.Rfid.ToLower() == code?.ToLower())) return;
-            NewRfid = code;
-        }
+      //  private void ScanAddVisitor(string code)
+      //  {
+      //      if (Visit.Cache.Any(x => !x.HasLeft && x.Rfid.ToLower() == code?.ToLower())) return;
+      //      NewRfid = code;
+      //  }
 
         private Action<string> ScanCallback;
 
@@ -209,6 +210,11 @@ namespace SFC.Gate.Material.ViewModels
                 OnPropertyChanged(nameof(ShowNewDialog));
                
                     IsAddingVisitor = value;
+                if (!value)
+                {
+                    ScanCallback = null;
+                    RfidScanner.ExclusiveCallback = null;
+                }
             }
         }
 
@@ -223,6 +229,7 @@ namespace SFC.Gate.Material.ViewModels
             NewPurpose = "";
             ShowNewDialog = true;
             IsAddingVisitor = true;
+            NewVisitorStep = 0;
         }));
 
         private ICommand _newCancelCommand;
@@ -235,6 +242,7 @@ namespace SFC.Gate.Material.ViewModels
             NewNumber = "";
             NewRfid = "";
             NewPurpose = "";
+         
         }));
 
         private ICommand _timeOutCommand;
@@ -245,6 +253,20 @@ namespace SFC.Gate.Material.ViewModels
             Log.Add("VISITOR LEFT", $"{visit.Visitor.Name} has left.");
         }));
 
+        private ICommand _newNextCommand;
+
+        public ICommand NewNextCommand => _newNextCommand ?? (_newNextCommand = new DelegateCommand(d =>
+        {
+            NewVisitorStep = 1;
+        }, d => GetDataError(nameof(NewPurpose))==null && GetDataError(nameof(NewName))==null));
+        
+        private ICommand _newBackCommand;
+
+        public ICommand NewBackCommand => _newBackCommand ?? (_newBackCommand = new DelegateCommand(d =>
+        {
+            NewVisitorStep = 0;
+        }));
+        
         private ICommand _newAcceptCommand;
 
         public ICommand NewAcceptCommand => _newAcceptCommand ?? (_newAcceptCommand = new DelegateCommand(d =>
@@ -289,6 +311,47 @@ namespace SFC.Gate.Material.ViewModels
             return visit.TimeOut != null;
         }));
 
+        private bool _IsWaitingScan = true;
+
+        public bool IsWaitingScan
+        {
+            get => _IsWaitingScan;
+            set
+            {
+                if (value == _IsWaitingScan) return;
+                _IsWaitingScan = value;
+                OnPropertyChanged(nameof(IsWaitingScan));
+            }
+        }
+
+        private bool _NewVisitorError;
+
+        public bool NewVisitorError
+        {
+            get => _NewVisitorError;
+            set
+            {
+                if (value == _NewVisitorError) return;
+                _NewVisitorError = value;
+                OnPropertyChanged(nameof(NewVisitorError));
+            }
+        }
+
+        private string _NewVisitorErrorMessage;
+
+        public string NewVisitorErrorMessage
+        {
+            get => _NewVisitorErrorMessage;
+            set
+            {
+                if (value == _NewVisitorErrorMessage) return;
+                _NewVisitorErrorMessage = value;
+                OnPropertyChanged(nameof(NewVisitorErrorMessage));
+            }
+        }
+
+        
+
         private string _NewPurpose;
 
         public string NewPurpose
@@ -318,6 +381,46 @@ namespace SFC.Gate.Material.ViewModels
                 OnPropertyChanged(nameof(NewName));
                 RefreshNewVisitor();
             }
+        }
+
+        private int _NewVisitorStep = 0;
+
+        public int NewVisitorStep
+        {
+            get => _NewVisitorStep;
+            set
+            {
+                if (value == _NewVisitorStep) return;
+                _NewVisitorStep = value;
+                OnPropertyChanged(nameof(NewVisitorStep));
+                if (value == 1)
+                {
+                    ScanCallback = NewVisitorScan;
+                }
+                else
+                {
+                    ScanCallback = null;
+                    NewVisitorError = false;
+                }
+                RfidScanner.ExclusiveCallback = ScanCallback;
+            }
+        }
+
+        private async void NewVisitorScan(string s)
+        {
+            IsWaitingScan = false;
+            var v = Visit.GetByRfid(s).FirstOrDefault(x => !x.HasLeft);
+            if (v != null)
+            {
+                NewVisitorError = true;
+                NewVisitorErrorMessage = $"Card is currently issued to {v.Visitor.Name}";
+                await TaskEx.Delay(2222);
+                NewVisitorError = false;
+                IsWaitingScan = true;
+                return;
+            }
+            NewVisitorError = false;
+            NewRfid = s;
         }
 
         private string _NewNumber;
@@ -359,6 +462,7 @@ namespace SFC.Gate.Material.ViewModels
                     return;
                 _NewRfid = value;
                 OnPropertyChanged(nameof(NewRfid));
+                IsWaitingScan = string.IsNullOrEmpty(value);
             }
         }
 
@@ -383,8 +487,16 @@ namespace SFC.Gate.Material.ViewModels
 
         private string GetDataError(string columnName)
         {
-            if (columnName == nameof(NewName) && string.IsNullOrWhiteSpace(NewName))
-                return "Name is required";
+            if (columnName == nameof(NewName))
+            {
+                if(string.IsNullOrWhiteSpace(NewName))
+                    return "Name is required";
+                var visitor = Visitor.Cache.FirstOrDefault(x => x.Name.ToLower() == NewName.ToLower());
+                if (visitor != null && visitor.IsInside)
+                {
+                    return $"{visitor.Name} has not left yet. Or the card issued on his/her last visit was not returned.";
+                }
+            }
             if (columnName == nameof(NewPurpose) && string.IsNullOrWhiteSpace(NewPurpose))
                 return "Provide purpose of visit";
 

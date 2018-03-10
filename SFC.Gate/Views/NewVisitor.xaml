@@ -9,13 +9,16 @@
              xmlns:behaviors="clr-namespace:WPFTextBoxAutoComplete;assembly=WPFTextBoxAutoComplete"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:models="clr-namespace:SFC.Gate.Models;assembly=SFC.Gate.Core"
+             xmlns:converters="clr-namespace:SFC.Gate.Converters"
              HorizontalAlignment="Stretch"
              VerticalAlignment="Stretch">
   <md:Card HorizontalAlignment="Center"
            MinWidth="444"
            UniformCornerRadius="7"
              VerticalAlignment="Center">
+   
     <StackPanel>
+      
       <StackPanel Orientation="Horizontal" Margin="10">
         
         <Path Data="M23.677979,26.495C23.997978,26.495 24.263979,26.59 24.47398,26.78 24.683979,26.967 24.78998,27.204 24.78998,27.491 24.78998,27.783 24.686979,28.024 24.479981,28.214 24.26998,28.405 24.00198,28.5 23.677979,28.5 23.352978,28.5 23.084978,28.403 22.869978,28.208 22.654978,28.006 22.547978,27.766 22.547978,27.491 22.547978,27.207 22.654978,26.97 22.869978,26.78 23.084978,26.59 23.352978,26.495 23.677979,26.495z M23.732979,19.5C24.108978,19.5 24.458979,19.541 24.78398,19.625 25.107981,19.708 25.38998,19.839 25.630982,20.017 25.872982,20.195 26.060982,20.422 26.196982,20.7 26.331982,20.978 26.399983,21.311 26.399983,21.7 26.399983,21.947 26.372982,22.171 26.314982,22.371 26.257982,22.572 26.175982,22.762 26.065981,22.94 25.956982,23.118 25.820982,23.289 25.658981,23.453 25.496981,23.617 25.30998,23.786 25.099981,23.961 24.957981,24.078 24.833981,24.187 24.72698,24.289 24.61898,24.39 24.52998,24.49 24.458979,24.589 24.38798,24.689 24.333979,24.794 24.297979,24.905 24.260979,25.017 24.242979,25.144 24.242979,25.285 24.242979,25.383 24.25598,25.482 24.281979,25.583 24.308979,25.685 24.343979,25.77 24.388979,25.838L22.790978,25.838C22.750977,25.733 22.718977,25.615 22.696978,25.483 22.673977,25.351 22.662977,25.226 22.662977,25.109 22.662977,24.922 22.680977,24.752 22.717978,24.599 22.753977,24.445 22.808977,24.3 22.881977,24.164 22.954977,24.029 23.045979,23.898 23.154978,23.775 23.264978,23.652 23.391977,23.529 23.537979,23.407 23.692978,23.278 23.826979,23.157 23.941979,23.046 24.05798,22.935 24.155979,22.823 24.236979,22.712 24.318979,22.6 24.378979,22.485 24.41898,22.365 24.458979,22.246 24.479981,22.113 24.479981,21.967 24.479981,21.841 24.457979,21.725 24.412979,21.618 24.367979,21.51 24.304979,21.419 24.22098,21.341 24.138979,21.264 24.037979,21.203 23.916979,21.159 23.797979,21.115 23.665979,21.092 23.519978,21.092 23.203978,21.092 22.875977,21.158 22.534977,21.29 22.194977,21.422 21.872976,21.621 21.568976,21.888L21.568976,20.059C21.881977,19.872 22.221977,19.733 22.589977,19.64 22.957977,19.547 23.339977,19.5 23.732979,19.5z M23.984984,18C20.668989,18 17.970993,20.691 17.970993,24 17.970993,27.309 20.668989,30 23.984984,30 27.30098,30 29.999975,27.309 29.999975,24 29.999975,20.691 27.30098,18 23.984984,18z M10.602005,15C5.8589998,15 1.9999968,18.82901 1.9999966,23.536011 1.9999968,24.89502 3.1159924,26 4.4890071,26L16.224615,26 16.22373,25.996896C16.058764,25.358369 15.970995,24.689219 15.970995,24 15.970995,20.829594 17.828175,18.083834 20.513643,16.790128L20.610045,16.746552 20.332823,16.543529C18.894539,15.541333,17.180422,15,15.39698,15L12.999,15z M12.999,2C9.9409963,2 7.4529925,4.467 7.4529925,7.5 7.4529925,9.947 9.1079951,12.123 11.477998,12.791 12.461,13.068 13.535001,13.069 14.521002,12.791 16.891005,12.122 18.545008,9.9460001 18.545008,7.5 18.545008,4.467 16.057005,2 12.999,2z M12.999,0C17.160006,0 20.54501,3.3640003 20.54501,7.5 20.54501,9.6899061 19.574291,11.720467 17.994896,13.115179L17.807274,13.27433 17.878784,13.290482C19.649843,13.712339,21.289921,14.584431,22.644987,15.846008L22.882458,16.076058 22.965691,16.064397C23.299545,16.021905 23.63975,16 23.984984,16 28.403978,16 31.999973,19.589 31.999973,24 31.999973,28.411 28.403978,32 23.984984,32 21.08502,32 18.539921,30.454348 17.132837,28.145059L17.049189,28 4.4890071,28C2.0129972,28 -3.880413E-07,25.997009 5.6843419E-14,23.536011 -3.880413E-07,18.633825 3.3851498,14.503344 7.9551745,13.33225L8.1908837,13.27496 8.0041123,13.116582C6.4241391,11.721779 5.4529901,9.6905625 5.4529901,7.5 5.4529901,3.3640003 8.8379947,0 12.999,0z" Stretch="Uniform"
@@ -35,38 +38,143 @@
                    Text="ADD VISITOR"/>
       </StackPanel>
       <Rectangle Height="1" Fill="{StaticResource PrimaryHueMidBrush}"/>
-      <TextBox md:HintAssist.IsFloating="True"
+      <md:Transitioner SelectedIndex="{Binding NewVisitorStep}">
+        <md:TransitionerSlide>
+          <md:TransitionerSlide.ForwardWipe>
+            <md:SlideWipe Direction="Left" Duration="0:0:0.2" />
+          </md:TransitionerSlide.ForwardWipe>
+          <md:TransitionerSlide.BackwardWipe>
+            <md:SlideWipe Direction="Left" Duration="0:0:0.2" />
+          </md:TransitionerSlide.BackwardWipe>
+          <StackPanel Background="{StaticResource MaterialDesignPaper}">
+            <TextBox md:HintAssist.IsFloating="True"
                Style="{StaticResource MaterialDesignTextBox}"
                 Text="{Binding NewName,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                behaviors:AutoCompleteBehavior.AutoCompleteItemsSource="{Binding VisitorNames}"
                behaviors:AutoCompleteBehavior.AutoCompleteStringComparison="InvariantCultureIgnoreCase"
                 Margin="20 10 20 5"
                 md:HintAssist.Hint="VISITOR'S NAME"/>
-      <TextBox md:HintAssist.IsFloating="True"
+            <TextBox md:HintAssist.IsFloating="True"
                Margin="20 7"
                Text="{Binding NewAddress,UpdateSourceTrigger=PropertyChanged}"
                md:HintAssist.Hint="VISITOR'S ADDRESS" />
-      <TextBox md:HintAssist.IsFloating="True"
+            <TextBox md:HintAssist.IsFloating="True"
                Margin="20 7"
                Text="{Binding NewNumber,UpdateSourceTrigger=PropertyChanged}"
                md:HintAssist.Hint="VISITOR'S CONTACT NUMBER" />
-      <TextBox md:HintAssist.IsFloating="True"
+            <TextBox md:HintAssist.IsFloating="True"
                Margin="20 7"
                Text="{Binding NewPurpose,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
                md:HintAssist.Hint="PURPOSE OF VISIT" />
-      <TextBox md:HintAssist.IsFloating="True"
-               Margin="20 7"
-               Text="{Binding NewRfid,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
-               md:HintAssist.Hint="ISSUED RFID" />
-      <UniformGrid Rows="1" Margin="0 20 0 0">
-        <Button Style="{StaticResource MaterialDesignFlatButton}"
+          </StackPanel>
+        </md:TransitionerSlide>
+        <md:TransitionerSlide>
+          <md:TransitionerSlide.ForwardWipe>
+            <md:SlideWipe Direction="Right" Duration="0:0:0.2" />
+          </md:TransitionerSlide.ForwardWipe>
+          <md:TransitionerSlide.BackwardWipe>
+            <md:SlideWipe Direction="Right" Duration="0:0:0.2" />
+          </md:TransitionerSlide.BackwardWipe>
+          <Grid Background="{StaticResource MaterialDesignPaper}">
+            <Viewbox Opacity="1" Margin="20"
+                     Visibility="{Binding IsWaitingScan,Converter={converters:BooleanToVisibility}}"
+                     Height="74" HorizontalAlignment="Center"
+                     VerticalAlignment="Center">
+              <StackPanel Orientation="Horizontal">
+                <Viewbox HorizontalAlignment="Center" >
+                  <Rectangle Fill="{StaticResource MaterialDesignLightForeground}" Stretch="Uniform" Height="174" Width="174">
+                    <Rectangle.OpacityMask>
+                      <ImageBrush ImageSource="pack://application:,,,/contactless-icon.png"
+                                  RenderOptions.BitmapScalingMode="LowQuality" />
+                    </Rectangle.OpacityMask>
+                  </Rectangle>
+                </Viewbox>
+                <Viewbox HorizontalAlignment="Center" Margin="20 0">
+                  <StackPanel>
+                    <TextBlock Text="PLEASE SCAN VISITOR'S" FontSize="30pt"
+                               TextAlignment="Center" />
+                    <TextBlock Text="IDENTIFICATION CARD" FontSize="30pt"
+                               FontWeight="Bold"
+                               TextAlignment="Center"/>
+                  </StackPanel>
+                </Viewbox>
+              </StackPanel>
+            </Viewbox>
+            <Grid Visibility="{Binding IsWaitingScan,Converter={converters:BooleanToVisibility Collapsed,Visible}}"
+                  Margin="20">
+              <Grid Visibility="{Binding NewVisitorError,Converter={converters:BooleanToVisibility}}">
+                <StackPanel VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                          HorizontalAlignment="Center">
+                  <md:PackIcon Kind="Alert" Height="64" Width="64"
+                               Margin="0 0 10 0"
+                               VerticalAlignment="Center"
+                               Foreground="Red" />
+                  <StackPanel VerticalAlignment="Center">
+                  <TextBlock Text="INVALID CARD" Style="{StaticResource MaterialDesignTitleTextBlock}"
+                             FontWeight="Bold"
+                             VerticalAlignment="Center" />
+                  <TextBlock Text="{Binding NewVisitorErrorMessage}" Style="{StaticResource MaterialDesignTitleTextBlock}"
+                           TextWrapping="Wrap"/>
+                  </StackPanel>
+                  
+                </StackPanel>
+              </Grid>
+              <Grid Visibility="{Binding NewVisitorError,Converter={converters:BooleanToVisibility Collapsed,Visible}}">
+                <StackPanel VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+                  <md:PackIcon Kind="CheckCircle" Height="64" Width="64"
+                               Margin="0 0 10 0"
+                               VerticalAlignment="Center"
+                               Foreground="DodgerBlue" />
+                  
+                  <StackPanel VerticalAlignment="Center">
+                  <TextBlock Text="CARD ACCEPTED" Style="{StaticResource MaterialDesignTitleTextBlock}"
+                             FontWeight="Bold"
+                             VerticalAlignment="Center" />
+                  <TextBlock Text="{Binding NewRfid}"
+                             Style="{StaticResource MaterialDesignTitleTextBlock}"
+                             FontSize="24pt"
+                             TextAlignment="Center"
+                             TextWrapping="Wrap" />
+                  </StackPanel>
+                </StackPanel>
+              </Grid>
+            </Grid>
+          </Grid>
+        </md:TransitionerSlide>
+      </md:Transitioner>
+
+      <md:Transitioner SelectedIndex="{Binding NewVisitorStep}">
+        <md:TransitionerSlide>
+          
+        <UniformGrid Rows="1" Margin="0 20 0 0">
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
                 IsCancel="True"
                 Command="{Binding NewCancelCommand}"
                 Content="CANCEL" />
-        <Button Style="{StaticResource MaterialDesignFlatButton}"
-                Command="{Binding NewAcceptCommand}"
-                Content="ACCEPT"/>
-      </UniformGrid>
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
+                Command="{Binding NewNextCommand}"
+                Content="NEXT"/>
+        </UniformGrid>
+        </md:TransitionerSlide>
+        <md:TransitionerSlide>
+        <UniformGrid Rows="1" Margin="0 20 0 0">
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  Command="{Binding NewBackCommand}"
+                  Content="BACK" />
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  IsCancel="True"
+                  Command="{Binding NewCancelCommand}"
+                  Content="CANCEL" />
+          <Button Style="{StaticResource MaterialDesignFlatButton}"
+                  Command="{Binding NewAcceptCommand}"
+                  Content="ACCEPT" />
+        </UniformGrid>
+        </md:TransitionerSlide>
+      </md:Transitioner>
     </StackPanel>
+     
   </md:Card>
 </UserControl>
