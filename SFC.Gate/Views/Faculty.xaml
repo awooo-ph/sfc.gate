@@ -197,7 +197,10 @@
                               VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                               Command="{Binding Source={x:Static viewModels:Faculty.Instance},Path=ChangeRfidCommand}"
                               CommandParameter="{Binding}"
-                              Style="{StaticResource MaterialDesignToolButton}" />
+                              Style="{StaticResource MaterialDesignToolButton}" >
+                        <md:PackIcon Kind="CreditCardScan"
+                                     Visibility="{Binding HasRfid,Converter={converters:BooleanToVisibility Collapsed,Visible}}"/>
+                      </Button>
                     </Grid>
                   </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>

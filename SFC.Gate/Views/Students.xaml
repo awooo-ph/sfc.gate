@@ -339,9 +339,41 @@
                   PreviewDragOver="StudentsDragEnter"
                     FrozenColumnCount="1"
                   Grid.Row="1">
+          <DataGrid.ItemContainerStyle>
+            <Style BasedOn="{StaticResource MaterialDesignDataGridRow}"
+                   TargetType="DataGridRow">
+              <Setter Property="ContextMenu">
+                <Setter.Value>
+                  <ContextMenu>
+                    <MenuItem Header="Change Picture"
+                              Command="{Binding Source={x:Static vm:StudentsViewModel.Instance},Path=ChangePictureCommand}"
+                              CommandParameter="{Binding}" 
+                              Icon="{md:PackIcon Face}"/>
+                    <MenuItem Header="Change RFID"
+                              Command="{Binding Source={x:Static vm:StudentsViewModel.Instance},Path=ChangeRfidCommand}"
+                              CommandParameter="{Binding}" 
+                              Icon="{md:PackIcon CreditCardScan}"/>
+                    <MenuItem Header="View">
+                      <MenuItem Header="Violations" Icon="{md:PackIcon Alert}"
+                                Command="{Binding Source={x:Static vm:StudentsViewModel.Instance},Path=ViewCommand}"
+                                CommandParameter="violations" />
+                      <MenuItem Header="Notifications" Icon="{md:PackIcon Bullhorn}"
+                                Command="{Binding Source={x:Static vm:StudentsViewModel.Instance},Path=ViewCommand}"
+                                CommandParameter="notifications" />
+                      <MenuItem Header="Activity Log" Icon="{md:PackIcon CalendarClock}"
+                                Command="{Binding Source={x:Static vm:StudentsViewModel.Instance},Path=ViewCommand}"
+                                CommandParameter="activity" />
+                    </MenuItem>
+                    <MenuItem Header="Delete Student"
+                              Command="{Binding DeleteCommand}"/>
+                  </ContextMenu>
+                </Setter.Value>
+              </Setter>
+            </Style>
+          </DataGrid.ItemContainerStyle>
           <DataGrid.Resources>
               <!--<ObjectDataProvider x:Key="Departments" MethodName="GetValues"
-                                  ObjectType="{x:Type system:Enum}">
+                                  ObjectType="{x:Type system:Enumb}">
                 <ObjectDataProvider.MethodParameters>
                   <x:Type Type="models:Departments"/>
                 </ObjectDataProvider.MethodParameters>
@@ -360,7 +392,6 @@
                                       CanUserResize="False"
                                       ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}">
                 <DataGridCheckBoxColumn.Header>
-                  
                     <CheckBox VerticalAlignment="Center"
                               HorizontalAlignment="Center"
                               Focusable="False"
@@ -407,7 +438,10 @@
                             VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                             Command="{Binding Source={x:Static vm:StudentsViewModel.Instance},Path=ChangeRfidCommand}"
                             CommandParameter="{Binding}"
-                            Style="{StaticResource MaterialDesignToolButton}"/>
+                            Style="{StaticResource MaterialDesignToolButton}">
+                      <md:PackIcon Kind="CreditCardScan"
+                                   Visibility="{Binding HasRfid,Converter={converters:BooleanToVisibility Collapsed,Visible}}" />
+                    </Button>
                   </Grid>
                 </DataTemplate>
               </DataGridTemplateColumn.CellTemplate>
