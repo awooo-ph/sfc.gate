@@ -63,7 +63,8 @@
                 </TextBlock>
               </StackPanel>
             </TabItem>
-            <TabItem Header="USE ANDROID SMS GATEWAY" IsSelected="{Binding Source={x:Static cnf:Config.Sms},Path=UseAndroidGateway}">
+            <TabItem Header="USE ANDROID SMS GATEWAY" IsSelected="{Binding Source={x:Static cnf:Config.Sms},Path=UseAndroidGateway}"
+                     Visibility="Collapsed">
               <StackPanel Margin="20">
                 <TextBlock Text="GATEWAY URL" Margin="4" FontWeight="Bold" />
                 <TextBox Margin="4"
