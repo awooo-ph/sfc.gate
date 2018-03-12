@@ -107,8 +107,6 @@ namespace SFC.Gate.Material.ViewModels
             get => _ReturnVisitor;
             set
             {
-                if(value == _ReturnVisitor)
-                    return;
                 _ReturnVisitor = value;
                 OnPropertyChanged(nameof(ReturnVisit));
             }
@@ -560,8 +558,6 @@ namespace SFC.Gate.Material.ViewModels
             get => _ReturnRfid;
             set
             {
-                if(value == _ReturnRfid)
-                    return;
                 _ReturnRfid = value;
                 OnPropertyChanged(nameof(ReturnRfid));
                 OnPropertyChanged(nameof(HasReturnCardError));
