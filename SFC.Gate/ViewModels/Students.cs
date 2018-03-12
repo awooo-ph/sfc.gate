@@ -234,11 +234,11 @@ namespace SFC.Gate.Material.ViewModels
                 _students = new ListCollectionView(Models.Student.Cache);
                 _students.Filter = FilterStudents;
                
-                Models.Student.Cache.CollectionChanged += (sender, args) =>
-                {
-                    if(!_students.IsAddingNew)
-                        _students.Filter = FilterStudents;
-                };
+               // Models.Student.Cache.CollectionChanged += (sender, args) =>
+               // {
+               //     if(!_students.IsAddingNew)
+               //         _students.Filter = FilterStudents;
+               // };
                 return _students;
             }
         }
@@ -359,7 +359,10 @@ namespace SFC.Gate.Material.ViewModels
             if (!(o is Student s))
                 return false;
 
-            if (s.Level > Departments.College) return false;
+            if (s.Id == 0) return false;
+            
+            if (s.Level == Departments.Faculty)
+                return false;
             
             var fe = FilterElementary || (!FilterElementary && !FilterCollege && !FilterHighSchool);
             var fh = FilterHighSchool || (!FilterElementary && !FilterCollege && !FilterHighSchool);
@@ -757,6 +760,18 @@ namespace SFC.Gate.Material.ViewModels
                     SmsTab = true;
             }
         }
+
+        private ICommand _viewCommand;
+
+        public ICommand ViewCommand => _viewCommand ?? (_viewCommand = new DelegateCommand<string>(s =>
+        {
+            if (s == "violations")
+                ViolationsTab = true;
+            else if (s == "notifications")
+                SmsTab = true;
+            else
+                LogTab = true;
+        }));
 
         private ListCollectionView _messages;
 
