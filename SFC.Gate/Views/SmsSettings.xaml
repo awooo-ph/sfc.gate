@@ -40,8 +40,8 @@
                 Margin="0 0 0 40"
                 BorderThickness="1"
                 CornerRadius="7">
-          <TabControl Margin="10">
-            <TabItem Header="USE GSM MODEM">
+          <!--<TabControl Margin="10">
+            <TabItem Header="USE GSM MODEM">-->
               <StackPanel Margin="20">
                 <TextBlock Text="MODEM COM PORT" Margin="4" FontWeight="Bold" />
                 <Grid>
@@ -62,7 +62,7 @@
             <Run> to refresh the list.</Run>
                 </TextBlock>
               </StackPanel>
-            </TabItem>
+            <!--</TabItem>
             <TabItem Header="USE ANDROID SMS GATEWAY" IsSelected="{Binding Source={x:Static cnf:Config.Sms},Path=UseAndroidGateway}"
                      Visibility="Collapsed">
               <StackPanel Margin="20">
@@ -92,7 +92,7 @@
                 </Grid>
               </StackPanel>
             </TabItem>
-          </TabControl>
+          </TabControl>-->
         </Border>
 
         <Border BorderBrush="{StaticResource MaterialDesignDivider}"
